@@ -161,7 +161,7 @@
       font-size:16px;
       margin-bottom:4px;
     }
-    .produto-cod{
+    .produto-ref{
       font-size:11px;
       font-weight:700;
       color:var(--primary);
@@ -260,7 +260,7 @@
       <div class="logo">GR</div>
       <div>
         <h1>Consulta de Produtos</h1>
-        <div class="header-sub">Digite o código para visualizar as características técnicas.</div>
+        <div class="header-sub">Digite a <b>Referência</b> para visualizar as características técnicas.</div>
       </div>
     </div>
     <div class="version">
@@ -272,23 +272,23 @@
   <main class="grid">
     <!-- LADO ESQUERDO: BUSCA -->
     <section class="card">
-      <div class="card-title">Buscar por código</div>
-      <label for="codigoInput">Código do produto</label>
+      <div class="card-title">Buscar pela Referência</div>
+      <label for="refInput">Referência do produto</label>
       <div class="input-row">
-        <input id="codigoInput" type="text" placeholder="Ex.: 3101, GL-200, etc.">
+        <input id="refInput" type="text" placeholder="Ex.: GR0026, GR0030, etc.">
         <button class="btn-primary" id="btnBuscar">Buscar</button>
       </div>
       <div class="helper">
-        • Você também pode pressionar <b>Enter</b> após digitar o código.<br>
-        • O sistema ignora espaços e letras maiúsculas/minúsculas.
+        • Campo baseado na coluna <b>Referência</b> da planilha.<br>
+        • Você também pode pressionar <b>Enter</b> após digitar.
       </div>
 
       <div class="status status-muted" id="statusMsg">
-        Digite um código e clique em Buscar.
+        Digite uma referência e clique em Buscar.
       </div>
 
       <div class="history" id="historyBox" style="display:none;">
-        <div class="history-title">Códigos recentes</div>
+        <div class="history-title">Referências recentes</div>
         <div class="history-tags" id="historyTags"></div>
       </div>
     </section>
@@ -297,7 +297,7 @@
     <section class="card" id="resultadoCard" style="opacity:0.5;">
       <div class="card-title">Informações do produto</div>
       <div id="semResultado" class="helper">
-        Nenhum produto selecionado. Faça uma busca pelo código.
+        Nenhum produto selecionado. Faça uma busca pela referência.
       </div>
 
       <div id="resultado" style="display:none;">
@@ -306,20 +306,16 @@
             Foto não disponível
           </div>
           <div class="produto-info">
-            <div class="produto-cod" id="codBox">COD-0000</div>
+            <div class="produto-ref" id="refBox">REF-0000</div>
             <h2 id="nomeBox">Nome do produto</h2>
-            <div class="produto-tags" id="tagsBox">
-              <!-- tags dinâmicas -->
-            </div>
+            <div class="produto-tags" id="tagsBox"></div>
             <p class="desc" id="descBox"></p>
           </div>
         </div>
 
         <div class="specs">
           <div class="specs-title">Características técnicas</div>
-          <div class="specs-grid" id="specsGrid">
-            <!-- itens dinâmicos -->
-          </div>
+          <div class="specs-grid" id="specsGrid"></div>
         </div>
       </div>
     </section>
@@ -327,80 +323,77 @@
 </div>
 
 <script>
-  // Exemplo de base de produtos (depois você troca pelos dados reais)
-  const produtos = {
-    "3101": {
-      codigo: "3101",
-      nome: "Grelha Inox 50x30",
-      descricao: "Grelha em aço inox, ideal para churrasqueiras residenciais.",
-      tags: ["Linha Inox", "Churrasqueira", "Uso doméstico"],
-      foto: "", // pode colocar URL no futuro
+  // 🔹 Base EXEMPLO – aqui você vai substituir pelos dados reais da planilha
+  // Cada item representa uma linha da planilha CARACTERÍSTICAS, coluna "Referência"
+  const produtos = [
+    {
+      referencia: "GR0026", // COLUNA Referência
+      nome: "GRELHA INOX DUPLA 36X50CM",
+      descricao: "Grelha em aço inox dupla, ideal para churrasqueiras residenciais.",
+      tags: ["INOX", "Linha Churrasqueiras", "Dupla"],
+      foto: "", // pode colocar URL da imagem se quiser
       specs: {
-        "Material": "Aço inox 304",
-        "Dimensões": "50 x 30 cm",
-        "Espessura": "1,2 mm",
-        "Peso": "1,1 kg",
-        "Acabamento": "Polido"
+        "Largura (cm)": "36",
+        "Comprimento (cm)": "79,5",
+        "Material": "Aço Inox",
+        "Peso Líquido (kg)": "1,41"
       }
     },
-    "GL200": {
-      codigo: "GL200",
-      nome: "Grelha Aramada GL-200",
-      descricao: "Modelo aramado padrão industrial.",
-      tags: ["Linha Industrial", "Aramada"],
+    {
+      referencia: "GR0030",
+      nome: "GRELHA INOX PARRILLA 60X50CM",
+      descricao: "Modelo parrilla em inox, ideal para cortes especiais.",
+      tags: ["INOX", "Parrilla"],
       foto: "",
       specs: {
-        "Material": "Aço carbono BTC",
-        "Dimensões": "60 x 40 cm",
-        "Tratamento": "Zincado",
-        "Bitola do arame": "3,8 mm",
-        "Aplicação": "Churrasqueiras grandes"
+        "Largura (cm)": "60",
+        "Comprimento (cm)": "79,5",
+        "Material": "Aço Inox",
+        "Peso Líquido (kg)": "2,935"
       }
     }
-    // aqui você vai colar os códigos reais
-  };
+    // ➜ daqui pra baixo você replica as linhas da planilha
+    //   mantendo o campo 'referencia' igual à coluna "Referência"
+  ];
 
-  const codigoInput = document.getElementById("codigoInput");
-  const btnBuscar   = document.getElementById("btnBuscar");
-  const statusMsg   = document.getElementById("statusMsg");
+  const refInput   = document.getElementById("refInput");
+  const btnBuscar  = document.getElementById("btnBuscar");
+  const statusMsg  = document.getElementById("statusMsg");
 
   const resultadoCard = document.getElementById("resultadoCard");
   const semResultado  = document.getElementById("semResultado");
   const resultado     = document.getElementById("resultado");
 
-  const codBox  = document.getElementById("codBox");
-  const nomeBox = document.getElementById("nomeBox");
-  const descBox = document.getElementById("descBox");
-  const tagsBox = document.getElementById("tagsBox");
-  const fotoBox = document.getElementById("fotoBox");
+  const refBox   = document.getElementById("refBox");
+  const nomeBox  = document.getElementById("nomeBox");
+  const descBox  = document.getElementById("descBox");
+  const tagsBox  = document.getElementById("tagsBox");
+  const fotoBox  = document.getElementById("fotoBox");
   const specsGrid = document.getElementById("specsGrid");
 
   const historyBox  = document.getElementById("historyBox");
   const historyTags = document.getElementById("historyTags");
 
-  function normalizarCodigo(cod){
-    return (cod || "").toString().trim().toUpperCase();
+  function normalizarReferencia(ref){
+    return (ref || "").toString().trim().toUpperCase();
   }
 
-  function salvarHistorico(cod){
-    const key = "hist_codigos";
+  function salvarHistorico(ref){
+    const key = "hist_referencias";
     let lista = [];
     try{
       const raw = localStorage.getItem(key);
       if(raw) lista = JSON.parse(raw) || [];
     }catch{}
-    // remove se já existir
-    lista = lista.filter(c => c !== cod);
-    // adiciona no início
-    lista.unshift(cod);
-    // limita tamanho
+    lista = lista.filter(r => r !== ref);
+    lista.unshift(ref);
     if(lista.length > 8) lista = lista.slice(0,8);
     localStorage.setItem(key, JSON.stringify(lista));
     renderHistorico();
   }
 
   function renderHistorico(){
-    const key = "hist_codigos";
+    const key = "hist_referencias";
     let lista = [];
     try{
       const raw = localStorage.getItem(key);
@@ -412,12 +405,12 @@
     }
     historyBox.style.display = "block";
     historyTags.innerHTML = "";
-    lista.forEach(cod=>{
+    lista.forEach(ref=>{
       const btn = document.createElement("button");
       btn.className = "history-tag";
-      btn.textContent = cod;
+      btn.textContent = ref;
       btn.addEventListener("click", ()=>{
-        codigoInput.value = cod;
+        refInput.value = ref;
         buscarProduto();
       });
       historyTags.appendChild(btn);
@@ -429,11 +422,10 @@
     resultado.style.display = "block";
     resultadoCard.style.opacity = "1";
 
-    codBox.textContent  = prod.codigo || "";
+    refBox.textContent  = prod.referencia || "";
     nomeBox.textContent = prod.nome || "";
     descBox.textContent = prod.descricao || "";
 
-    // Tags
     tagsBox.innerHTML = "";
     (prod.tags || []).forEach(t=>{
       const span = document.createElement("span");
@@ -442,7 +434,6 @@
       tagsBox.appendChild(span);
     });
 
-    // Foto (por enquanto, placeholder)
     if(prod.foto){
       fotoBox.innerHTML = "";
       fotoBox.style.backgroundImage = `url('${prod.foto}')`;
@@ -453,7 +444,6 @@
       fotoBox.textContent = "Foto não disponível";
     }
 
-    // Especificações
     specsGrid.innerHTML = "";
     if(prod.specs){
       Object.entries(prod.specs).forEach(([label, value])=>{
@@ -477,20 +467,21 @@
   }
 
   function buscarProduto(){
-    const codRaw = codigoInput.value;
-    const cod = normalizarCodigo(codRaw);
+    const refRaw = refInput.value;
+    const ref = normalizarReferencia(refRaw);
 
-    if(!cod){
-      statusMsg.textContent = "Digite um código para fazer a busca.";
+    if(!ref){
+      statusMsg.textContent = "Digite uma referência para fazer a busca.";
       statusMsg.className = "status status-muted";
       limparResultado();
       return;
     }
 
-    const prod = produtos[cod] || produtos[cod.replace(/\s/g,"")] || null;
+    // 👉 Busca usando a coluna Referência (campo prod.referencia)
+    const prod = produtos.find(p => normalizarReferencia(p.referencia) === ref) || null;
 
     if(!prod){
-      statusMsg.textContent = "Nenhum produto encontrado para o código: " + cod;
+      statusMsg.textContent = "Nenhum produto encontrado para a referência: " + ref;
       statusMsg.className = "status status-err";
       limparResultado();
       return;
@@ -499,22 +490,20 @@
     statusMsg.textContent = "Produto encontrado.";
     statusMsg.className = "status status-ok";
     mostrarProduto(prod);
-    salvarHistorico(cod);
+    salvarHistorico(ref);
   }
 
   btnBuscar.addEventListener("click", buscarProduto);
-  codigoInput.addEventListener("keypress", (ev)=>{
+  refInput.addEventListener("keypress", (ev)=>{
     if(ev.key === "Enter"){
       ev.preventDefault();
       buscarProduto();
     }
   });
 
-  // Data do cabeçalho
   document.getElementById("today").textContent =
     new Date().toLocaleDateString("pt-BR");
 
-  // Render histórico ao abrir
   renderHistorico();
 </script>
 </body>
