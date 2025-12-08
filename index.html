@@ -2,509 +2,552 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Consulta de Produtos – Grilazer</title>
+  <title>Impressão de Etiquetas Zebra</title>
   <style>
-    :root{
-      --bg1:#0ea5e9; --bg2:#38bdf8;
-      --text:#0f172a; --card:#ffffff;
-      --muted:#64748b; --border:#e2e8f0;
-      --primary:#2563eb; --primary-soft:#dbeafe;
-      --danger:#ef4444; --ok:#16a34a;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
-      color:var(--text);
-      background:linear-gradient(135deg,var(--bg1),var(--bg2));
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-    }
-    .wrap{
-      width:100%;
-      max-width:1100px;
-    }
-    .header{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      color:#fff;
-      margin-bottom:12px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .logo{
-      width:40px;height:40px;
-      border-radius:14px;
-      background:#ffffff1f;
-      border:1px solid #ffffff3d;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      font-size:18px;
-    }
-    h1{
-      font-size:20px;
-      font-weight:900;
-    }
-    .header-sub{
-      font-size:12px;
-      opacity:.9;
-    }
-    .version{
-      font-size:11px;
-      opacity:.7;
-      text-align:right;
+    :root {
+      --cor-primaria: #0f766e;
+      --cor-primaria-escura: #0b524d;
+      --bg-claro: #f1f5f9;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:380px 1fr;
-      gap:12px;
-    }
-    .card{
-      background:var(--card);
-      border-radius:18px;
-      border:1px solid var(--border);
-      box-shadow:0 12px 40px rgba(15,23,42,.18);
-      padding:14px;
-    }
-    .card-title{
-      font-weight:700;
-      font-size:14px;
-      margin-bottom:6px;
-    }
-    label{
-      display:block;
-      font-size:12px;
-      font-weight:600;
-      margin-bottom:4px;
-      color:var(--muted);
-    }
-    .input-row{
-      display:flex;
-      gap:8px;
-      align-items:flex-end;
-    }
-    input[type="text"]{
-      width:100%;
-      padding:9px 10px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      font-size:13px;
-      outline:none;
-    }
-    input[type="text"]:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 1px var(--primary-soft);
-    }
-    button{
-      border:none;
-      border-radius:10px;
-      padding:9px 12px;
-      font-size:13px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .btn-primary{
-      background:var(--primary);
-      color:#fff;
-    }
-    .btn-outline{
-      background:#fff;
-      color:var(--primary);
-      border:1px solid var(--primary-soft);
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .helper{
-      font-size:11px;
-      color:var(--muted);
-      margin-top:6px;
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: #0f172a;
+      display: flex;
+      justify-content: center;
+      padding: 24px;
     }
 
-    .status{
-      margin-top:8px;
-      font-size:12px;
-    }
-    .status-ok{color:var(--ok);}
-    .status-err{color:var(--danger);}
-    .status-muted{color:var(--muted);}
-
-    /* Resultado */
-    .produto-top{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      margin-bottom:8px;
-    }
-    .foto{
-      width:96px;height:96px;
-      border-radius:16px;
-      border:1px dashed var(--border);
-      background:#f8fafc;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:11px;
-      color:var(--muted);
-      text-align:center;
-      padding:6px;
-    }
-    .produto-info h2{
-      font-size:16px;
-      margin-bottom:4px;
-    }
-    .produto-ref{
-      font-size:11px;
-      font-weight:700;
-      color:var(--primary);
-      background:var(--primary-soft);
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
-      margin-bottom:4px;
-    }
-    .produto-tags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:4px;
-      margin-top:4px;
-    }
-    .tag{
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#f9fafb;
-    }
-    .desc{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:4px;
+    .app {
+      background: white;
+      width: 100%;
+      max-width: 960px;
+      border-radius: 16px;
+      padding: 20px 24px 28px;
+      box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.4),
+        0 0 0 1px rgba(15, 23, 42, 0.4);
     }
 
-    .specs-title{
-      font-size:12px;
-      font-weight:700;
-      margin-top:6px;
-      margin-bottom:4px;
-    }
-    .specs-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-      gap:6px;
-      font-size:11px;
-    }
-    .spec-item{
-      background:#f9fafb;
-      border-radius:10px;
-      padding:6px 8px;
-      border:1px solid var(--border);
-    }
-    .spec-label{
-      font-weight:600;
-      color:var(--muted);
-      margin-bottom:2px;
-    }
-    .spec-value{
-      font-size:11px;
+    h1 {
+      margin: 0 0 4px;
+      font-size: 22px;
+      color: #0f172a;
     }
 
-    .history{
-      margin-top:10px;
-      border-top:1px dashed var(--border);
-      padding-top:6px;
-    }
-    .history-title{
-      font-size:11px;
-      font-weight:700;
-      color:var(--muted);
-      margin-bottom:4px;
-    }
-    .history-tags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:4px;
-    }
-    .history-tag{
-      font-size:11px;
-      padding:3px 7px;
-      border-radius:999px;
-      background:#f1f5f9;
-      border:1px solid var(--border);
-      cursor:pointer;
+    .subtitulo {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 18px;
     }
 
-    @media (max-width:900px){
-      .grid{grid-template-columns:1fr;}
+    .linha {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
     }
-    @media (max-width:600px){
-      h1{font-size:18px;}
-      .card{padding:12px;}
-      .produto-top{flex-direction:row;}
-      .foto{width:80px;height:80px;}
+
+    .campo {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      border-radius: 8px;
+      border: 1px solid #cbd5f5;
+      padding: 7px 9px;
+      font-size: 13px;
+      outline: none;
+      background: #f8fafc;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--cor-primaria);
+      box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.25);
+      background: #ffffff;
+    }
+
+    .botoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 6px 0 16px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.1s ease;
+    }
+
+    .btn-primario {
+      background: var(--cor-primaria);
+      color: white;
+      box-shadow: 0 8px 18px rgba(15, 118, 110, 0.45);
+    }
+
+    .btn-primario:hover {
+      background: var(--cor-primaria-escura);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.6);
+    }
+
+    .btn-secundario {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .btn-secundario:hover {
+      background: #cbd5f5;
+    }
+
+    .icone {
+      font-size: 14px;
+    }
+
+    .cartao {
+      background: var(--bg-claro);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .cartao-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .cartao-titulo {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .cartao-subtitulo {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 6px 4px;
+      text-align: left;
+    }
+
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: rgba(15, 118, 110, 0.05);
+    }
+
+    .col-qtde {
+      text-align: center;
+      width: 60px;
+    }
+
+    .col-acoes {
+      width: 70px;
+      text-align: center;
+    }
+
+    .tag-total {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    .tag-total strong {
+      color: #0f172a;
+    }
+
+    .link-menor {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .btn-mini {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-mini:hover {
+      background: #fecaca;
+    }
+
+    /* ÁREA DAS ETIQUETAS (VISUALIZAÇÃO) */
+    #previewEtiquetas {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preview-etiqueta {
+      border: 1px dashed #cbd5f5;
+      border-radius: 8px;
+      padding: 6px 8px;
+      min-width: 180px;
+      max-width: 220px;
+      font-size: 11px;
+      background: white;
+    }
+
+    .preview-etiqueta-codigo {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .preview-etiqueta-descricao {
+      font-size: 11px;
+      color: #475569;
+    }
+
+    /* ÁREA REAL DE IMPRESSÃO */
+    #etiquetasParaImprimir {
+      display: none; /* só aparece na impressão */
+    }
+
+    /* UMA ETIQUETA POR PÁGINA */
+    .etiqueta-print {
+      width: 100%;
+      height: 100%;
+      padding: 4mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .etiqueta-codigo {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .etiqueta-descricao {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .etiqueta-extra {
+      font-size: 10px;
+      margin-top: 2px;
+      color: #4b5563;
+    }
+
+    /* CONFIGURAÇÕES ESPECÍFICAS PARA IMPRESSÃO */
+    @page {
+      /* AJUSTE AQUI para o tamanho da etiqueta da sua Zebra */
+      size: 60mm 30mm;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+
+      .app {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+      }
+
+      /* Esconde interface e mostra só as etiquetas */
+      .linha,
+      .botoes,
+      .cartao,
+      h1,
+      .subtitulo,
+      #previewEtiquetas {
+        display: none !important;
+      }
+
+      #etiquetasParaImprimir {
+        display: block !important;
+      }
+
+      .etiqueta-print {
+        page-break-after: always; /* cada etiqueta em uma “página” (etiqueta) */
+      }
     }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="header">
-    <div class="brand">
-      <div class="logo">GR</div>
-      <div>
-        <h1>Consulta de Produtos</h1>
-        <div class="header-sub">Digite a <b>Referência</b> para visualizar as características técnicas.</div>
+  <div class="app">
+    <h1>Impressão de Etiquetas – Zebra</h1>
+    <div class="subtitulo">
+      Digite código, descrição e quantidade. Depois gere as etiquetas e mande imprimir escolhendo a impressora Zebra.
+    </div>
+
+    <div class="linha">
+      <div class="campo">
+        <label for="codigo">Código</label>
+        <input type="text" id="codigo" placeholder="Ex: 12345">
+      </div>
+      <div class="campo">
+        <label for="descricao">Descrição</label>
+        <input type="text" id="descricao" placeholder="Nome do produto / info da etiqueta">
+      </div>
+      <div class="campo" style="max-width: 120px;">
+        <label for="qtde">Qtde etiquetas</label>
+        <input type="number" id="qtde" min="1" value="1">
       </div>
     </div>
-    <div class="version">
-      Grilazer<br>
-      <span id="today"></span>
+
+    <div class="botoes">
+      <button class="btn-primario" onclick="adicionarItem()">
+        <span class="icone">➕</span> Adicionar à lista
+      </button>
+      <button class="btn-secundario" onclick="limparLista()">
+        <span class="icone">🧹</span> Limpar lista
+      </button>
+      <button class="btn-primario" style="margin-left:auto;" onclick="gerarEtiquetasEImprimir()">
+        <span class="icone">🖨️</span> Gerar etiquetas e imprimir
+      </button>
     </div>
-  </header>
 
-  <main class="grid">
-    <!-- LADO ESQUERDO: BUSCA -->
-    <section class="card">
-      <div class="card-title">Buscar pela Referência</div>
-      <label for="refInput">Referência do produto</label>
-      <div class="input-row">
-        <input id="refInput" type="text" placeholder="Ex.: GR0026, GR0030, etc.">
-        <button class="btn-primary" id="btnBuscar">Buscar</button>
-      </div>
-      <div class="helper">
-        • Campo baseado na coluna <b>Referência</b> da planilha.<br>
-        • Você também pode pressionar <b>Enter</b> após digitar.
-      </div>
-
-      <div class="status status-muted" id="statusMsg">
-        Digite uma referência e clique em Buscar.
-      </div>
-
-      <div class="history" id="historyBox" style="display:none;">
-        <div class="history-title">Referências recentes</div>
-        <div class="history-tags" id="historyTags"></div>
-      </div>
-    </section>
-
-    <!-- LADO DIREITO: RESULTADO -->
-    <section class="card" id="resultadoCard" style="opacity:0.5;">
-      <div class="card-title">Informações do produto</div>
-      <div id="semResultado" class="helper">
-        Nenhum produto selecionado. Faça uma busca pela referência.
-      </div>
-
-      <div id="resultado" style="display:none;">
-        <div class="produto-top">
-          <div class="foto" id="fotoBox">
-            Foto não disponível
-          </div>
-          <div class="produto-info">
-            <div class="produto-ref" id="refBox">REF-0000</div>
-            <h2 id="nomeBox">Nome do produto</h2>
-            <div class="produto-tags" id="tagsBox"></div>
-            <p class="desc" id="descBox"></p>
-          </div>
+    <div class="cartao">
+      <div class="cartao-header">
+        <div>
+          <div class="cartao-titulo">Itens para impressão</div>
+          <div class="cartao-subtitulo">Cada linha pode gerar várias etiquetas, conforme a quantidade.</div>
         </div>
-
-        <div class="specs">
-          <div class="specs-title">Características técnicas</div>
-          <div class="specs-grid" id="specsGrid"></div>
+        <div class="tag-total">
+          Total de etiquetas: <strong id="totalEtiquetas">0</strong>
         </div>
       </div>
-    </section>
-  </main>
-</div>
 
-<script>
-  // 🔹 Base EXEMPLO – aqui você vai substituir pelos dados reais da planilha
-  // Cada item representa uma linha da planilha CARACTERÍSTICAS, coluna "Referência"
-  const produtos = [
-    {
-      referencia: "GR0026", // COLUNA Referência
-      nome: "GRELHA INOX DUPLA 36X50CM",
-      descricao: "Grelha em aço inox dupla, ideal para churrasqueiras residenciais.",
-      tags: ["INOX", "Linha Churrasqueiras", "Dupla"],
-      foto: "", // pode colocar URL da imagem se quiser
-      specs: {
-        "Largura (cm)": "36",
-        "Comprimento (cm)": "79,5",
-        "Material": "Aço Inox",
-        "Peso Líquido (kg)": "1,41"
-      }
-    },
-    {
-      referencia: "GR0030",
-      nome: "GRELHA INOX PARRILLA 60X50CM",
-      descricao: "Modelo parrilla em inox, ideal para cortes especiais.",
-      tags: ["INOX", "Parrilla"],
-      foto: "",
-      specs: {
-        "Largura (cm)": "60",
-        "Comprimento (cm)": "79,5",
-        "Material": "Aço Inox",
-        "Peso Líquido (kg)": "2,935"
-      }
-    }
-    // ➜ daqui pra baixo você replica as linhas da planilha
-    //   mantendo o campo 'referencia' igual à coluna "Referência"
-  ];
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 90px;">Código</th>
+              <th>Descrição</th>
+              <th class="col-qtde">Qtde</th>
+              <th class="col-acoes">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaItens">
+            <!-- Linhas adicionadas via JS -->
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:6px;" class="link-menor">
+        Dica: ajuste o tamanho de página da Zebra (ex.: 60 x 30 mm) nas propriedades da impressora antes de imprimir.
+      </div>
+    </div>
 
-  const refInput   = document.getElementById("refInput");
-  const btnBuscar  = document.getElementById("btnBuscar");
-  const statusMsg  = document.getElementById("statusMsg");
+    <div>
+      <div class="cartao-header">
+        <div class="cartao-titulo">Pré-visualização das etiquetas</div>
+        <div class="cartao-subtitulo">Exemplo visual (não é exatamente o tamanho real).</div>
+      </div>
+      <div id="previewEtiquetas">
+        <!-- Preview de algumas etiquetas (limite para não pesar a tela) -->
+      </div>
+    </div>
 
-  const resultadoCard = document.getElementById("resultadoCard");
-  const semResultado  = document.getElementById("semResultado");
-  const resultado     = document.getElementById("resultado");
+    <!-- ÁREA OCULTA – USADA NA IMPRESSÃO -->
+    <div id="etiquetasParaImprimir"></div>
+  </div>
 
-  const refBox   = document.getElementById("refBox");
-  const nomeBox  = document.getElementById("nomeBox");
-  const descBox  = document.getElementById("descBox");
-  const tagsBox  = document.getElementById("tagsBox");
-  const fotoBox  = document.getElementById("fotoBox");
-  const specsGrid = document.getElementById("specsGrid");
+  <script>
+    let itens = [];
 
-  const historyBox  = document.getElementById("historyBox");
-  const historyTags = document.getElementById("historyTags");
+    function atualizarTabela() {
+      const tbody = document.getElementById('tabelaItens');
+      tbody.innerHTML = '';
 
-  function normalizarReferencia(ref){
-    return (ref || "").toString().trim().toUpperCase();
-  }
+      let total = 0;
 
-  function salvarHistorico(ref){
-    const key = "hist_referencias";
-    let lista = [];
-    try{
-      const raw = localStorage.getItem(key);
-      if(raw) lista = JSON.parse(raw) || [];
-    }catch{}
-    lista = lista.filter(r => r !== ref);
-    lista.unshift(ref);
-    if(lista.length > 8) lista = lista.slice(0,8);
-    localStorage.setItem(key, JSON.stringify(lista));
-    renderHistorico();
-  }
+      itens.forEach((item, index) => {
+        total += item.qtde;
 
-  function renderHistorico(){
-    const key = "hist_referencias";
-    let lista = [];
-    try{
-      const raw = localStorage.getItem(key);
-      if(raw) lista = JSON.parse(raw) || [];
-    }catch{}
-    if(!lista.length){
-      historyBox.style.display = "none";
-      return;
-    }
-    historyBox.style.display = "block";
-    historyTags.innerHTML = "";
-    lista.forEach(ref=>{
-      const btn = document.createElement("button");
-      btn.className = "history-tag";
-      btn.textContent = ref;
-      btn.addEventListener("click", ()=>{
-        refInput.value = ref;
-        buscarProduto();
+        const tr = document.createElement('tr');
+
+        const tdCodigo = document.createElement('td');
+        tdCodigo.textContent = item.codigo;
+        tr.appendChild(tdCodigo);
+
+        const tdDesc = document.createElement('td');
+        tdDesc.textContent = item.descricao;
+        tr.appendChild(tdDesc);
+
+        const tdQtde = document.createElement('td');
+        tdQtde.className = 'col-qtde';
+        tdQtde.textContent = item.qtde;
+        tr.appendChild(tdQtde);
+
+        const tdAcoes = document.createElement('td');
+        tdAcoes.className = 'col-acoes';
+        const btnRemover = document.createElement('button');
+        btnRemover.className = 'btn-mini';
+        btnRemover.textContent = 'Remover';
+        btnRemover.onclick = () => removerItem(index);
+        tdAcoes.appendChild(btnRemover);
+        tr.appendChild(tdAcoes);
+
+        tbody.appendChild(tr);
       });
-      historyTags.appendChild(btn);
-    });
-  }
 
-  function mostrarProduto(prod){
-    semResultado.style.display = "none";
-    resultado.style.display = "block";
-    resultadoCard.style.opacity = "1";
-
-    refBox.textContent  = prod.referencia || "";
-    nomeBox.textContent = prod.nome || "";
-    descBox.textContent = prod.descricao || "";
-
-    tagsBox.innerHTML = "";
-    (prod.tags || []).forEach(t=>{
-      const span = document.createElement("span");
-      span.className = "tag";
-      span.textContent = t;
-      tagsBox.appendChild(span);
-    });
-
-    if(prod.foto){
-      fotoBox.innerHTML = "";
-      fotoBox.style.backgroundImage = `url('${prod.foto}')`;
-      fotoBox.style.backgroundSize = "cover";
-      fotoBox.style.backgroundPosition = "center";
-    } else {
-      fotoBox.style.backgroundImage = "none";
-      fotoBox.textContent = "Foto não disponível";
+      document.getElementById('totalEtiquetas').textContent = total;
+      atualizarPreview();
     }
 
-    specsGrid.innerHTML = "";
-    if(prod.specs){
-      Object.entries(prod.specs).forEach(([label, value])=>{
-        const div = document.createElement("div");
-        div.className = "spec-item";
-        div.innerHTML = `
-          <div class="spec-label">${label}</div>
-          <div class="spec-value">${value}</div>
-        `;
-        specsGrid.appendChild(div);
+    function atualizarPreview() {
+      const preview = document.getElementById('previewEtiquetas');
+      preview.innerHTML = '';
+
+      let contador = 0;
+      const LIMITE_PREVIEW = 20; // pra não travar a tela se tiver muita etiqueta
+
+      itens.forEach(item => {
+        for (let i = 0; i < item.qtde && contador < LIMITE_PREVIEW; i++) {
+          contador++;
+
+          const div = document.createElement('div');
+          div.className = 'preview-etiqueta';
+
+          const cod = document.createElement('div');
+          cod.className = 'preview-etiqueta-codigo';
+          cod.textContent = item.codigo || '(sem código)';
+          div.appendChild(cod);
+
+          const desc = document.createElement('div');
+          desc.className = 'preview-etiqueta-descricao';
+          desc.textContent = item.descricao || '(sem descrição)';
+          div.appendChild(desc);
+
+          preview.appendChild(div);
+        }
       });
-    }
-  }
 
-  function limparResultado(){
-    semResultado.style.display = "block";
-    resultado.style.display = "none";
-    resultadoCard.style.opacity = "0.5";
-    specsGrid.innerHTML = "";
-    tagsBox.innerHTML = "";
-  }
-
-  function buscarProduto(){
-    const refRaw = refInput.value;
-    const ref = normalizarReferencia(refRaw);
-
-    if(!ref){
-      statusMsg.textContent = "Digite uma referência para fazer a busca.";
-      statusMsg.className = "status status-muted";
-      limparResultado();
-      return;
+      if (contador === 0) {
+        const vazio = document.createElement('div');
+        vazio.className = 'preview-etiqueta';
+        vazio.textContent = 'Nenhum item adicionado ainda.';
+        preview.appendChild(vazio);
+      } else if (contador >= 20) {
+        const msg = document.createElement('div');
+        msg.className = 'preview-etiqueta';
+        msg.textContent = 'Prévia limitada a 20 etiquetas para não travar. Na impressão sairão todas.';
+        preview.appendChild(msg);
+      }
     }
 
-    // 👉 Busca usando a coluna Referência (campo prod.referencia)
-    const prod = produtos.find(p => normalizarReferencia(p.referencia) === ref) || null;
+    function adicionarItem() {
+      const codigo = document.getElementById('codigo').value.trim();
+      const descricao = document.getElementById('descricao').value.trim();
+      let qtde = parseInt(document.getElementById('qtde').value, 10);
 
-    if(!prod){
-      statusMsg.textContent = "Nenhum produto encontrado para a referência: " + ref;
-      statusMsg.className = "status status-err";
-      limparResultado();
-      return;
+      if (!codigo && !descricao) {
+        alert('Preencha pelo menos o código ou a descrição.');
+        return;
+      }
+
+      if (isNaN(qtde) || qtde < 1) {
+        qtde = 1;
+      }
+
+      itens.push({ codigo, descricao, qtde });
+
+      document.getElementById('codigo').value = '';
+      document.getElementById('descricao').value = '';
+      document.getElementById('qtde').value = '1';
+      document.getElementById('codigo').focus();
+
+      atualizarTabela();
     }
 
-    statusMsg.textContent = "Produto encontrado.";
-    statusMsg.className = "status status-ok";
-    mostrarProduto(prod);
-    salvarHistorico(ref);
-  }
-
-  btnBuscar.addEventListener("click", buscarProduto);
-  refInput.addEventListener("keypress", (ev)=>{
-    if(ev.key === "Enter"){
-      ev.preventDefault();
-      buscarProduto();
+    function removerItem(index) {
+      itens.splice(index, 1);
+      atualizarTabela();
     }
-  });
 
-  document.getElementById("today").textContent =
-    new Date().toLocaleDateString("pt-BR");
+    function limparLista() {
+      if (!confirm('Tem certeza que deseja limpar a lista inteira?')) return;
+      itens = [];
+      atualizarTabela();
+    }
 
-  renderHistorico();
-</script>
+    function gerarEtiquetasEImprimir() {
+      if (itens.length === 0) {
+        alert('Adicione pelo menos um item antes de imprimir.');
+        return;
+      }
+
+      const container = document.getElementById('etiquetasParaImprimir');
+      container.innerHTML = '';
+
+      itens.forEach(item => {
+        for (let i = 0; i < item.qtde; i++) {
+          const div = document.createElement('div');
+          div.className = 'etiqueta-print';
+
+          const cod = document.createElement('div');
+          cod.className = 'etiqueta-codigo';
+          cod.textContent = item.codigo || '';
+          div.appendChild(cod);
+
+          const desc = document.createElement('div');
+          desc.className = 'etiqueta-descricao';
+          desc.textContent = item.descricao || '';
+          div.appendChild(desc);
+
+          container.appendChild(div);
+        }
+      });
+
+      window.print();
+    }
+
+    // Inicializa preview vazio
+    atualizarPreview();
+  </script>
 </body>
 </html>
