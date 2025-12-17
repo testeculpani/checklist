@@ -3,1550 +3,981 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Estoque Pro — Controle de Estoque</title>
+  <title>Ampertech — Estoque & Vendas</title>
   <meta name="theme-color" content="#0b1220" />
   <style>
     :root{
       --bg:#0b1220;
-      --card:#111a2b;
-      --card2:#0f1726;
+      --card:#101a2b;
       --muted:#9bb0d0;
       --text:#e8f0ff;
-      --line:rgba(255,255,255,.08);
-      --accent:#22c55e;
-      --accent2:#38bdf8;
+      --line:rgba(255,255,255,.10);
+      --ok:#22c55e;
+      --info:#38bdf8;
       --warn:#f59e0b;
       --danger:#fb7185;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
-      --radius2:14px;
+      --r:18px;
+      --r2:14px;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      background: radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.12), transparent 55%),
-                  radial-gradient(1000px 500px at 100% 0%, rgba(34,197,94,.12), transparent 55%),
-                  var(--bg);
-      color:var(--text);
       font-family:var(--font);
-    }
-    a{color:inherit}
-    .wrap{
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 14px 90px;
-    }
-    header{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 6px 16px;
-    }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
-    .logo{
-      width:46px; height:46px;
-      border-radius:14px;
+      color:var(--text);
       background:
-        linear-gradient(135deg, rgba(34,197,94,.25), rgba(56,189,248,.25)),
-        rgba(255,255,255,.06);
+        radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.12), transparent 55%),
+        radial-gradient(1000px 500px at 100% 0%, rgba(34,197,94,.12), transparent 55%),
+        var(--bg);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:16px 12px 90px}
+    header{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:8px 4px 14px;
+      flex-wrap:wrap;
+    }
+    .brand{display:flex; gap:10px; align-items:center}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(34,197,94,.18));
       border:1px solid rgba(255,255,255,.14);
-      display:grid; place-items:center;
       box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      font-weight:900;
+      letter-spacing:.5px;
     }
-    .logo svg{opacity:.95}
-    .title{
-      line-height:1.05;
-    }
-    .title b{font-size:16px; letter-spacing:.2px}
-    .title small{display:block; color:var(--muted); margin-top:2px; font-size:12px}
-    .top-actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+    .title b{font-size:15px}
+    .title small{display:block; margin-top:2px; color:var(--muted); font-size:12px}
     .btn{
       border:1px solid rgba(255,255,255,.14);
       background:rgba(255,255,255,.06);
       color:var(--text);
       padding:10px 12px;
       border-radius:14px;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
       cursor:pointer;
-      transition:.15s ease;
-      user-select:none;
-      font-weight:600;
+      font-weight:800;
       font-size:13px;
-      box-shadow: 0 6px 16px rgba(0,0,0,.20);
+      display:inline-flex; align-items:center; gap:8px;
+      transition:.12s ease;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+      user-select:none;
     }
-    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.08)}
-    .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(34,197,94,.10));
-      border-color: rgba(34,197,94,.35);
-    }
-    .btn.info{
-      background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(56,189,248,.10));
-      border-color: rgba(56,189,248,.35);
-    }
-    .btn.danger{
-      background: linear-gradient(135deg, rgba(251,113,133,.20), rgba(251,113,133,.08));
-      border-color: rgba(251,113,133,.35);
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:14px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      header{flex-direction:column; align-items:flex-start}
-      .top-actions{width:100%; justify-content:flex-start}
-    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08)}
+    .btn:active{transform:translateY(0)}
+    .btn.primary{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.12)}
+    .btn.info{border-color:rgba(56,189,248,.35); background:rgba(56,189,248,.12)}
+    .btn.danger{border-color:rgba(251,113,133,.35); background:rgba(251,113,133,.12)}
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
+      border-radius: var(--r);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .card .hd{
-      padding:14px 14px 12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
+    .hd{
+      padding:14px;
       border-bottom:1px solid var(--line);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      flex-wrap:wrap;
     }
-    .card .hd h2{
-      margin:0;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .card .hd p{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.35;
-    }
-    .card .bd{padding:14px}
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:12px;
-    }
-    @media (max-width: 980px){
-      .kpis{grid-template-columns: repeat(2, minmax(0,1fr))}
-    }
+    .hd h2{margin:0; font-size:14px}
+    .hd p{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35}
+    .bd{padding:14px}
+
+    .kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+    @media(max-width:900px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
     .kpi{
-      background: rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius2);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--r2);
       padding:12px;
-      position:relative;
-      overflow:hidden;
     }
-    .kpi:before{
-      content:"";
-      position:absolute;
-      inset:-40% -40% auto auto;
-      width:140px; height:140px;
-      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.25), transparent 60%);
-      transform: rotate(12deg);
-      pointer-events:none;
+    .kpi small{color:var(--muted); font-weight:800; letter-spacing:.2px}
+    .kpi b{display:block; margin-top:6px; font-size:18px}
+
+    .tabs{display:flex; gap:10px; flex-wrap:wrap}
+    .tab{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      cursor:pointer;
+      font-weight:900;
+      font-size:13px;
     }
-    .kpi b{display:block; font-size:18px; margin-top:6px}
-    .kpi small{color:var(--muted); font-weight:600; letter-spacing:.2px}
-    .kpi .tag{
-      display:inline-flex; align-items:center; gap:6px;
-      font-size:11px; font-weight:700;
-      padding:6px 8px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-    }
-    .tag.green{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
-    .tag.blue{border-color: rgba(56,189,248,.35); background: rgba(56,189,248,.12)}
-    .tag.warn{border-color: rgba(245,158,11,.40); background: rgba(245,158,11,.12)}
-    .tag.red{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.12)}
-    .row{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:10px;
-      align-items:end;
-    }
-    .field{
-      grid-column: span 3;
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .field.span2{grid-column: span 2}
-    .field.span4{grid-column: span 4}
-    .field.span6{grid-column: span 6}
-    .field.span12{grid-column: span 12}
-    label{
-      font-size:11px;
-      color:var(--muted);
-      font-weight:700;
-      letter-spacing:.25px;
-    }
+    .tab.active{border-color:rgba(56,189,248,.40); background:rgba(56,189,248,.10)}
+    .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:12px}
+    @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+
+    label{font-size:11px; color:var(--muted); font-weight:900; letter-spacing:.2px}
     input, select, textarea{
       width:100%;
-      border-radius: 14px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(10,16,28,.55);
       color:var(--text);
       padding:10px 11px;
       font-size:13px;
       outline:none;
-      transition:.12s ease;
     }
     input:focus, select:focus, textarea:focus{
       border-color: rgba(56,189,248,.45);
       box-shadow: 0 0 0 3px rgba(56,189,248,.12);
     }
-    textarea{min-height: 64px; resize: vertical}
-    .inline-actions{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
+    .row{display:grid; grid-template-columns:repeat(12,1fr); gap:10px; align-items:end}
+    .field{grid-column:span 3; display:flex; flex-direction:column; gap:6px}
+    .span2{grid-column:span 2}
+    .span4{grid-column:span 4}
+    .span5{grid-column:span 5}
+    .span6{grid-column:span 6}
+    .span7{grid-column:span 7}
+    .span12{grid-column:span 12}
+
     .table{
       width:100%;
       border-collapse:separate;
       border-spacing:0;
-      overflow:hidden;
-      border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      overflow:hidden;
       background: rgba(10,16,28,.35);
     }
-    .table th, .table td{
-      padding:10px 10px;
+    .table th,.table td{
+      padding:10px;
       font-size:12px;
       border-bottom:1px solid rgba(255,255,255,.08);
-      vertical-align:middle;
       text-align:left;
       white-space:nowrap;
+      vertical-align:middle;
     }
     .table th{
       font-size:11px;
       color:var(--muted);
-      font-weight:800;
-      letter-spacing:.25px;
+      font-weight:900;
       background: rgba(255,255,255,.05);
       position:sticky; top:0;
       z-index:1;
     }
     .table tr:hover td{background: rgba(255,255,255,.04)}
+    .muted{color:var(--muted)}
     .pill{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
+      display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
-      font-weight:700;
+      font-weight:900;
       font-size:11px;
     }
-    .pill.low{border-color: rgba(245,158,11,.45); background: rgba(245,158,11,.12)}
-    .pill.zero{border-color: rgba(251,113,133,.45); background: rgba(251,113,133,.12)}
-    .muted{color:var(--muted)}
-    .hr{height:1px; background: var(--line); margin:12px 0}
-    .note{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.4;
-    }
-    .two{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width:980px){
-      .two{grid-template-columns:1fr}
-    }
+    .pill.ok{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.10)}
+    .pill.low{border-color:rgba(245,158,11,.40); background:rgba(245,158,11,.10)}
+    .pill.zero{border-color:rgba(251,113,133,.35); background:rgba(251,113,133,.10)}
+    .hr{height:1px; background:var(--line); margin:12px 0}
 
-    /* Modal */
-    .modal{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:50;
-      backdrop-filter: blur(6px);
-    }
-    .modal.show{display:flex}
-    .modal .box{
-      width:min(920px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border:1px solid rgba(255,255,255,.14);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .modal .box .mh{
-      padding:14px 14px 12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      border-bottom:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-    }
-    .modal .box .mh b{font-size:14px}
-    .x{
-      width:40px; height:40px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-      display:grid; place-items:center;
-    }
-    .x:hover{background: rgba(255,255,255,.08)}
-    .modal .box .mb{padding:14px}
-    .foot{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
-      padding:12px 14px;
-      border-top:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-    }
     .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform: translateX(-50%);
-      background: rgba(17,26,43,.92);
+      position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+      background: rgba(16,26,43,.92);
       border:1px solid rgba(255,255,255,.14);
       padding:10px 12px;
-      border-radius: 999px;
+      border-radius:999px;
       box-shadow: var(--shadow);
       display:none;
-      gap:8px;
-      align-items:center;
-      z-index:60;
       font-size:12px;
-      font-weight:700;
+      font-weight:900;
+      z-index:40;
     }
-    .toast.show{display:inline-flex}
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:11px;
-      padding:4px 8px;
-      border-radius: 10px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      color: var(--muted);
-      font-weight:800;
-    }
+    .toast.show{display:block}
+    .hide{display:none !important}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" title="Estoque Pro">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="rgba(232,240,255,.95)" stroke-width="1.7"/>
-            <path d="M12 3v18" stroke="rgba(56,189,248,.75)" stroke-width="1.7"/>
-            <path d="M4 7.5l8 4.5 8-4.5" stroke="rgba(34,197,94,.75)" stroke-width="1.7"/>
-          </svg>
-        </div>
+        <div class="logo">AT</div>
         <div class="title">
-          <b>Estoque Pro</b>
-          <small>Controle de estoque + valor • Entradas e saídas • Histórico</small>
+          <b>Ampertech — Estoque & Vendas</b>
+          <small>Eletrônicos, capas e acessórios • GitHub Pages • Sem banco</small>
         </div>
       </div>
-
-      <div class="top-actions">
-        <button class="btn info" id="btnBackup">Backup/Importar</button>
-        <button class="btn" id="btnCsv">CSV</button>
-        <button class="btn danger" id="btnLimpar">Limpar tudo</button>
-        <button class="btn primary" id="btnMov">Nova movimentação</button>
+      <div class="tabs" role="tablist">
+        <div class="tab active" id="tabVenda">Venda</div>
+        <div class="tab" id="tabItens">Itens</div>
+        <div class="tab" id="tabHist">Histórico</div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn info" id="btnBackup">Backup JSON</button>
+        <button class="btn danger" id="btnReset">Limpar tudo</button>
       </div>
     </header>
 
-    <div class="card" style="margin-bottom:14px">
+    <section class="card" style="margin-bottom:12px">
       <div class="bd">
         <div class="kpis">
-          <div class="kpi">
-            <span class="tag blue">Itens</span>
-            <b id="kpiItens">0</b>
-            <small class="muted">cadastrados</small>
-          </div>
-          <div class="kpi">
-            <span class="tag green">Estoque</span>
-            <b id="kpiQtd">0</b>
-            <small class="muted">quantidade total</small>
-          </div>
-          <div class="kpi">
-            <span class="tag blue">Valor</span>
-            <b id="kpiValor">R$ 0,00</b>
-            <small class="muted">valor do estoque (custo médio)</small>
-          </div>
-          <div class="kpi">
-            <span class="tag warn">Alertas</span>
-            <b id="kpiBaixo">0</b>
-            <small class="muted">itens com estoque baixo/zerado</small>
-          </div>
+          <div class="kpi"><small>Itens</small><b id="kItens">0</b></div>
+          <div class="kpi"><small>Estoque total</small><b id="kQtd">0</b></div>
+          <div class="kpi"><small>Valor estoque (custo médio)</small><b id="kValor">R$ 0,00</b></div>
+          <div class="kpi"><small>Alertas (baixo/zerado)</small><b id="kAlertas">0</b></div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="grid">
-      <!-- ESQUERDA -->
-      <section class="card">
-        <div class="hd">
-          <div>
-            <h2>Itens</h2>
-            <p>Cadastre os itens e depois movimente (entrada/saída). O sistema calcula custo médio e valor do estoque.</p>
-          </div>
-          <div class="inline-actions">
-            <input id="q" placeholder="Buscar por código, descrição ou categoria…" style="min-width:260px" />
-            <select id="filtro">
-              <option value="todos">Todos</option>
-              <option value="baixo">Somente baixo</option>
-              <option value="zerado">Somente zerado</option>
-            </select>
-          </div>
+    <!-- ====== VENDA (SIMPLIFICADA) ====== -->
+    <section class="card" id="viewVenda">
+      <div class="hd">
+        <div>
+          <h2>Venda Rápida</h2>
+          <p>Selecione o item, informe quantidade e adicione no carrinho. Finalizar gera SAÍDA no estoque.</p>
         </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <button class="btn" id="btnLimparCarrinho">Limpar carrinho</button>
+          <button class="btn primary" id="btnFinalizar">Finalizar venda</button>
+        </div>
+      </div>
 
-        <div class="bd">
+      <div class="bd">
+        <div class="grid">
+          <div class="card" style="background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); box-shadow:none">
+            <div class="bd">
+              <div class="row">
+                <div class="field span12">
+                  <label>Busca rápida (código/descrição) — opcional</label>
+                  <input id="vBusca" placeholder="Ex: CAPA IPHONE 13 / FONE / CABO..." />
+                </div>
+
+                <div class="field span7">
+                  <label>Item</label>
+                  <select id="vItem"></select>
+                </div>
+
+                <div class="field span2">
+                  <label>Qtd</label>
+                  <input id="vQtd" type="number" step="1" placeholder="1" />
+                </div>
+
+                <div class="field span3">
+                  <label>Preço venda (R$) (opcional)</label>
+                  <input id="vPreco" type="number" step="0.01" placeholder="0,00" />
+                </div>
+
+                <div class="field span12">
+                  <label>Observação / cliente (opcional)</label>
+                  <input id="vObs" placeholder="Ex: Cliente João / Whats / Pix / Cartão..." />
+                </div>
+              </div>
+
+              <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+                <button class="btn primary" id="btnAdd">Adicionar no carrinho</button>
+                <span class="muted" id="vInfoEstoque">—</span>
+              </div>
+            </div>
+          </div>
+
           <div class="card" style="background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); box-shadow:none">
             <div class="hd">
               <div>
-                <h2 id="formTitle">Novo item</h2>
-                <p class="muted">Dica: use um código interno (ex: GR0001, PARF-10, etc.).</p>
+                <h2>Carrinho</h2>
+                <p class="muted">Itens adicionados nesta venda.</p>
               </div>
-              <div class="inline-actions">
-                <button class="btn" id="btnNovo">Novo</button>
-                <button class="btn primary" id="btnSalvarItem">Salvar item</button>
-              </div>
+              <div class="pill ok" id="vTotal">Total: R$ 0,00</div>
             </div>
-            <div class="bd">
-              <div class="row">
-                <div class="field span2">
-                  <label>Código *</label>
-                  <input id="itCodigo" placeholder="Ex: GR0851" />
-                </div>
-                <div class="field span6">
-                  <label>Descrição *</label>
-                  <input id="itDesc" placeholder="Ex: Tábua 38,5x28,5" />
-                </div>
-                <div class="field span2">
-                  <label>Categoria</label>
-                  <input id="itCat" placeholder="Ex: Tábuas" />
-                </div>
-                <div class="field span2">
-                  <label>Unidade</label>
-                  <select id="itUn">
-                    <option value="UN">UN</option>
-                    <option value="KG">KG</option>
-                    <option value="MT">MT</option>
-                    <option value="PC">PC</option>
-                    <option value="CX">CX</option>
-                  </select>
-                </div>
-
-                <div class="field span2">
-                  <label>Custo (R$)</label>
-                  <input id="itCusto" type="number" step="0.0001" placeholder="0,00" />
-                </div>
-                <div class="field span2">
-                  <label>Estoque inicial</label>
-                  <input id="itEstoque" type="number" step="0.0001" placeholder="0" />
-                </div>
-                <div class="field span2">
-                  <label>Estoque mínimo</label>
-                  <input id="itMin" type="number" step="0.0001" placeholder="0" />
-                </div>
-                <div class="field span6">
-                  <label>Observações</label>
-                  <input id="itObs" placeholder="Ex: fornecedor padrão, local, detalhes…" />
-                </div>
-              </div>
-              <div class="note" style="margin-top:10px">
-                <span class="kbd">Regra de valor</span> Entradas atualizam o <b>custo médio (média ponderada)</b>.
-                Saídas baixam o estoque pelo custo médio atual.
+            <div class="bd" style="max-height:380px; overflow:auto">
+              <table class="table" id="tblCarrinho">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th style="text-align:right">Qtd</th>
+                    <th style="text-align:right">Preço</th>
+                    <th style="text-align:right">Total</th>
+                    <th>Ação</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+              <div class="muted" style="margin-top:10px; font-size:12px">
+                Dica: para capas e acessórios, você pode deixar “Preço venda” e só registrar a saída no estoque (se quiser).
               </div>
             </div>
           </div>
-
-          <div class="hr"></div>
-
-          <div style="overflow:auto; border-radius:16px">
-            <table class="table" id="tblItens">
-              <thead>
-                <tr>
-                  <th style="min-width:120px">Código</th>
-                  <th style="min-width:280px">Descrição</th>
-                  <th style="min-width:140px">Categoria</th>
-                  <th>UN</th>
-                  <th style="text-align:right">Estoque</th>
-                  <th style="text-align:right">Mínimo</th>
-                  <th style="text-align:right">Custo médio</th>
-                  <th style="text-align:right">Valor estoque</th>
-                  <th style="min-width:170px">Status</th>
-                  <th style="min-width:170px">Ações</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
         </div>
-      </section>
-
-      <!-- DIREITA -->
-      <aside class="card">
-        <div class="hd">
-          <div>
-            <h2>Movimentações</h2>
-            <p>Entrada/saída com histórico. Pode exportar tudo para CSV/JSON e usar como backup.</p>
-          </div>
-          <button class="btn primary" id="btnMov2">Nova movimentação</button>
-        </div>
-
-        <div class="bd">
-          <div class="two">
-            <div class="kpi">
-              <span class="tag blue">Última entrada</span>
-              <b id="kpiUltEnt">—</b>
-              <small class="muted" id="kpiUltEntSub">—</small>
-            </div>
-            <div class="kpi">
-              <span class="tag warn">Última saída</span>
-              <b id="kpiUltSai">—</b>
-              <small class="muted" id="kpiUltSaiSub">—</small>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="inline-actions" style="justify-content:space-between; gap:12px">
-            <div class="inline-actions">
-              <input id="qMov" placeholder="Buscar no histórico…" />
-              <select id="fMov">
-                <option value="todas">Todas</option>
-                <option value="ENTRADA">Entradas</option>
-                <option value="SAIDA">Saídas</option>
-              </select>
-            </div>
-            <div class="inline-actions">
-              <button class="btn" id="btnResumoDia">Hoje</button>
-              <button class="btn" id="btnResumoMes">Mês</button>
-            </div>
-          </div>
-
-          <div style="margin-top:12px; overflow:auto; border-radius:16px; max-height:520px">
-            <table class="table" id="tblMov">
-              <thead>
-                <tr>
-                  <th style="min-width:150px">Data/Hora</th>
-                  <th>Tipo</th>
-                  <th style="min-width:120px">Código</th>
-                  <th style="min-width:220px">Descrição</th>
-                  <th style="text-align:right">Qtd</th>
-                  <th style="text-align:right">Preço (R$)</th>
-                  <th style="text-align:right">Total (R$)</th>
-                  <th style="min-width:160px">Motivo</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div class="note" style="margin-top:10px">
-            <span class="kbd">Dica</span> use “Motivo” para rastrear: compra, ajuste, perda, venda, OS, etc.
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
-
-  <!-- MODAL MOVIMENTAÇÃO -->
-  <div class="modal" id="modalMov">
-    <div class="box">
-      <div class="mh">
-        <div>
-          <b>Nova movimentação</b>
-          <div class="muted" style="font-size:12px; margin-top:3px">Entrada atualiza custo médio. Saída baixa pelo custo médio atual.</div>
-        </div>
-        <div class="x" id="closeMov" title="Fechar">✕</div>
       </div>
-      <div class="mb">
+    </section>
+
+    <!-- ====== ITENS ====== -->
+    <section class="card hide" id="viewItens" style="margin-top:12px">
+      <div class="hd">
+        <div>
+          <h2>Cadastro de Itens</h2>
+          <p>Cadastre produtos da Ampertech (eletrônicos, capas, acessórios). Entradas ajustam custo médio.</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <input id="iBusca" placeholder="Buscar item..." style="min-width:220px" />
+          <button class="btn primary" id="btnSalvarItem">Salvar item</button>
+          <button class="btn" id="btnNovoItem">Novo</button>
+        </div>
+      </div>
+
+      <div class="bd">
         <div class="row">
-          <div class="field span3">
-            <label>Tipo *</label>
-            <select id="mvTipo">
-              <option value="ENTRADA">ENTRADA</option>
-              <option value="SAIDA">SAÍDA</option>
-            </select>
+          <div class="field span2">
+            <label>Código *</label>
+            <input id="iCodigo" placeholder="Ex: CAP-IPH13" />
           </div>
-          <div class="field span4">
-            <label>Item *</label>
-            <select id="mvItem"></select>
+          <div class="field span6">
+            <label>Descrição *</label>
+            <input id="iDesc" placeholder="Ex: Capa iPhone 13 Silicone" />
           </div>
           <div class="field span2">
-            <label>Quantidade *</label>
-            <input id="mvQtd" type="number" step="0.0001" placeholder="0" />
+            <label>Categoria</label>
+            <input id="iCat" placeholder="Capas / Acessórios / Celulares" />
           </div>
-          <div class="field span3" id="boxPreco">
-            <label>Preço unit. (R$) <span class="muted">(na ENTRADA)</span></label>
-            <input id="mvPreco" type="number" step="0.0001" placeholder="0,00" />
+          <div class="field span2">
+            <label>Unidade</label>
+            <select id="iUn">
+              <option value="UN">UN</option>
+              <option value="CX">CX</option>
+            </select>
           </div>
 
-          <div class="field span6">
-            <label>Motivo / Documento</label>
-            <input id="mvMotivo" placeholder="Ex: NF 12345, venda balcão, ajuste inventário…" />
+          <div class="field span2">
+            <label>Custo (R$)</label>
+            <input id="iCusto" type="number" step="0.01" placeholder="0,00" />
+          </div>
+          <div class="field span2">
+            <label>Estoque</label>
+            <input id="iEst" type="number" step="1" placeholder="0" />
+          </div>
+          <div class="field span2">
+            <label>Mínimo</label>
+            <input id="iMin" type="number" step="1" placeholder="0" />
           </div>
           <div class="field span6">
-            <label>Observação</label>
-            <input id="mvObs" placeholder="Ex: lote, fornecedor, responsável, etc." />
+            <label>Obs</label>
+            <input id="iObs" placeholder="Ex: fornecedor, cor, modelo, etc." />
+          </div>
+
+          <div class="field span12">
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn info" id="btnEntradaRapida">Entrada rápida</button>
+              <span class="muted">Entrada rápida gera movimentação de ENTRADA (atualiza custo médio).</span>
+            </div>
           </div>
         </div>
 
         <div class="hr"></div>
 
-        <div class="two">
-          <div class="kpi">
-            <span class="tag blue">Estoque atual</span>
-            <b id="mvEstAtual">0</b>
-            <small class="muted" id="mvEstAtualSub">—</small>
-          </div>
-          <div class="kpi">
-            <span class="tag green">Após movimentação</span>
-            <b id="mvEstDepois">0</b>
-            <small class="muted" id="mvEstDepoisSub">—</small>
-          </div>
+        <div style="overflow:auto; border-radius:16px; max-height:520px">
+          <table class="table" id="tblItens">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th style="min-width:260px">Descrição</th>
+                <th>Categoria</th>
+                <th>UN</th>
+                <th style="text-align:right">Estoque</th>
+                <th style="text-align:right">Mínimo</th>
+                <th style="text-align:right">Custo médio</th>
+                <th style="text-align:right">Valor estoque</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </div>
-      <div class="foot">
-        <button class="btn" id="btnCancelarMov">Cancelar</button>
-        <button class="btn primary" id="btnSalvarMov">Salvar movimentação</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- MODAL BACKUP -->
-  <div class="modal" id="modalBackup">
-    <div class="box">
-      <div class="mh">
+      </div>
+    </section>
+
+    <!-- ====== HISTÓRICO ====== -->
+    <section class="card hide" id="viewHist" style="margin-top:12px">
+      <div class="hd">
         <div>
-          <b>Backup / Importar</b>
-          <div class="muted" style="font-size:12px; margin-top:3px">Exporta/importa seus dados em JSON (ideal para backup).</div>
+          <h2>Histórico</h2>
+          <p>Movimentações: ENTRADA / SAÍDA / VENDA. (Venda é uma SAÍDA com motivo “VENDA”).</p>
         </div>
-        <div class="x" id="closeBackup" title="Fechar">✕</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <input id="hBusca" placeholder="Buscar no histórico..." style="min-width:220px" />
+          <button class="btn" id="btnCsv">Exportar CSV</button>
+        </div>
       </div>
-      <div class="mb">
-        <div class="two">
-          <div>
-            <div class="inline-actions" style="justify-content:space-between">
-              <b>Exportar</b>
-              <button class="btn info" id="btnExportJson">Baixar JSON</button>
-            </div>
-            <p class="note">Baixe um arquivo .json com todos os itens e movimentações.</p>
-            <div class="hr"></div>
-            <div class="inline-actions" style="justify-content:space-between">
-              <b>Importar</b>
-              <label class="btn" style="cursor:pointer">
-                Selecionar JSON
-                <input type="file" id="fileImportJson" accept="application/json" style="display:none" />
-              </label>
-            </div>
-            <p class="note">Importa um backup JSON e substitui seus dados atuais.</p>
-          </div>
+      <div class="bd">
+        <div style="overflow:auto; border-radius:16px; max-height:560px">
+          <table class="table" id="tblHist">
+            <thead>
+              <tr>
+                <th style="min-width:150px">Data/Hora</th>
+                <th>Tipo</th>
+                <th>Item</th>
+                <th style="text-align:right">Qtd</th>
+                <th style="text-align:right">Preço</th>
+                <th style="text-align:right">Total</th>
+                <th>Motivo</th>
+                <th>Obs</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
-          <div>
-            <b>Prévia do backup</b>
-            <textarea id="backupPreview" readonly placeholder="Aqui aparece um resumo ao exportar/importar."></textarea>
-            <p class="note">Dica: guarde esse backup no Drive/OneDrive.</p>
-          </div>
-        </div>
-      </div>
-      <div class="foot">
-        <button class="btn" id="btnFecharBackup">Fechar</button>
-      </div>
-    </div>
   </div>
 
-  <!-- MODAL CSV -->
-  <div class="modal" id="modalCsv">
-    <div class="box">
-      <div class="mh">
-        <div>
-          <b>Exportar CSV</b>
-          <div class="muted" style="font-size:12px; margin-top:3px">Baixe em formato CSV (abre no Excel).</div>
-        </div>
-        <div class="x" id="closeCsv" title="Fechar">✕</div>
-      </div>
-      <div class="mb">
-        <div class="two">
-          <div class="kpi">
-            <span class="tag blue">Itens</span>
-            <b>CSV de itens</b>
-            <small class="muted">Inclui custo médio, estoque, valor.</small>
-            <div style="margin-top:10px">
-              <button class="btn info" id="btnExportCsvItens">Baixar itens.csv</button>
-            </div>
-          </div>
-          <div class="kpi">
-            <span class="tag warn">Movimentações</span>
-            <b>CSV de histórico</b>
-            <small class="muted">Data, tipo, item, qtd, preço, total.</small>
-            <div style="margin-top:10px">
-              <button class="btn info" id="btnExportCsvMov">Baixar movimentacoes.csv</button>
-            </div>
-          </div>
-        </div>
-        <div class="note" style="margin-top:12px">
-          <span class="kbd">Obs</span> CSV é ótimo para relatórios no Excel, mas para restaurar dados use o JSON.
-        </div>
-      </div>
-      <div class="foot">
-        <button class="btn" id="btnFecharCsv">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="toast">✅ <span id="toastTxt">Ok</span></div>
+  <div class="toast" id="toast">OK</div>
 
 <script>
-/* =========================
-   ESTOQUE PRO — localStorage
-   ========================= */
+  // ===== Helpers / DB =====
+  const LS_KEY = "ampertech_estoque_vendas_v1";
+  const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  const num = (v)=>{ const n=Number(v); return Number.isFinite(n)?n:0; };
+  const fmt = (n)=> num(n).toLocaleString("pt-BR",{minimumFractionDigits:0, maximumFractionDigits:2});
+  const nowISO = ()=> new Date().toISOString();
+  const toLocal = (iso)=> new Date(iso).toLocaleString("pt-BR");
+  const uid = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
 
-const LS_KEY = "estoque_pro_v1";
-const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
-const numBR = (v) => {
-  const n = Number(v);
-  return (Number.isFinite(n) ? n : 0);
-};
-const fmt = (n, dec=2) => {
-  const x = numBR(n);
-  return x.toLocaleString("pt-BR",{minimumFractionDigits:dec, maximumFractionDigits:dec});
-};
-const nowISO = () => new Date().toISOString();
-const toLocalDT = (iso) => {
-  const d = new Date(iso);
-  return d.toLocaleString("pt-BR");
-};
+  let DB = loadDB();
+  let editItemId = null;
+  let CART = []; // {itemId, qty, salePrice}
 
-function uid(){
-  return Math.random().toString(16).slice(2) + Date.now().toString(16);
-}
-
-function toast(msg){
-  const t = document.getElementById("toast");
-  const tx = document.getElementById("toastTxt");
-  tx.textContent = msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2200);
-}
-
-function loadDB(){
-  const raw = localStorage.getItem(LS_KEY);
-  if(!raw){
-    return {
-      items: [],
-      moves: []
-    };
+  function toast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2200);
   }
-  try{
-    const db = JSON.parse(raw);
-    db.items ??= [];
-    db.moves ??= [];
-    return db;
-  }catch(e){
-    console.warn("DB inválido, resetando.", e);
-    return {items:[], moves:[]};
+  function loadDB(){
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return {items:[], moves:[]};
+    try{
+      const db=JSON.parse(raw);
+      db.items ??= [];
+      db.moves ??= [];
+      return db;
+    }catch{ return {items:[], moves:[]}; }
   }
-}
-
-function saveDB(){
-  localStorage.setItem(LS_KEY, JSON.stringify(DB));
-}
-
-let DB = loadDB();
-let editingItemId = null;
-
-/* ========== Regras de custo médio ==========
-   - Item tem: estoque, custoMedio
-   - ENTRADA (qtd, preco):
-       novoCM = (estoqueAtual*cm + qtd*preco) / (estoqueAtual + qtd)
-       estoque += qtd
-   - SAIDA (qtd):
-       estoque -= qtd
-       cm permanece
-*/
-function applyMove(move){
-  const it = DB.items.find(x=>x.id===move.itemId);
-  if(!it) throw new Error("Item não encontrado.");
-  const qtd = numBR(move.qty);
-
-  if(move.type === "ENTRADA"){
-    const p = numBR(move.price);
-    const est = numBR(it.stock);
-    const cm = numBR(it.avgCost);
-
-    const novoEst = est + qtd;
-    const novoCM = (novoEst <= 0) ? 0 : ((est*cm) + (qtd*p)) / novoEst;
-
-    it.stock = +novoEst.toFixed(6);
-    it.avgCost = +novoCM.toFixed(6);
-    // opcional: atualizar "lastCost"
-    it.lastCost = +p.toFixed(6);
-  } else {
-    const est = numBR(it.stock);
-    if(qtd > est + 1e-9) throw new Error("Estoque insuficiente para essa saída.");
-    it.stock = +(est - qtd).toFixed(6);
-  }
-}
-
-/* ========== UI Helpers ========== */
-function setText(id, txt){ document.getElementById(id).textContent = txt; }
-
-function buildItemOption(it){
-  const opt = document.createElement("option");
-  opt.value = it.id;
-  opt.textContent = `${it.code} — ${it.desc}`;
-  return opt;
-}
-
-function statusPill(it){
-  const est = numBR(it.stock);
-  const min = numBR(it.minStock);
-  if(est <= 0){
-    return `<span class="pill zero">Zerado</span>`;
-  }
-  if(est <= min && min > 0){
-    return `<span class="pill low">Baixo</span>`;
-  }
-  return `<span class="pill">OK</span>`;
-}
-
-function itemValue(it){
-  return numBR(it.stock) * numBR(it.avgCost);
-}
-
-function refreshKPIs(){
-  const itens = DB.items.length;
-  const qtdTotal = DB.items.reduce((a,it)=>a + numBR(it.stock), 0);
-  const valorTotal = DB.items.reduce((a,it)=>a + itemValue(it), 0);
-  const alerts = DB.items.filter(it=>{
-    const est = numBR(it.stock);
-    const min = numBR(it.minStock);
-    return est<=0 || (min>0 && est<=min);
-  }).length;
-
-  setText("kpiItens", itens);
-  setText("kpiQtd", fmt(qtdTotal, 2));
-  setText("kpiValor", money.format(valorTotal));
-  setText("kpiBaixo", alerts);
-
-  // ultimas
-  const lastEnt = [...DB.moves].reverse().find(m=>m.type==="ENTRADA");
-  const lastSai = [...DB.moves].reverse().find(m=>m.type==="SAIDA");
-  if(lastEnt){
-    const it = DB.items.find(x=>x.id===lastEnt.itemId);
-    setText("kpiUltEnt", `${fmt(lastEnt.qty,2)} ${it?.unit||""}`);
-    setText("kpiUltEntSub", `${it?.code||"—"} • ${toLocalDT(lastEnt.at)}`);
-  }else{
-    setText("kpiUltEnt", "—");
-    setText("kpiUltEntSub", "—");
-  }
-  if(lastSai){
-    const it = DB.items.find(x=>x.id===lastSai.itemId);
-    setText("kpiUltSai", `${fmt(lastSai.qty,2)} ${it?.unit||""}`);
-    setText("kpiUltSaiSub", `${it?.code||"—"} • ${toLocalDT(lastSai.at)}`);
-  }else{
-    setText("kpiUltSai", "—");
-    setText("kpiUltSaiSub", "—");
-  }
-}
-
-function refreshItemSelect(){
-  const sel = document.getElementById("mvItem");
-  sel.innerHTML = "";
-  const itemsSorted = [...DB.items].sort((a,b)=>(a.code||"").localeCompare(b.code||""));
-  for(const it of itemsSorted){
-    sel.appendChild(buildItemOption(it));
-  }
-}
-
-function matchesItemFilter(it){
-  const q = (document.getElementById("q").value || "").trim().toLowerCase();
-  const filtro = document.getElementById("filtro").value;
-
-  const text = `${it.code} ${it.desc} ${it.category}`.toLowerCase();
-  if(q && !text.includes(q)) return false;
-
-  const est = numBR(it.stock);
-  const min = numBR(it.minStock);
-
-  if(filtro==="baixo"){
-    return (min>0 && est>0 && est<=min);
-  }
-  if(filtro==="zerado"){
-    return est<=0;
-  }
-  return true;
-}
-
-function refreshItemsTable(){
-  const tb = document.querySelector("#tblItens tbody");
-  tb.innerHTML = "";
-
-  const itemsSorted = [...DB.items].sort((a,b)=>(a.code||"").localeCompare(b.code||""));
-  const filtered = itemsSorted.filter(matchesItemFilter);
-
-  if(filtered.length===0){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="10" class="muted" style="padding:14px">Nenhum item encontrado.</td>`;
-    tb.appendChild(tr);
-    return;
+  function saveDB(){ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
+  function esc(s){
+    return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
-  for(const it of filtered){
-    const tr = document.createElement("tr");
-    const val = itemValue(it);
-
-    tr.innerHTML = `
-      <td><b>${escapeHTML(it.code||"")}</b></td>
-      <td title="${escapeHTML(it.obs||"")}">${escapeHTML(it.desc||"")}</td>
-      <td class="muted">${escapeHTML(it.category||"—")}</td>
-      <td class="muted">${escapeHTML(it.unit||"UN")}</td>
-      <td style="text-align:right"><b>${fmt(it.stock,2)}</b></td>
-      <td style="text-align:right" class="muted">${fmt(it.minStock,2)}</td>
-      <td style="text-align:right">${money.format(numBR(it.avgCost))}</td>
-      <td style="text-align:right"><b>${money.format(val)}</b></td>
-      <td>${statusPill(it)}</td>
-      <td>
-        <div class="inline-actions">
-          <button class="btn" data-edit="${it.id}">Editar</button>
-          <button class="btn danger" data-del="${it.id}">Excluir</button>
-        </div>
-      </td>
-    `;
-    tb.appendChild(tr);
-  }
-
-  // actions
-  tb.querySelectorAll("[data-edit]").forEach(btn=>{
-    btn.addEventListener("click", ()=>loadItemToForm(btn.dataset.edit));
-  });
-  tb.querySelectorAll("[data-del]").forEach(btn=>{
-    btn.addEventListener("click", ()=>deleteItem(btn.dataset.del));
-  });
-}
-
-function matchesMoveFilter(m){
-  const q = (document.getElementById("qMov").value || "").trim().toLowerCase();
-  const f = document.getElementById("fMov").value;
-
-  if(f !== "todas" && m.type !== f) return false;
-
-  const it = DB.items.find(x=>x.id===m.itemId);
-  const text = `${m.type} ${it?.code||""} ${it?.desc||""} ${m.reason||""} ${m.obs||""}`.toLowerCase();
-  if(q && !text.includes(q)) return false;
-
-  return true;
-}
-
-function refreshMovesTable(){
-  const tb = document.querySelector("#tblMov tbody");
-  tb.innerHTML = "";
-
-  const moves = [...DB.moves].sort((a,b)=> (b.at||"").localeCompare(a.at||""));
-  const filtered = moves.filter(matchesMoveFilter);
-
-  if(filtered.length===0){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="8" class="muted" style="padding:14px">Nenhuma movimentação encontrada.</td>`;
-    tb.appendChild(tr);
-    return;
-  }
-
-  for(const m of filtered){
+  // ===== Regras custo médio =====
+  // item: stock, avgCost
+  function applyMove(m){
     const it = DB.items.find(x=>x.id===m.itemId);
-    const total = (m.type==="ENTRADA") ? (numBR(m.qty)*numBR(m.price)) : (numBR(m.qty)*numBR(it?.avgCost));
-    const tipoPill = m.type==="ENTRADA"
-      ? `<span class="pill" style="border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.10)">ENTRADA</span>`
-      : `<span class="pill" style="border-color:rgba(245,158,11,.40); background:rgba(245,158,11,.10)">SAÍDA</span>`;
+    if(!it) throw new Error("Item não encontrado.");
 
-    tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="muted">${toLocalDT(m.at)}</td>
-      <td>${tipoPill}</td>
-      <td><b>${escapeHTML(it?.code||"—")}</b></td>
-      <td>${escapeHTML(it?.desc||"—")}</td>
-      <td style="text-align:right"><b>${fmt(m.qty,2)}</b></td>
-      <td style="text-align:right">${m.type==="ENTRADA" ? money.format(numBR(m.price)) : "<span class='muted'>—</span>"}</td>
-      <td style="text-align:right"><b>${money.format(total)}</b></td>
-      <td>${escapeHTML(m.reason||"—")}</td>
-    `;
-    tb.appendChild(tr);
-  }
-}
+    const q = num(m.qty);
+    if(q<=0) throw new Error("Qtd inválida.");
 
-/* ========== CRUD Itens ========== */
-function clearForm(){
-  editingItemId = null;
-  setText("formTitle", "Novo item");
-  document.getElementById("itCodigo").value = "";
-  document.getElementById("itDesc").value = "";
-  document.getElementById("itCat").value = "";
-  document.getElementById("itUn").value = "UN";
-  document.getElementById("itCusto").value = "";
-  document.getElementById("itEstoque").value = "";
-  document.getElementById("itMin").value = "";
-  document.getElementById("itObs").value = "";
-  document.getElementById("itCodigo").focus();
-}
-
-function loadItemToForm(id){
-  const it = DB.items.find(x=>x.id===id);
-  if(!it) return;
-
-  editingItemId = id;
-  setText("formTitle", `Editar item: ${it.code}`);
-  document.getElementById("itCodigo").value = it.code || "";
-  document.getElementById("itDesc").value = it.desc || "";
-  document.getElementById("itCat").value = it.category || "";
-  document.getElementById("itUn").value = it.unit || "UN";
-  document.getElementById("itCusto").value = (numBR(it.lastCost || it.avgCost) || 0);
-  document.getElementById("itEstoque").value = numBR(it.stock) || 0;
-  document.getElementById("itMin").value = numBR(it.minStock) || 0;
-  document.getElementById("itObs").value = it.obs || "";
-  toast("Item carregado para edição.");
-}
-
-function codeExists(code, ignoreId=null){
-  const c = (code||"").trim().toLowerCase();
-  return DB.items.some(it => (it.code||"").trim().toLowerCase()===c && it.id!==ignoreId);
-}
-
-function saveItem(){
-  const code = document.getElementById("itCodigo").value.trim();
-  const desc = document.getElementById("itDesc").value.trim();
-  const category = document.getElementById("itCat").value.trim();
-  const unit = document.getElementById("itUn").value;
-  const lastCost = numBR(document.getElementById("itCusto").value);
-  const stockInput = numBR(document.getElementById("itEstoque").value);
-  const minStock = numBR(document.getElementById("itMin").value);
-  const obs = document.getElementById("itObs").value.trim();
-
-  if(!code || !desc){
-    toast("Preencha Código e Descrição.");
-    return;
-  }
-  if(codeExists(code, editingItemId)){
-    toast("Já existe um item com esse código.");
-    return;
-  }
-
-  if(editingItemId){
-    const it = DB.items.find(x=>x.id===editingItemId);
-    if(!it) return;
-
-    it.code = code;
-    it.desc = desc;
-    it.category = category;
-    it.unit = unit;
-    it.minStock = +minStock.toFixed(6);
-    it.obs = obs;
-
-    // Se usuário alterou estoque manualmente no cadastro, vamos ajustar:
-    // (isso é útil pra inventário inicial/ajuste rápido)
-    const oldStock = numBR(it.stock);
-    const newStock = stockInput;
-    it.stock = +newStock.toFixed(6);
-
-    // custo médio: se o item ainda não tinha custo médio, use o lastCost
-    if(numBR(it.avgCost) <= 0 && lastCost > 0){
-      it.avgCost = +lastCost.toFixed(6);
+    if(m.type==="ENTRADA"){
+      const p = num(m.price);
+      if(p<=0) throw new Error("Preço inválido na entrada.");
+      const est = num(it.stock);
+      const cm = num(it.avgCost);
+      const novoEst = est + q;
+      const novoCM = ((est*cm) + (q*p)) / novoEst;
+      it.stock = Math.round(novoEst);
+      it.avgCost = +novoCM.toFixed(6);
+      it.lastCost = +p.toFixed(6);
+    }else{ // SAIDA
+      const est = num(it.stock);
+      if(q>est) throw new Error("Estoque insuficiente.");
+      it.stock = Math.round(est - q);
     }
-    it.lastCost = +lastCost.toFixed(6);
+  }
 
-    // Se houve diferença de estoque, registrar uma movimentação automática de ajuste:
-    const diff = newStock - oldStock;
-    if(Math.abs(diff) > 1e-9){
-      const m = {
+  function itemValue(it){ return num(it.stock) * num(it.avgCost); }
+  function status(it){
+    const est=num(it.stock), min=num(it.minStock);
+    if(est<=0) return `<span class="pill zero">Zerado</span>`;
+    if(min>0 && est<=min) return `<span class="pill low">Baixo</span>`;
+    return `<span class="pill ok">OK</span>`;
+  }
+
+  // ===== Tabs =====
+  const tabVenda = document.getElementById("tabVenda");
+  const tabItens = document.getElementById("tabItens");
+  const tabHist  = document.getElementById("tabHist");
+  const viewVenda = document.getElementById("viewVenda");
+  const viewItens = document.getElementById("viewItens");
+  const viewHist  = document.getElementById("viewHist");
+
+  function setTab(which){
+    [tabVenda,tabItens,tabHist].forEach(x=>x.classList.remove("active"));
+    [viewVenda,viewItens,viewHist].forEach(x=>x.classList.add("hide"));
+    if(which==="venda"){ tabVenda.classList.add("active"); viewVenda.classList.remove("hide"); }
+    if(which==="itens"){ tabItens.classList.add("active"); viewItens.classList.remove("hide"); }
+    if(which==="hist"){ tabHist.classList.add("active"); viewHist.classList.remove("hide"); }
+  }
+  tabVenda.onclick=()=>setTab("venda");
+  tabItens.onclick=()=>setTab("itens");
+  tabHist.onclick=()=>setTab("hist");
+
+  // ===== KPIs =====
+  function refreshKPIs(){
+    document.getElementById("kItens").textContent = DB.items.length;
+    const qtdTotal = DB.items.reduce((a,it)=>a+num(it.stock),0);
+    document.getElementById("kQtd").textContent = fmt(qtdTotal);
+    const vTotal = DB.items.reduce((a,it)=>a+itemValue(it),0);
+    document.getElementById("kValor").textContent = money.format(vTotal);
+    const alerts = DB.items.filter(it=>{
+      const est=num(it.stock), min=num(it.minStock);
+      return est<=0 || (min>0 && est<=min);
+    }).length;
+    document.getElementById("kAlertas").textContent = alerts;
+  }
+
+  // ===== Venda =====
+  const vBusca = document.getElementById("vBusca");
+  const vItem  = document.getElementById("vItem");
+  const vQtd   = document.getElementById("vQtd");
+  const vPreco = document.getElementById("vPreco");
+  const vObs   = document.getElementById("vObs");
+  const vInfoEstoque = document.getElementById("vInfoEstoque");
+
+  function refreshVendaSelect(filterText=""){
+    vItem.innerHTML="";
+    const t = filterText.trim().toLowerCase();
+    const list = [...DB.items]
+      .filter(it=>{
+        if(!t) return true;
+        return (`${it.code} ${it.desc} ${it.category}`).toLowerCase().includes(t);
+      })
+      .sort((a,b)=>(a.code||"").localeCompare(b.code||""));
+
+    for(const it of list){
+      const opt=document.createElement("option");
+      opt.value=it.id;
+      opt.textContent = `${it.code} — ${it.desc} (Est: ${it.stock})`;
+      vItem.appendChild(opt);
+    }
+    refreshVendaInfo();
+  }
+
+  function refreshVendaInfo(){
+    const it = DB.items.find(x=>x.id===vItem.value);
+    if(!it){ vInfoEstoque.textContent="Cadastre itens para vender."; return; }
+    vInfoEstoque.textContent =
+      `Estoque: ${it.stock} • Custo médio: ${money.format(num(it.avgCost))} • Categoria: ${it.category||"—"}`;
+  }
+
+  vBusca.addEventListener("input", ()=> refreshVendaSelect(vBusca.value));
+  vItem.addEventListener("change", refreshVendaInfo);
+
+  function cartTotal(){
+    return CART.reduce((a,c)=>{
+      const p = num(c.salePrice);
+      return a + (num(c.qty)*p);
+    },0);
+  }
+
+  function refreshCart(){
+    const tb=document.querySelector("#tblCarrinho tbody");
+    tb.innerHTML="";
+    if(CART.length===0){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td colspan="5" class="muted" style="padding:14px">Carrinho vazio.</td>`;
+      tb.appendChild(tr);
+    }else{
+      CART.forEach((c,idx)=>{
+        const it=DB.items.find(x=>x.id===c.itemId);
+        const total = num(c.qty)*num(c.salePrice);
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td><b>${esc(it?.code||"")}</b> <span class="muted">— ${esc(it?.desc||"")}</span></td>
+          <td style="text-align:right"><b>${fmt(c.qty)}</b></td>
+          <td style="text-align:right">${money.format(num(c.salePrice))}</td>
+          <td style="text-align:right"><b>${money.format(total)}</b></td>
+          <td><button class="btn danger" data-rm="${idx}">Remover</button></td>
+        `;
+        tb.appendChild(tr);
+      });
+      tb.querySelectorAll("[data-rm]").forEach(b=>{
+        b.onclick=()=>{
+          CART.splice(Number(b.dataset.rm),1);
+          refreshCart();
+          toast("Item removido.");
+        };
+      });
+    }
+    document.getElementById("vTotal").textContent = `Total: ${money.format(cartTotal())}`;
+  }
+
+  document.getElementById("btnAdd").onclick=()=>{
+    if(DB.items.length===0){ toast("Cadastre um item primeiro."); setTab("itens"); return; }
+    const it = DB.items.find(x=>x.id===vItem.value);
+    if(!it){ toast("Selecione um item."); return; }
+
+    const q = Math.round(num(vQtd.value||1));
+    if(!(q>0)){ toast("Quantidade inválida."); return; }
+    if(q>num(it.stock)){ toast("Estoque insuficiente."); return; }
+
+    // Preço venda é opcional: se vazio, grava como 0 no carrinho
+    const sp = num(vPreco.value || 0);
+
+    // se já existe no carrinho, soma qtd (mantém o último preço informado)
+    const existing = CART.find(x=>x.itemId===it.id);
+    if(existing){
+      existing.qty += q;
+      if(vPreco.value!=="" ) existing.salePrice = sp;
+    }else{
+      CART.push({itemId: it.id, qty: q, salePrice: sp});
+    }
+
+    vQtd.value="1";
+    vPreco.value="";
+    refreshVendaSelect(vBusca.value);
+    refreshCart();
+    toast("Adicionado no carrinho.");
+  };
+
+  document.getElementById("btnLimparCarrinho").onclick=()=>{
+    if(!confirm("Limpar carrinho?")) return;
+    CART=[];
+    refreshCart();
+  };
+
+  document.getElementById("btnFinalizar").onclick=()=>{
+    if(CART.length===0){ toast("Carrinho vazio."); return; }
+
+    // valida estoque novamente
+    for(const c of CART){
+      const it = DB.items.find(x=>x.id===c.itemId);
+      if(!it) { toast("Item não encontrado."); return; }
+      if(num(c.qty)>num(it.stock)){ toast(`Estoque insuficiente: ${it.code}`); return; }
+    }
+
+    const obsVenda = (vObs.value||"").trim();
+    const vendaId = "VENDA-" + new Date().toISOString().slice(0,10).replaceAll("-","") + "-" + Math.random().toString(16).slice(2,6).toUpperCase();
+
+    // cria SAÍDAS (motivo VENDA)
+    for(const c of CART){
+      const it = DB.items.find(x=>x.id===c.itemId);
+
+      const move = {
         id: uid(),
         at: nowISO(),
-        type: diff>0 ? "ENTRADA" : "SAIDA",
+        type: "SAIDA",
         itemId: it.id,
-        qty: Math.abs(diff),
-        price: diff>0 ? lastCost : 0,
-        reason: "Ajuste (edição do item)",
-        obs: "Movimentação gerada automaticamente"
+        qty: Math.round(num(c.qty)),
+        price: 0,
+        reason: "VENDA",
+        obs: `${vendaId}${obsVenda ? " • " + obsVenda : ""}${(c.salePrice>0) ? " • PreçoVenda: "+c.salePrice.toFixed(2) : ""}`
       };
-      // aplicar regra de custo médio se for entrada
-      if(m.type==="ENTRADA"){
-        // garantir custo no ajuste
-        m.price = lastCost > 0 ? lastCost : numBR(it.avgCost);
-        // voltar o estoque para oldStock para aplicar corretamente a movimentação
-        it.stock = +oldStock.toFixed(6);
-        try{
+
+      applyMove(move);
+      DB.moves.push(move);
+    }
+
+    saveDB();
+    CART=[];
+    vObs.value="";
+    refreshAll();
+    refreshCart();
+    toast("Venda finalizada!");
+  };
+
+  // ===== Itens =====
+  const iBusca=document.getElementById("iBusca");
+  function clearItemForm(){
+    editItemId=null;
+    document.getElementById("iCodigo").value="";
+    document.getElementById("iDesc").value="";
+    document.getElementById("iCat").value="";
+    document.getElementById("iUn").value="UN";
+    document.getElementById("iCusto").value="";
+    document.getElementById("iEst").value="0";
+    document.getElementById("iMin").value="0";
+    document.getElementById("iObs").value="";
+    document.getElementById("iCodigo").focus();
+  }
+  document.getElementById("btnNovoItem").onclick=clearItemForm;
+
+  function codeExists(code, ignoreId=null){
+    const c=(code||"").trim().toLowerCase();
+    return DB.items.some(it=>(it.code||"").trim().toLowerCase()===c && it.id!==ignoreId);
+  }
+
+  document.getElementById("btnSalvarItem").onclick=()=>{
+    const code = document.getElementById("iCodigo").value.trim();
+    const desc = document.getElementById("iDesc").value.trim();
+    const cat  = document.getElementById("iCat").value.trim();
+    const unit = document.getElementById("iUn").value;
+    const cost = num(document.getElementById("iCusto").value);
+    const est  = Math.round(num(document.getElementById("iEst").value));
+    const min  = Math.round(num(document.getElementById("iMin").value));
+    const obs  = document.getElementById("iObs").value.trim();
+
+    if(!code || !desc){ toast("Preencha Código e Descrição."); return; }
+    if(codeExists(code, editItemId)){ toast("Já existe esse código."); return; }
+
+    if(editItemId){
+      const it = DB.items.find(x=>x.id===editItemId);
+      if(!it) return;
+
+      it.code=code; it.desc=desc; it.category=cat; it.unit=unit; it.minStock=min; it.obs=obs;
+
+      // ajuste rápido de estoque: se mudou, gera movimentação automática
+      const old = num(it.stock);
+      const diff = est - old;
+      if(diff!==0){
+        const m = {
+          id: uid(),
+          at: nowISO(),
+          type: diff>0 ? "ENTRADA" : "SAIDA",
+          itemId: it.id,
+          qty: Math.abs(diff),
+          price: diff>0 ? (cost>0?cost:num(it.avgCost)||1) : 0,
+          reason: "Ajuste",
+          obs: "Ajuste pelo cadastro"
+        };
+
+        // aplica corretamente
+        if(m.type==="ENTRADA"){
+          // volta estoque e aplica entrada (pra custo médio)
+          it.stock = Math.round(old);
+          if(cost>0 && num(it.avgCost)<=0) it.avgCost = cost;
           applyMove(m);
           DB.moves.push(m);
-        }catch(e){
-          // fallback: simplesmente manter o estoque ajustado
-          it.stock = +newStock.toFixed(6);
+        }else{
+          it.stock = Math.round(old);
+          applyMove(m);
+          DB.moves.push(m);
         }
       }else{
-        // saída: não mexe em custo médio
-        // voltar e aplicar
-        it.stock = +oldStock.toFixed(6);
-        try{
-          applyMove(m);
-          DB.moves.push(m);
-        }catch(e){
-          it.stock = +newStock.toFixed(6);
-        }
+        it.stock = Math.round(est);
       }
+
+      // custo médio inicial (se não existir)
+      if(num(it.avgCost)<=0 && cost>0) it.avgCost = +cost.toFixed(6);
+      it.lastCost = +cost.toFixed(6);
+
+      saveDB(); refreshAll(); toast("Item atualizado.");
+      return;
     }
 
-    saveDB();
-    refreshAll();
-    toast("Item atualizado.");
-    return;
-  }
+    // novo
+    const it = {
+      id: uid(),
+      code, desc, category:cat, unit,
+      stock: 0,
+      minStock: min,
+      avgCost: (cost>0? +cost.toFixed(6) : 0),
+      lastCost: (cost>0? +cost.toFixed(6) : 0),
+      obs
+    };
+    DB.items.push(it);
 
-  // novo item
-  const it = {
-    id: uid(),
-    code,
-    desc,
-    category,
-    unit,
-    stock: 0,
-    minStock: +minStock.toFixed(6),
-    avgCost: 0,
-    lastCost: +lastCost.toFixed(6),
-    obs
-  };
-
-  // estoque inicial (se tiver)
-  DB.items.push(it);
-
-  // se estoque inicial > 0, cria entrada inicial para custo médio
-  if(stockInput > 0){
-    const price = lastCost > 0 ? lastCost : 0;
-    if(price <= 0){
-      it.stock = +stockInput.toFixed(6);
-      it.avgCost = 0;
-    }else{
-      const m = {
-        id: uid(),
-        at: nowISO(),
-        type: "ENTRADA",
-        itemId: it.id,
-        qty: stockInput,
-        price,
-        reason: "Estoque inicial",
-        obs: obs || ""
-      };
+    // se estoque inicial > 0 e custo > 0, gera entrada inicial
+    if(est>0 && cost>0){
+      const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: est, price: cost, reason:"Estoque inicial", obs };
       applyMove(m);
       DB.moves.push(m);
+    }else{
+      it.stock = Math.round(est);
     }
-  }
 
-  // se custo foi informado e ainda não tem custo médio, setar
-  if(numBR(it.avgCost) <= 0 && lastCost > 0){
-    it.avgCost = +lastCost.toFixed(6);
-  }
-
-  saveDB();
-  refreshAll();
-  toast("Item salvo.");
-  clearForm();
-}
-
-function deleteItem(id){
-  const it = DB.items.find(x=>x.id===id);
-  if(!it) return;
-
-  const hasMoves = DB.moves.some(m=>m.itemId===id);
-  const msg = hasMoves
-    ? `Excluir "${it.code}"? Isso também vai remover todo o histórico de movimentações desse item.`
-    : `Excluir "${it.code}"?`;
-  if(!confirm(msg)) return;
-
-  DB.items = DB.items.filter(x=>x.id!==id);
-  DB.moves = DB.moves.filter(m=>m.itemId!==id);
-  saveDB();
-  refreshAll();
-  if(editingItemId===id) clearForm();
-  toast("Item excluído.");
-}
-
-/* ========== Movimentação ========== */
-function openMovModal(){
-  if(DB.items.length===0){
-    toast("Cadastre ao menos 1 item antes de movimentar.");
-    return;
-  }
-  refreshItemSelect();
-  document.getElementById("mvTipo").value = "ENTRADA";
-  document.getElementById("mvQtd").value = "";
-  document.getElementById("mvPreco").value = "";
-  document.getElementById("mvMotivo").value = "";
-  document.getElementById("mvObs").value = "";
-  document.getElementById("modalMov").classList.add("show");
-  updateMovPreview();
-  document.getElementById("mvQtd").focus();
-}
-
-function closeMovModal(){
-  document.getElementById("modalMov").classList.remove("show");
-}
-
-function updateMovPreview(){
-  const itemId = document.getElementById("mvItem").value;
-  const tipo = document.getElementById("mvTipo").value;
-  const qtd = numBR(document.getElementById("mvQtd").value);
-  const preco = numBR(document.getElementById("mvPreco").value);
-
-  const it = DB.items.find(x=>x.id===itemId);
-  if(!it){
-    setText("mvEstAtual","0");
-    setText("mvEstDepois","0");
-    setText("mvEstAtualSub","—");
-    setText("mvEstDepoisSub","—");
-    return;
-  }
-
-  const est = numBR(it.stock);
-  setText("mvEstAtual", fmt(est,2));
-  setText("mvEstAtualSub", `${it.code} • CM ${money.format(numBR(it.avgCost))}`);
-
-  let depois = est;
-  if(tipo==="ENTRADA") depois = est + qtd;
-  else depois = est - qtd;
-
-  setText("mvEstDepois", fmt(depois,2));
-
-  // texto extra
-  if(tipo==="ENTRADA"){
-    const cm = numBR(it.avgCost);
-    const novoEst = est + qtd;
-    const novoCM = (novoEst<=0) ? 0 : ((est*cm) + (qtd*preco)) / novoEst;
-    setText("mvEstDepoisSub", `Novo CM ≈ ${money.format(novoCM)} • Total entrada ${money.format(qtd*preco)}`);
-    document.getElementById("boxPreco").style.display = "";
-  }else{
-    const totalSaida = qtd * numBR(it.avgCost);
-    setText("mvEstDepoisSub", `Baixa pelo CM ${money.format(numBR(it.avgCost))} • Total saída ${money.format(totalSaida)}`);
-    document.getElementById("boxPreco").style.display = "none";
-  }
-}
-
-function saveMove(){
-  const type = document.getElementById("mvTipo").value;
-  const itemId = document.getElementById("mvItem").value;
-  const qty = numBR(document.getElementById("mvQtd").value);
-  const price = numBR(document.getElementById("mvPreco").value);
-  const reason = document.getElementById("mvMotivo").value.trim();
-  const obs = document.getElementById("mvObs").value.trim();
-
-  if(!itemId){
-    toast("Selecione um item.");
-    return;
-  }
-  if(!(qty > 0)){
-    toast("Quantidade deve ser maior que zero.");
-    return;
-  }
-  if(type==="ENTRADA" && !(price > 0)){
-    toast("Na ENTRADA, informe um preço unitário.");
-    return;
-  }
-
-  const move = {
-    id: uid(),
-    at: nowISO(),
-    type,
-    itemId,
-    qty,
-    price: type==="ENTRADA" ? price : 0,
-    reason: reason || (type==="ENTRADA" ? "Entrada" : "Saída"),
-    obs
+    saveDB(); refreshAll(); toast("Item salvo."); clearItemForm();
   };
 
-  try{
-    applyMove(move);
-    DB.moves.push(move);
-    saveDB();
-    refreshAll();
-    closeMovModal();
-    toast("Movimentação salva.");
-  }catch(e){
-    toast(e.message || "Erro ao salvar movimentação.");
-  }
-}
-
-/* ========== Backup / CSV ==========
-   - JSON: exporta/importa
-   - CSV: itens e movimentações
-*/
-function openBackupModal(){
-  document.getElementById("modalBackup").classList.add("show");
-  updateBackupPreview();
-}
-function closeBackupModal(){
-  document.getElementById("modalBackup").classList.remove("show");
-}
-function openCsvModal(){
-  document.getElementById("modalCsv").classList.add("show");
-}
-function closeCsvModal(){
-  document.getElementById("modalCsv").classList.remove("show");
-}
-
-function updateBackupPreview(){
-  const resumo = {
-    itens: DB.items.length,
-    movimentacoes: DB.moves.length,
-    geradoEm: new Date().toLocaleString("pt-BR"),
-    valorEstoque: money.format(DB.items.reduce((a,it)=>a+itemValue(it),0))
-  };
-  document.getElementById("backupPreview").value =
-    "Resumo do banco:\n" +
-    `• Itens: ${resumo.itens}\n` +
-    `• Movimentações: ${resumo.movimentacoes}\n` +
-    `• Valor do estoque: ${resumo.valorEstoque}\n` +
-    `• Gerado em: ${resumo.geradoEm}\n\n` +
-    "Você pode exportar o JSON para backup ou importar um JSON para restaurar.";
-}
-
-function downloadFile(filename, content, mime){
-  const blob = new Blob([content], {type: mime});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 800);
-}
-
-function exportJSON(){
-  const payload = {
-    version: 1,
-    exportedAt: nowISO(),
-    items: DB.items,
-    moves: DB.moves
-  };
-  downloadFile("estoque_backup.json", JSON.stringify(payload, null, 2), "application/json");
-  toast("Backup JSON baixado.");
-  updateBackupPreview();
-}
-
-function importJSONFile(file){
-  const fr = new FileReader();
-  fr.onload = () => {
+  document.getElementById("btnEntradaRapida").onclick=()=>{
+    if(!editItemId){ toast("Carregue um item para editar ou cadastre e depois edite."); return; }
+    const it = DB.items.find(x=>x.id===editItemId);
+    if(!it) return;
+    const qtd = Number(prompt("Quantidade de ENTRADA:", "1"));
+    const preco = Number(prompt("Preço de COMPRA unitário (R$):", (num(it.lastCost)||0).toFixed(2)));
+    if(!(qtd>0) || !(preco>0)) { toast("Entrada cancelada."); return; }
+    const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: Math.round(qtd), price: preco, reason:"Entrada", obs:"Entrada rápida" };
     try{
-      const payload = JSON.parse(fr.result);
-      if(!payload || !Array.isArray(payload.items) || !Array.isArray(payload.moves)){
-        throw new Error("Arquivo inválido: faltam itens/movimentações.");
-      }
-      if(!confirm("Importar este backup vai SUBSTITUIR os dados atuais. Continuar?")) return;
-
-      // validação mínima
-      for(const it of payload.items){
-        if(!it.id) it.id = uid();
-      }
-      for(const m of payload.moves){
-        if(!m.id) m.id = uid();
-      }
-
-      DB = { items: payload.items, moves: payload.moves };
-      saveDB();
-      refreshAll();
-      updateBackupPreview();
-      toast("Backup importado com sucesso.");
-    }catch(e){
-      toast(e.message || "Falha ao importar JSON.");
-    }
+      applyMove(m); DB.moves.push(m);
+      saveDB(); refreshAll(); toast("Entrada registrada.");
+    }catch(e){ toast(e.message||"Erro na entrada."); }
   };
-  fr.readAsText(file, "utf-8");
-}
 
-function csvEscape(v){
-  const s = String(v ?? "");
-  if(/[",\n;]/.test(s)){
-    return `"${s.replace(/"/g,'""')}"`;
+  function refreshItensTable(){
+    const tb=document.querySelector("#tblItens tbody");
+    tb.innerHTML="";
+    const q=(iBusca.value||"").trim().toLowerCase();
+    const items=[...DB.items]
+      .filter(it=>{
+        if(!q) return true;
+        return (`${it.code} ${it.desc} ${it.category}`).toLowerCase().includes(q);
+      })
+      .sort((a,b)=>(a.code||"").localeCompare(b.code||""));
+
+    if(items.length===0){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td colspan="10" class="muted" style="padding:14px">Nenhum item.</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+
+    for(const it of items){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td><b>${esc(it.code)}</b></td>
+        <td>${esc(it.desc)}</td>
+        <td class="muted">${esc(it.category||"—")}</td>
+        <td class="muted">${esc(it.unit||"UN")}</td>
+        <td style="text-align:right"><b>${fmt(it.stock)}</b></td>
+        <td style="text-align:right" class="muted">${fmt(it.minStock)}</td>
+        <td style="text-align:right">${money.format(num(it.avgCost))}</td>
+        <td style="text-align:right"><b>${money.format(itemValue(it))}</b></td>
+        <td>${status(it)}</td>
+        <td>
+          <button class="btn" data-edit="${it.id}">Editar</button>
+          <button class="btn danger" data-del="${it.id}">Excluir</button>
+        </td>
+      `;
+      tb.appendChild(tr);
+    }
+
+    tb.querySelectorAll("[data-edit]").forEach(b=>{
+      b.onclick=()=>{
+        const it = DB.items.find(x=>x.id===b.dataset.edit);
+        if(!it) return;
+        editItemId=it.id;
+        document.getElementById("iCodigo").value=it.code||"";
+        document.getElementById("iDesc").value=it.desc||"";
+        document.getElementById("iCat").value=it.category||"";
+        document.getElementById("iUn").value=it.unit||"UN";
+        document.getElementById("iCusto").value=(num(it.lastCost||it.avgCost)||0).toFixed(2);
+        document.getElementById("iEst").value=Math.round(num(it.stock));
+        document.getElementById("iMin").value=Math.round(num(it.minStock));
+        document.getElementById("iObs").value=it.obs||"";
+        toast("Item carregado.");
+        setTab("itens");
+      };
+    });
+
+    tb.querySelectorAll("[data-del]").forEach(b=>{
+      b.onclick=()=>{
+        const it = DB.items.find(x=>x.id===b.dataset.del);
+        if(!it) return;
+        if(!confirm(`Excluir ${it.code}? Isso remove o histórico desse item.`)) return;
+        DB.items = DB.items.filter(x=>x.id!==it.id);
+        DB.moves = DB.moves.filter(m=>m.itemId!==it.id);
+        if(editItemId===it.id) clearItemForm();
+        saveDB(); refreshAll(); toast("Excluído.");
+      };
+    });
   }
-  return s;
-}
+  iBusca.addEventListener("input", refreshItensTable);
 
-function exportCSVItens(){
-  const header = ["codigo","descricao","categoria","unidade","estoque","minimo","custo_medio","valor_estoque","obs"];
-  const rows = DB.items
-    .slice()
-    .sort((a,b)=>(a.code||"").localeCompare(b.code||""))
-    .map(it => ([
-      it.code, it.desc, it.category, it.unit,
-      numBR(it.stock), numBR(it.minStock),
-      numBR(it.avgCost), itemValue(it),
-      it.obs || ""
-    ]));
-  const csv = [header, ...rows].map(r=>r.map(csvEscape).join(";")).join("\n");
-  downloadFile("itens.csv", csv, "text/csv;charset=utf-8");
-  toast("CSV de itens baixado.");
-}
+  // ===== Histórico =====
+  const hBusca=document.getElementById("hBusca");
+  function refreshHist(){
+    const tb=document.querySelector("#tblHist tbody");
+    tb.innerHTML="";
+    const q=(hBusca.value||"").trim().toLowerCase();
+    const moves=[...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||""))
+      .filter(m=>{
+        if(!q) return true;
+        const it=DB.items.find(x=>x.id===m.itemId);
+        const text = `${m.type} ${it?.code||""} ${it?.desc||""} ${m.reason||""} ${m.obs||""}`.toLowerCase();
+        return text.includes(q);
+      });
 
-function exportCSVMov(){
-  const header = ["data_hora","tipo","codigo","descricao","qtd","preco_unit","total_estimado","motivo","obs"];
-  const rows = DB.moves
-    .slice()
-    .sort((a,b)=>(b.at||"").localeCompare(a.at||""))
-    .map(m=>{
-      const it = DB.items.find(x=>x.id===m.itemId);
-      const total = (m.type==="ENTRADA") ? (numBR(m.qty)*numBR(m.price)) : (numBR(m.qty)*numBR(it?.avgCost));
+    if(moves.length===0){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td colspan="8" class="muted" style="padding:14px">Sem movimentações.</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+
+    for(const m of moves){
+      const it=DB.items.find(x=>x.id===m.itemId);
+      const total = (m.type==="ENTRADA")
+        ? (num(m.qty)*num(m.price))
+        : (num(m.qty)*num(it?.avgCost));
+      const tipoPill = (m.type==="ENTRADA")
+        ? `<span class="pill ok">ENTRADA</span>`
+        : `<span class="pill low">SAÍDA</span>`;
+
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td class="muted">${toLocal(m.at)}</td>
+        <td>${tipoPill}</td>
+        <td><b>${esc(it?.code||"—")}</b> <span class="muted">— ${esc(it?.desc||"—")}</span></td>
+        <td style="text-align:right"><b>${fmt(m.qty)}</b></td>
+        <td style="text-align:right">${m.type==="ENTRADA" ? money.format(num(m.price)) : "<span class='muted'>—</span>"}</td>
+        <td style="text-align:right"><b>${money.format(total)}</b></td>
+        <td>${esc(m.reason||"—")}</td>
+        <td class="muted">${esc(m.obs||"")}</td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+  hBusca.addEventListener("input", refreshHist);
+
+  // ===== Backup / CSV / Reset =====
+  document.getElementById("btnBackup").onclick=()=>{
+    const payload = {version:1, exportedAt: nowISO(), items: DB.items, moves: DB.moves};
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download="ampertech_backup.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),800);
+    toast("Backup baixado.");
+  };
+
+  document.getElementById("btnCsv").onclick=()=>{
+    // CSV do histórico
+    const header=["data_hora","tipo","codigo","descricao","qtd","preco","total","motivo","obs"];
+    const rows = [...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||"")).map(m=>{
+      const it=DB.items.find(x=>x.id===m.itemId);
+      const total=(m.type==="ENTRADA") ? (num(m.qty)*num(m.price)) : (num(m.qty)*num(it?.avgCost));
       return [
-        toLocalDT(m.at), m.type, it?.code||"", it?.desc||"",
-        numBR(m.qty),
-        m.type==="ENTRADA" ? numBR(m.price) : "",
+        toLocal(m.at), m.type, it?.code||"", it?.desc||"",
+        num(m.qty),
+        (m.type==="ENTRADA")? num(m.price) : "",
         total,
         m.reason||"", m.obs||""
       ];
     });
-  const csv = [header, ...rows].map(r=>r.map(csvEscape).join(";")).join("\n");
-  downloadFile("movimentacoes.csv", csv, "text/csv;charset=utf-8");
-  toast("CSV de movimentações baixado.");
-}
+    const escCSV = (v)=>{
+      const s=String(v??"");
+      return /[",\n;]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
+    };
+    const csv = [header, ...rows].map(r=>r.map(escCSV).join(";")).join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download="ampertech_historico.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),800);
+    toast("CSV baixado.");
+  };
 
-/* ========== Resumo rápido (Hoje / Mês) ========== */
-function resumoPeriodo(tipo){
-  const now = new Date();
-  const start = new Date(now);
-  if(tipo==="dia"){
-    start.setHours(0,0,0,0);
-  }else{
-    start.setDate(1);
-    start.setHours(0,0,0,0);
+  document.getElementById("btnReset").onclick=()=>{
+    if(!confirm("Apagar tudo (itens + histórico)?")) return;
+    localStorage.removeItem(LS_KEY);
+    DB={items:[], moves:[]};
+    CART=[];
+    clearItemForm();
+    refreshAll();
+    refreshCart();
+    toast("Dados apagados.");
+  };
+
+  // ===== Refresh geral =====
+  function refreshAll(){
+    refreshKPIs();
+    refreshItensTable();
+    refreshHist();
+    refreshVendaSelect(vBusca.value);
+    refreshVendaInfo();
   }
-  const startIso = start.toISOString();
 
-  const moves = DB.moves.filter(m => (m.at||"") >= startIso);
-  const ent = moves.filter(m=>m.type==="ENTRADA");
-  const sai = moves.filter(m=>m.type==="SAIDA");
-
-  const totalEnt = ent.reduce((a,m)=>a + (numBR(m.qty)*numBR(m.price)), 0);
-  const totalSai = sai.reduce((a,m)=>{
-    const it = DB.items.find(x=>x.id===m.itemId);
-    return a + (numBR(m.qty)*numBR(it?.avgCost));
-  }, 0);
-
-  const qtdEnt = ent.reduce((a,m)=>a + numBR(m.qty), 0);
-  const qtdSai = sai.reduce((a,m)=>a + numBR(m.qty), 0);
-
-  alert(
-    (tipo==="dia" ? "Resumo de HOJE" : "Resumo do MÊS") + "\n\n" +
-    `Entradas: ${fmt(qtdEnt,2)} itens • ${money.format(totalEnt)}\n` +
-    `Saídas:   ${fmt(qtdSai,2)} itens • ${money.format(totalSai)}\n` +
-    `Movimentações: ${moves.length}`
-  );
-}
-
-/* ========== Segurança básica / util ========= */
-function escapeHTML(s){
-  return String(s||"")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-/* ========== Refresh Geral ========== */
-function refreshAll(){
-  refreshKPIs();
-  refreshItemSelect();
-  refreshItemsTable();
-  refreshMovesTable();
-  updateBackupPreview();
-}
-
-/* ========== Eventos ========= */
-document.getElementById("btnSalvarItem").addEventListener("click", saveItem);
-document.getElementById("btnNovo").addEventListener("click", clearForm);
-document.getElementById("q").addEventListener("input", refreshItemsTable);
-document.getElementById("filtro").addEventListener("change", refreshItemsTable);
-
-document.getElementById("qMov").addEventListener("input", refreshMovesTable);
-document.getElementById("fMov").addEventListener("change", refreshMovesTable);
-
-document.getElementById("btnMov").addEventListener("click", openMovModal);
-document.getElementById("btnMov2").addEventListener("click", openMovModal);
-document.getElementById("closeMov").addEventListener("click", closeMovModal);
-document.getElementById("btnCancelarMov").addEventListener("click", closeMovModal);
-document.getElementById("modalMov").addEventListener("click", (e)=>{ if(e.target.id==="modalMov") closeMovModal(); });
-
-["mvTipo","mvItem","mvQtd","mvPreco"].forEach(id=>{
-  document.getElementById(id).addEventListener("input", updateMovPreview);
-  document.getElementById(id).addEventListener("change", updateMovPreview);
-});
-document.getElementById("btnSalvarMov").addEventListener("click", saveMove);
-
-// Backup
-document.getElementById("btnBackup").addEventListener("click", openBackupModal);
-document.getElementById("closeBackup").addEventListener("click", closeBackupModal);
-document.getElementById("btnFecharBackup").addEventListener("click", closeBackupModal);
-document.getElementById("modalBackup").addEventListener("click", (e)=>{ if(e.target.id==="modalBackup") closeBackupModal(); });
-
-document.getElementById("btnExportJson").addEventListener("click", exportJSON);
-document.getElementById("fileImportJson").addEventListener("change", (e)=>{
-  const f = e.target.files?.[0];
-  if(f) importJSONFile(f);
-  e.target.value = "";
-});
-
-// CSV
-document.getElementById("btnCsv").addEventListener("click", openCsvModal);
-document.getElementById("closeCsv").addEventListener("click", closeCsvModal);
-document.getElementById("btnFecharCsv").addEventListener("click", closeCsvModal);
-document.getElementById("modalCsv").addEventListener("click", (e)=>{ if(e.target.id==="modalCsv") closeCsvModal(); });
-
-document.getElementById("btnExportCsvItens").addEventListener("click", exportCSVItens);
-document.getElementById("btnExportCsvMov").addEventListener("click", exportCSVMov);
-
-// Resumos
-document.getElementById("btnResumoDia").addEventListener("click", ()=>resumoPeriodo("dia"));
-document.getElementById("btnResumoMes").addEventListener("click", ()=>resumoPeriodo("mes"));
-
-// Limpar tudo
-document.getElementById("btnLimpar").addEventListener("click", ()=>{
-  if(!confirm("Isso vai APAGAR tudo (itens e movimentações). Continuar?")) return;
-  localStorage.removeItem(LS_KEY);
-  DB = {items:[], moves:[]};
-  clearForm();
+  // init
+  clearItemForm();
   refreshAll();
-  toast("Dados apagados.");
-});
-
-// Atalhos teclado
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape"){
-    closeMovModal(); closeBackupModal(); closeCsvModal();
-  }
-  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
-    e.preventDefault();
-    document.getElementById("q").focus();
-  }
-});
-
-// Inicial
-clearForm();
-refreshAll();
+  refreshCart();
+  setTab("venda");
 </script>
 </body>
 </html>
