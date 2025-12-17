@@ -33,11 +33,10 @@
         radial-gradient(1000px 500px at 100% 0%, rgba(22,163,74,.10), transparent 55%),
         var(--bg);
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:16px 12px 90px}
+    .wrap{max-width:1150px; margin:0 auto; padding:16px 12px 90px}
     header{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
-      padding:8px 4px 14px;
-      flex-wrap:wrap;
+      padding:8px 4px 14px; flex-wrap:wrap;
     }
     .brand{display:flex; gap:10px; align-items:center}
     .logo{
@@ -46,31 +45,31 @@
       border:1px solid rgba(15,23,42,.10);
       box-shadow: var(--shadow);
       display:grid; place-items:center;
-      font-weight:900;
-      letter-spacing:.5px;
-      color:#0f172a;
+      font-weight:900; letter-spacing:.5px;
     }
     .title b{font-size:15px}
     .title small{display:block; margin-top:2px; color:var(--muted); font-size:12px}
 
     .btn{
       border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.85);
+      background:rgba(255,255,255,.90);
       color:var(--text);
       padding:10px 12px;
       border-radius:14px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size:13px;
       display:inline-flex; align-items:center; gap:8px;
       transition:.12s ease;
       box-shadow: 0 6px 16px rgba(2,6,23,.08);
       user-select:none;
+      white-space:nowrap;
     }
     .btn:hover{transform:translateY(-1px); background:#fff}
     .btn:active{transform:translateY(0)}
     .btn.primary{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
     .btn.info{border-color:rgba(2,132,199,.30); background:rgba(2,132,199,.10)}
+    .btn.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
     .btn.danger{border-color:rgba(225,29,72,.25); background:rgba(225,29,72,.08)}
 
     .card{
@@ -91,26 +90,28 @@
     .hd p{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35}
     .bd{padding:14px}
 
-    .kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
-    @media(max-width:900px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    .kpis{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px}
+    @media(max-width:980px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
     .kpi{
       border:1px solid rgba(15,23,42,.08);
       background: rgba(2,132,199,.04);
       border-radius: var(--r2);
       padding:12px;
+      min-height:74px;
     }
     .kpi small{color:var(--muted); font-weight:900; letter-spacing:.2px}
-    .kpi b{display:block; margin-top:6px; font-size:18px}
+    .kpi b{display:block; margin-top:6px; font-size:16px}
 
     .tabs{display:flex; gap:10px; flex-wrap:wrap}
     .tab{
       padding:10px 12px;
       border-radius:14px;
       border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.85);
+      background:rgba(255,255,255,.90);
       cursor:pointer;
       font-weight:900;
       font-size:13px;
+      white-space:nowrap;
     }
     .tab.active{border-color:rgba(2,132,199,.35); background:rgba(2,132,199,.10)}
 
@@ -132,6 +133,7 @@
       border-color: rgba(2,132,199,.45);
       box-shadow: 0 0 0 3px rgba(2,132,199,.12);
     }
+
     .row{display:grid; grid-template-columns:repeat(12,1fr); gap:10px; align-items:end}
     .field{grid-column:span 3; display:flex; flex-direction:column; gap:6px}
     .span2{grid-column:span 2}
@@ -140,6 +142,7 @@
     .span5{grid-column:span 5}
     .span6{grid-column:span 6}
     .span7{grid-column:span 7}
+    .span8{grid-column:span 8}
     .span12{grid-column:span 12}
 
     .table{
@@ -178,15 +181,19 @@
       background: rgba(15,23,42,.04);
       font-weight:900;
       font-size:11px;
+      white-space:nowrap;
     }
     .pill.ok{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
     .pill.low{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
     .pill.zero{border-color:rgba(225,29,72,.22); background:rgba(225,29,72,.08)}
+    .pill.info{border-color:rgba(2,132,199,.30); background:rgba(2,132,199,.10)}
+    .pill.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
+
     .hr{height:1px; background:var(--line); margin:12px 0}
 
     .toast{
       position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
-      background: rgba(255,255,255,.95);
+      background: rgba(255,255,255,.96);
       border:1px solid rgba(15,23,42,.14);
       padding:10px 12px;
       border-radius:999px;
@@ -194,10 +201,60 @@
       display:none;
       font-size:12px;
       font-weight:900;
-      z-index:40;
+      z-index:60;
     }
     .toast.show{display:block}
     .hide{display:none !important}
+
+    /* Modal simples */
+    .modal{
+      position:fixed; inset:0;
+      background: rgba(2,6,23,.40);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:16px;
+      z-index:70;
+      backdrop-filter: blur(6px);
+    }
+    .modal.show{display:flex}
+    .modal .box{
+      width:min(720px, 100%);
+      background:#fff;
+      border:1px solid rgba(15,23,42,.14);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .mh{
+      padding:14px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: linear-gradient(180deg, rgba(2,132,199,.06), transparent);
+    }
+    .modal .mh b{font-size:14px}
+    .x{
+      width:40px; height:40px;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.12);
+      background: rgba(255,255,255,.9);
+      cursor:pointer;
+      display:grid; place-items:center;
+      font-weight:900;
+    }
+    .modal .mb{padding:14px}
+    .modal .mf{
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+      background: rgba(2,132,199,.04);
+    }
+
+    .bigInput{
+      font-size:16px;
+      padding:12px 12px;
+      border-radius:16px;
+      font-weight:800;
+    }
   </style>
 </head>
 <body>
@@ -207,7 +264,7 @@
         <div class="logo">AT</div>
         <div class="title">
           <b>Ampertech — Estoque & Vendas</b>
-          <small>Eletrônicos, capas e acessórios • GitHub Pages • Tema claro</small>
+          <small>Venda intuitiva + Entrada/Saída fácil • Tema claro • Sem banco (localStorage)</small>
         </div>
       </div>
 
@@ -219,10 +276,12 @@
 
       <div style="display:flex; gap:10px; flex-wrap:wrap">
         <button class="btn info" id="btnBackup">Backup JSON</button>
+        <button class="btn" id="btnImport">Importar JSON</button>
         <button class="btn danger" id="btnReset">Limpar tudo</button>
       </div>
     </header>
 
+    <!-- KPIs -->
     <section class="card" style="margin-bottom:12px">
       <div class="bd">
         <div class="kpis">
@@ -230,6 +289,7 @@
           <div class="kpi"><small>Estoque total</small><b id="kQtd">0</b></div>
           <div class="kpi"><small>Valor estoque (custo médio)</small><b id="kValor">R$ 0,00</b></div>
           <div class="kpi"><small>Alertas (baixo/zerado)</small><b id="kAlertas">0</b></div>
+          <div class="kpi"><small>Vendas (hoje)</small><b id="kVendasHoje">R$ 0,00</b></div>
         </div>
       </div>
     </section>
@@ -238,8 +298,8 @@
     <section class="card" id="viewVenda">
       <div class="hd">
         <div>
-          <h2>Venda Rápida</h2>
-          <p>Selecione o item, informe quantidade e adicione no carrinho. Finalizar gera SAÍDA no estoque.</p>
+          <h2>Venda Rápida (intuitiva)</h2>
+          <p>Bipe/cole o <b>código</b> e aperte <b>Enter</b> para adicionar. Ou selecione no dropdown.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <button class="btn" id="btnLimparCarrinho">Limpar carrinho</button>
@@ -249,58 +309,68 @@
 
       <div class="bd">
         <div class="grid">
+          <!-- LADO ESQUERDO: ADICIONAR -->
           <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
             <div class="bd">
               <div class="row">
                 <div class="field span12">
-                  <label>Busca rápida (código/descrição) — opcional</label>
-                  <input id="vBusca" placeholder="Ex: CAPA IPHONE 13 / FONE / CABO..." />
+                  <label>Bipar/colar código (recomendado)</label>
+                  <input id="vCodigo" class="bigInput" placeholder="Ex: CAP-IPH13 (Enter para adicionar)" />
                 </div>
 
                 <div class="field span7">
-                  <label>Item</label>
+                  <label>Ou selecione o item</label>
                   <select id="vItem"></select>
                 </div>
 
                 <div class="field span2">
                   <label>Qtd</label>
-                  <input id="vQtd" type="number" step="1" placeholder="1" />
+                  <input id="vQtd" type="number" step="1" value="1" />
                 </div>
 
                 <div class="field span3">
-                  <label>Preço venda (R$) (opcional)</label>
-                  <input id="vPreco" type="number" step="0.01" placeholder="0,00" />
+                  <label>Preço de venda (R$) *</label>
+                  <input id="vPreco" type="number" step="0.01" placeholder="Ex: 49,90" />
                 </div>
 
                 <div class="field span12">
                   <label>Observação / cliente (opcional)</label>
-                  <input id="vObs" placeholder="Ex: Cliente João / Pix / Cartão..." />
+                  <input id="vObs" placeholder="Ex: Cliente João • Pix • Cartão..." />
                 </div>
               </div>
 
               <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center">
                 <button class="btn primary" id="btnAdd">Adicionar no carrinho</button>
-                <span class="muted" id="vInfoEstoque">—</span>
+                <span class="pill info" id="vInfoEstoque">—</span>
+              </div>
+
+              <div class="muted" style="margin-top:10px; font-size:12px">
+                * Agora a venda <b>grava preço de venda</b> e o histórico mostra <b>Faturamento</b> e <b>Custo (CMV)</b>.
               </div>
             </div>
           </div>
 
+          <!-- LADO DIREITO: CARRINHO -->
           <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
             <div class="hd">
               <div>
                 <h2>Carrinho</h2>
                 <p class="muted">Itens adicionados nesta venda.</p>
               </div>
-              <div class="pill ok" id="vTotal">Total: R$ 0,00</div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+                <div class="pill ok" id="vTotalVenda">Venda: R$ 0,00</div>
+                <div class="pill warn" id="vTotalCusto">Custo: R$ 0,00</div>
+              </div>
             </div>
-            <div class="bd" style="max-height:380px; overflow:auto">
+            <div class="bd" style="max-height:420px; overflow:auto">
               <table class="table" id="tblCarrinho">
                 <thead>
                   <tr>
                     <th>Item</th>
                     <th style="text-align:right">Qtd</th>
-                    <th style="text-align:right">Preço</th>
+                    <th style="text-align:right">Venda</th>
                     <th style="text-align:right">Total</th>
+                    <th style="text-align:right">Custo</th>
                     <th>Ação</th>
                   </tr>
                 </thead>
@@ -308,7 +378,7 @@
               </table>
 
               <div class="muted" style="margin-top:10px; font-size:12px">
-                Dica: para capas/acessórios, pode deixar “Preço venda” vazio e registrar só a saída.
+                Dica: se você usar leitor, só bipa o código e dá Enter (ele tenta adicionar 1 unidade).
               </div>
             </div>
           </div>
@@ -320,8 +390,8 @@
     <section class="card hide" id="viewItens" style="margin-top:12px">
       <div class="hd">
         <div>
-          <h2>Cadastro de Itens</h2>
-          <p>Cadastre produtos. Entradas atualizam custo médio.</p>
+          <h2>Itens (com Entrada/Saída fácil)</h2>
+          <p>Não precisa editar estoque “na mão”. Use <b>Entrada</b> e <b>Saída</b> por item.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="iBusca" placeholder="Buscar item..." style="min-width:220px" />
@@ -353,11 +423,11 @@
           </div>
 
           <div class="field span2">
-            <label>Custo (R$)</label>
+            <label>Custo (R$) (compra)</label>
             <input id="iCusto" type="number" step="0.01" placeholder="0,00" />
           </div>
           <div class="field span2">
-            <label>Estoque</label>
+            <label>Estoque inicial</label>
             <input id="iEst" type="number" step="1" placeholder="0" />
           </div>
           <div class="field span2">
@@ -366,20 +436,13 @@
           </div>
           <div class="field span6">
             <label>Obs</label>
-            <input id="iObs" placeholder="Ex: fornecedor, cor, modelo..." />
-          </div>
-
-          <div class="field span12">
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
-              <button class="btn info" id="btnEntradaRapida">Entrada rápida</button>
-              <span class="muted">Entrada rápida gera ENTRADA (atualiza custo médio).</span>
-            </div>
+            <input id="iObs" placeholder="Ex: modelo, cor, fornecedor..." />
           </div>
         </div>
 
         <div class="hr"></div>
 
-        <div style="overflow:auto; border-radius:16px; max-height:520px">
+        <div style="overflow:auto; border-radius:16px; max-height:560px">
           <table class="table" id="tblItens">
             <thead>
               <tr>
@@ -406,8 +469,8 @@
     <section class="card hide" id="viewHist" style="margin-top:12px">
       <div class="hd">
         <div>
-          <h2>Histórico</h2>
-          <p>Movimentações: ENTRADA / SAÍDA / VENDA.</p>
+          <h2>Histórico (Venda x Custo)</h2>
+          <p>Agora o histórico mostra <b>Venda (R$)</b>, <b>Custo (R$)</b> e <b>Lucro bruto</b> por movimentação de venda.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="hBusca" placeholder="Buscar no histórico..." style="min-width:220px" />
@@ -415,7 +478,7 @@
         </div>
       </div>
       <div class="bd">
-        <div style="overflow:auto; border-radius:16px; max-height:560px">
+        <div style="overflow:auto; border-radius:16px; max-height:620px">
           <table class="table" id="tblHist">
             <thead>
               <tr>
@@ -423,8 +486,10 @@
                 <th>Tipo</th>
                 <th>Item</th>
                 <th style="text-align:right">Qtd</th>
-                <th style="text-align:right">Preço</th>
-                <th style="text-align:right">Total</th>
+                <th style="text-align:right">Compra (R$)</th>
+                <th style="text-align:right">Venda (R$)</th>
+                <th style="text-align:right">Custo (R$)</th>
+                <th style="text-align:right">Lucro (R$)</th>
                 <th>Motivo</th>
                 <th>Obs</th>
               </tr>
@@ -437,13 +502,59 @@
 
   </div>
 
+  <!-- Modal Entrada/Saída por item -->
+  <div class="modal" id="modalMov">
+    <div class="box">
+      <div class="mh">
+        <div>
+          <b id="mTitle">Movimentação</b>
+          <div class="muted" style="font-size:12px; margin-top:3px" id="mSub">—</div>
+        </div>
+        <div class="x" id="mClose">✕</div>
+      </div>
+      <div class="mb">
+        <div class="row">
+          <div class="field span6">
+            <label>Tipo</label>
+            <select id="mTipo">
+              <option value="ENTRADA">ENTRADA</option>
+              <option value="SAIDA">SAÍDA</option>
+            </select>
+          </div>
+          <div class="field span3">
+            <label>Qtd</label>
+            <input id="mQtd" type="number" step="1" value="1" />
+          </div>
+          <div class="field span3" id="mPrecoBox">
+            <label>Preço compra (R$) (na ENTRADA)</label>
+            <input id="mPreco" type="number" step="0.01" placeholder="0,00" />
+          </div>
+          <div class="field span12">
+            <label>Motivo/Obs (opcional)</label>
+            <input id="mObs" placeholder="Ex: NF 123 • reposição • ajuste..." />
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="pill info" id="mPreview">—</div>
+      </div>
+      <div class="mf">
+        <button class="btn" id="mCancel">Cancelar</button>
+        <button class="btn primary" id="mSave">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast">OK</div>
+  <input type="file" id="fileImport" accept="application/json" style="display:none" />
 
 <script>
-  const LS_KEY = "ampertech_estoque_vendas_v1";
+  // =====================
+  // DB / Helpers
+  // =====================
+  const LS_KEY = "ampertech_estoque_vendas_v2";
   const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
   const num = (v)=>{ const n=Number(v); return Number.isFinite(n)?n:0; };
-  const fmt = (n)=> num(n).toLocaleString("pt-BR",{minimumFractionDigits:0, maximumFractionDigits:2});
   const nowISO = ()=> new Date().toISOString();
   const toLocal = (iso)=> new Date(iso).toLocaleString("pt-BR");
   const uid = ()=> Math.random().toString(16).slice(2) + Date.now().toString(16);
@@ -451,6 +562,7 @@
   let DB = loadDB();
   let editItemId = null;
   let CART = []; // {itemId, qty, salePrice}
+  let MODAL_ITEM_ID = null;
 
   function toast(msg){
     const t=document.getElementById("toast");
@@ -465,35 +577,18 @@
       const db=JSON.parse(raw);
       db.items ??= [];
       db.moves ??= [];
+      // migração básica: garantir campos
+      for(const it of db.items){
+        it.stock ??= 0;
+        it.avgCost ??= 0;
+        it.minStock ??= 0;
+      }
       return db;
     }catch{ return {items:[], moves:[]}; }
   }
   function saveDB(){ localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
   function esc(s){
     return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-  }
-
-  function applyMove(m){
-    const it = DB.items.find(x=>x.id===m.itemId);
-    if(!it) throw new Error("Item não encontrado.");
-    const q = num(m.qty);
-    if(q<=0) throw new Error("Qtd inválida.");
-
-    if(m.type==="ENTRADA"){
-      const p = num(m.price);
-      if(p<=0) throw new Error("Preço inválido na entrada.");
-      const est = num(it.stock);
-      const cm = num(it.avgCost);
-      const novoEst = est + q;
-      const novoCM = ((est*cm) + (q*p)) / novoEst;
-      it.stock = Math.round(novoEst);
-      it.avgCost = +novoCM.toFixed(6);
-      it.lastCost = +p.toFixed(6);
-    }else{
-      const est = num(it.stock);
-      if(q>est) throw new Error("Estoque insuficiente.");
-      it.stock = Math.round(est - q);
-    }
   }
 
   function itemValue(it){ return num(it.stock) * num(it.avgCost); }
@@ -504,7 +599,41 @@
     return `<span class="pill ok">OK</span>`;
   }
 
+  // =====================
+  // Regras de movimentação
+  // =====================
+  // Movimentação padrão:
+  // ENTRADA: usa priceBuy (m.priceBuy) para custo médio
+  // SAIDA: baixa estoque pelo custo médio (não altera CM)
+  //
+  // VENDA: é SAIDA + grava priceSell (m.priceSell) para faturamento
+  function applyMove(m){
+    const it = DB.items.find(x=>x.id===m.itemId);
+    if(!it) throw new Error("Item não encontrado.");
+
+    const q = Math.round(num(m.qty));
+    if(q<=0) throw new Error("Qtd inválida.");
+
+    if(m.type==="ENTRADA"){
+      const p = num(m.priceBuy);
+      if(p<=0) throw new Error("Preço de compra inválido na ENTRADA.");
+      const est = num(it.stock);
+      const cm = num(it.avgCost);
+      const novoEst = est + q;
+      const novoCM = ((est*cm) + (q*p)) / novoEst;
+      it.stock = Math.round(novoEst);
+      it.avgCost = +novoCM.toFixed(6);
+      it.lastCost = +p.toFixed(6);
+    } else { // SAIDA ou VENDA
+      const est = num(it.stock);
+      if(q>est) throw new Error("Estoque insuficiente.");
+      it.stock = Math.round(est - q);
+    }
+  }
+
+  // =====================
   // Tabs
+  // =====================
   const tabVenda = document.getElementById("tabVenda");
   const tabItens = document.getElementById("tabItens");
   const tabHist  = document.getElementById("tabHist");
@@ -523,38 +652,48 @@
   tabItens.onclick=()=>setTab("itens");
   tabHist.onclick=()=>setTab("hist");
 
+  // =====================
   // KPIs
+  // =====================
+  function vendasHojeTotal(){
+    const start = new Date(); start.setHours(0,0,0,0);
+    const startIso = start.toISOString();
+    return DB.moves
+      .filter(m => (m.at||"") >= startIso && m.type==="VENDA")
+      .reduce((a,m)=> a + (num(m.qty) * num(m.priceSell)), 0);
+  }
+
   function refreshKPIs(){
     document.getElementById("kItens").textContent = DB.items.length;
+
     const qtdTotal = DB.items.reduce((a,it)=>a+num(it.stock),0);
-    document.getElementById("kQtd").textContent = fmt(qtdTotal);
+    document.getElementById("kQtd").textContent = qtdTotal.toLocaleString("pt-BR");
+
     const vTotal = DB.items.reduce((a,it)=>a+itemValue(it),0);
     document.getElementById("kValor").textContent = money.format(vTotal);
+
     const alerts = DB.items.filter(it=>{
       const est=num(it.stock), min=num(it.minStock);
       return est<=0 || (min>0 && est<=min);
     }).length;
     document.getElementById("kAlertas").textContent = alerts;
+
+    document.getElementById("kVendasHoje").textContent = money.format(vendasHojeTotal());
   }
 
-  // Venda
-  const vBusca = document.getElementById("vBusca");
+  // =====================
+  // VENDA (intuitiva)
+  // =====================
+  const vCodigo = document.getElementById("vCodigo");
   const vItem  = document.getElementById("vItem");
   const vQtd   = document.getElementById("vQtd");
   const vPreco = document.getElementById("vPreco");
   const vObs   = document.getElementById("vObs");
   const vInfoEstoque = document.getElementById("vInfoEstoque");
 
-  function refreshVendaSelect(filterText=""){
+  function refreshVendaSelect(){
     vItem.innerHTML="";
-    const t = filterText.trim().toLowerCase();
-    const list = [...DB.items]
-      .filter(it=>{
-        if(!t) return true;
-        return (`${it.code} ${it.desc} ${it.category}`).toLowerCase().includes(t);
-      })
-      .sort((a,b)=>(a.code||"").localeCompare(b.code||""));
-
+    const list = [...DB.items].sort((a,b)=>(a.code||"").localeCompare(b.code||""));
     for(const it of list){
       const opt=document.createElement("option");
       opt.value=it.id;
@@ -571,30 +710,43 @@
       `Estoque: ${it.stock} • Custo médio: ${money.format(num(it.avgCost))} • Categoria: ${it.category||"—"}`;
   }
 
-  vBusca.addEventListener("input", ()=> refreshVendaSelect(vBusca.value));
   vItem.addEventListener("change", refreshVendaInfo);
 
-  function cartTotal(){
-    return CART.reduce((a,c)=> a + (num(c.qty)*num(c.salePrice)), 0);
+  function findItemByCode(code){
+    const c=(code||"").trim().toLowerCase();
+    if(!c) return null;
+    return DB.items.find(it => (it.code||"").trim().toLowerCase()===c) || null;
+  }
+
+  function cartTotals(){
+    const totalVenda = CART.reduce((a,c)=> a + (num(c.qty)*num(c.salePrice)), 0);
+    const totalCusto = CART.reduce((a,c)=>{
+      const it = DB.items.find(x=>x.id===c.itemId);
+      return a + (num(c.qty)*num(it?.avgCost));
+    }, 0);
+    return {totalVenda, totalCusto};
   }
 
   function refreshCart(){
     const tb=document.querySelector("#tblCarrinho tbody");
     tb.innerHTML="";
+
     if(CART.length===0){
       const tr=document.createElement("tr");
-      tr.innerHTML=`<td colspan="5" class="muted" style="padding:14px">Carrinho vazio.</td>`;
+      tr.innerHTML=`<td colspan="6" class="muted" style="padding:14px">Carrinho vazio.</td>`;
       tb.appendChild(tr);
-    }else{
+    } else {
       CART.forEach((c,idx)=>{
         const it=DB.items.find(x=>x.id===c.itemId);
         const total = num(c.qty)*num(c.salePrice);
+        const custo = num(c.qty)*num(it?.avgCost);
         const tr=document.createElement("tr");
         tr.innerHTML=`
           <td><b>${esc(it?.code||"")}</b> <span class="muted">— ${esc(it?.desc||"")}</span></td>
-          <td style="text-align:right"><b>${fmt(c.qty)}</b></td>
+          <td style="text-align:right"><b>${num(c.qty).toLocaleString("pt-BR")}</b></td>
           <td style="text-align:right">${money.format(num(c.salePrice))}</td>
           <td style="text-align:right"><b>${money.format(total)}</b></td>
+          <td style="text-align:right">${money.format(custo)}</td>
           <td><button class="btn danger" data-rm="${idx}">Remover</button></td>
         `;
         tb.appendChild(tr);
@@ -607,34 +759,73 @@
         };
       });
     }
-    document.getElementById("vTotal").textContent = `Total: ${money.format(cartTotal())}`;
+
+    const {totalVenda, totalCusto} = cartTotals();
+    document.getElementById("vTotalVenda").textContent = `Venda: ${money.format(totalVenda)}`;
+    document.getElementById("vTotalCusto").textContent = `Custo: ${money.format(totalCusto)}`;
+  }
+
+  function addToCart(itemId, qty, salePrice){
+    const it = DB.items.find(x=>x.id===itemId);
+    if(!it) { toast("Item não encontrado."); return; }
+
+    const q = Math.round(num(qty));
+    if(!(q>0)){ toast("Quantidade inválida."); return; }
+    if(q>num(it.stock)){ toast("Estoque insuficiente."); return; }
+
+    const sp = num(salePrice);
+    if(!(sp>0)){ toast("Informe o preço de venda (R$)."); return; }
+
+    const existing = CART.find(x=>x.itemId===it.id && num(x.salePrice)===sp);
+    if(existing){
+      existing.qty += q;
+    }else{
+      CART.push({itemId: it.id, qty: q, salePrice: sp});
+    }
+
+    refreshCart();
+    toast("Adicionado no carrinho.");
   }
 
   document.getElementById("btnAdd").onclick=()=>{
     if(DB.items.length===0){ toast("Cadastre um item primeiro."); setTab("itens"); return; }
     const it = DB.items.find(x=>x.id===vItem.value);
     if(!it){ toast("Selecione um item."); return; }
+    addToCart(it.id, vQtd.value||1, vPreco.value);
+    vQtd.value = 1;
+    vPreco.value = "";
+    vCodigo.value = "";
+    vCodigo.focus();
+    refreshVendaSelect();
+  };
 
-    const q = Math.round(num(vQtd.value||1));
-    if(!(q>0)){ toast("Quantidade inválida."); return; }
-    if(q>num(it.stock)){ toast("Estoque insuficiente."); return; }
+  // Enter no campo código: tenta adicionar 1 unidade
+  vCodigo.addEventListener("keydown", (e)=>{
+    if(e.key!=="Enter") return;
+    e.preventDefault();
+    if(DB.items.length===0){ toast("Cadastre itens antes."); setTab("itens"); return; }
 
-    const sp = num(vPreco.value || 0);
-
-    const existing = CART.find(x=>x.itemId===it.id);
-    if(existing){
-      existing.qty += q;
-      if(vPreco.value!=="" ) existing.salePrice = sp;
-    }else{
-      CART.push({itemId: it.id, qty: q, salePrice: sp});
+    const it = findItemByCode(vCodigo.value);
+    if(!it){
+      toast("Código não encontrado.");
+      return;
     }
 
-    vQtd.value="1";
-    vPreco.value="";
-    refreshVendaSelect(vBusca.value);
-    refreshCart();
-    toast("Adicionado no carrinho.");
-  };
+    // seleciona no dropdown
+    vItem.value = it.id;
+    refreshVendaInfo();
+
+    // se tiver preço preenchido, já adiciona
+    if(num(vPreco.value)>0){
+      addToCart(it.id, 1, vPreco.value);
+      vPreco.value = "";
+      vCodigo.value = "";
+      vCodigo.focus();
+    }else{
+      toast("Agora digite o preço de venda e clique em Adicionar.");
+      vPreco.focus();
+    }
+  });
 
   document.getElementById("btnLimparCarrinho").onclick=()=>{
     if(!confirm("Limpar carrinho?")) return;
@@ -645,10 +836,12 @@
   document.getElementById("btnFinalizar").onclick=()=>{
     if(CART.length===0){ toast("Carrinho vazio."); return; }
 
+    // valida estoque
     for(const c of CART){
       const it = DB.items.find(x=>x.id===c.itemId);
       if(!it) { toast("Item não encontrado."); return; }
       if(num(c.qty)>num(it.stock)){ toast(`Estoque insuficiente: ${it.code}`); return; }
+      if(!(num(c.salePrice)>0)){ toast(`Preço de venda inválido: ${it.code}`); return; }
     }
 
     const obsVenda = (vObs.value||"").trim();
@@ -660,12 +853,13 @@
       const move = {
         id: uid(),
         at: nowISO(),
-        type: "SAIDA",
+        type: "VENDA",          // <- agora é VENDA
         itemId: it.id,
         qty: Math.round(num(c.qty)),
-        price: 0,
+        priceBuy: 0,            // não usado na venda
+        priceSell: num(c.salePrice), // <- valor de venda GRAVADO
         reason: "VENDA",
-        obs: `${vendaId}${obsVenda ? " • " + obsVenda : ""}${(c.salePrice>0) ? " • PreçoVenda: "+c.salePrice.toFixed(2) : ""}`
+        obs: `${vendaId}${obsVenda ? " • " + obsVenda : ""}`
       };
 
       applyMove(move);
@@ -675,12 +869,17 @@
     saveDB();
     CART=[];
     vObs.value="";
+    vPreco.value="";
+    vCodigo.value="";
     refreshAll();
     refreshCart();
     toast("Venda finalizada!");
+    vCodigo.focus();
   };
 
-  // Itens
+  // =====================
+  // ITENS (cadastro) + Movimentação fácil
+  // =====================
   const iBusca=document.getElementById("iBusca");
   function clearItemForm(){
     editItemId=null;
@@ -720,7 +919,13 @@
 
       it.code=code; it.desc=desc; it.category=cat; it.unit=unit; it.minStock=min; it.obs=obs;
 
-      const old = num(it.stock);
+      // custo médio inicial se não tiver
+      if(num(it.avgCost)<=0 && cost>0) it.avgCost = +cost.toFixed(6);
+      if(cost>0) it.lastCost = +cost.toFixed(6);
+
+      // ajuste apenas do "estoque inicial" se usuário colocou diferente:
+      // (geramos ajuste via ENTRADA/SAÍDA automático para manter histórico)
+      const old = Math.round(num(it.stock));
       const diff = est - old;
       if(diff!==0){
         const m = {
@@ -729,28 +934,25 @@
           type: diff>0 ? "ENTRADA" : "SAIDA",
           itemId: it.id,
           qty: Math.abs(diff),
-          price: diff>0 ? (cost>0?cost:num(it.avgCost)||1) : 0,
-          reason: "Ajuste",
+          priceBuy: diff>0 ? (cost>0?cost:num(it.avgCost)||1) : 0,
+          priceSell: 0,
+          reason: "AJUSTE",
           obs: "Ajuste pelo cadastro"
         };
-        it.stock = Math.round(old);
-        if(m.type==="ENTRADA"){
-          if(cost>0 && num(it.avgCost)<=0) it.avgCost = cost;
-          applyMove(m); DB.moves.push(m);
-        }else{
-          applyMove(m); DB.moves.push(m);
+        it.stock = old;
+        try{
+          applyMove(m);
+          DB.moves.push(m);
+        }catch(e){
+          it.stock = est;
         }
-      }else{
-        it.stock = Math.round(est);
       }
-
-      if(num(it.avgCost)<=0 && cost>0) it.avgCost = +cost.toFixed(6);
-      it.lastCost = +cost.toFixed(6);
 
       saveDB(); refreshAll(); toast("Item atualizado.");
       return;
     }
 
+    // novo item
     const it = {
       id: uid(),
       code, desc, category:cat, unit,
@@ -762,28 +964,15 @@
     };
     DB.items.push(it);
 
+    // estoque inicial vira ENTRADA se tiver custo
     if(est>0 && cost>0){
-      const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: est, price: cost, reason:"Estoque inicial", obs };
+      const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: est, priceBuy: cost, priceSell: 0, reason:"ESTOQUE INICIAL", obs };
       applyMove(m); DB.moves.push(m);
     }else{
-      it.stock = Math.round(est);
+      it.stock = est;
     }
 
     saveDB(); refreshAll(); toast("Item salvo."); clearItemForm();
-  };
-
-  document.getElementById("btnEntradaRapida").onclick=()=>{
-    if(!editItemId){ toast("Carregue um item para editar."); return; }
-    const it = DB.items.find(x=>x.id===editItemId);
-    if(!it) return;
-    const qtd = Number(prompt("Quantidade de ENTRADA:", "1"));
-    const preco = Number(prompt("Preço de COMPRA unitário (R$):", (num(it.lastCost)||0).toFixed(2)));
-    if(!(qtd>0) || !(preco>0)) { toast("Entrada cancelada."); return; }
-    const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: Math.round(qtd), price: preco, reason:"Entrada", obs:"Entrada rápida" };
-    try{
-      applyMove(m); DB.moves.push(m);
-      saveDB(); refreshAll(); toast("Entrada registrada.");
-    }catch(e){ toast(e.message||"Erro na entrada."); }
   };
 
   function refreshItensTable(){
@@ -811,14 +1000,18 @@
         <td>${esc(it.desc)}</td>
         <td class="muted">${esc(it.category||"—")}</td>
         <td class="muted">${esc(it.unit||"UN")}</td>
-        <td style="text-align:right"><b>${fmt(it.stock)}</b></td>
-        <td style="text-align:right" class="muted">${fmt(it.minStock)}</td>
+        <td style="text-align:right"><b>${Math.round(num(it.stock)).toLocaleString("pt-BR")}</b></td>
+        <td style="text-align:right" class="muted">${Math.round(num(it.minStock)).toLocaleString("pt-BR")}</td>
         <td style="text-align:right">${money.format(num(it.avgCost))}</td>
         <td style="text-align:right"><b>${money.format(itemValue(it))}</b></td>
         <td>${status(it)}</td>
         <td>
-          <button class="btn" data-edit="${it.id}">Editar</button>
-          <button class="btn danger" data-del="${it.id}">Excluir</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="btn info" data-ent="${it.id}">Entrada</button>
+            <button class="btn warn" data-sai="${it.id}">Saída</button>
+            <button class="btn" data-edit="${it.id}">Editar</button>
+            <button class="btn danger" data-del="${it.id}">Excluir</button>
+          </div>
         </td>
       `;
       tb.appendChild(tr);
@@ -853,15 +1046,125 @@
         saveDB(); refreshAll(); toast("Excluído.");
       };
     });
+
+    tb.querySelectorAll("[data-ent]").forEach(b=>{
+      b.onclick=()=> openMovModal(b.dataset.ent, "ENTRADA");
+    });
+    tb.querySelectorAll("[data-sai]").forEach(b=>{
+      b.onclick=()=> openMovModal(b.dataset.sai, "SAIDA");
+    });
   }
   iBusca.addEventListener("input", refreshItensTable);
 
-  // Histórico
+  // =====================
+  // Modal Entrada/Saída
+  // =====================
+  const modalMov = document.getElementById("modalMov");
+  const mTitle = document.getElementById("mTitle");
+  const mSub = document.getElementById("mSub");
+  const mTipo = document.getElementById("mTipo");
+  const mQtd = document.getElementById("mQtd");
+  const mPreco = document.getElementById("mPreco");
+  const mPrecoBox = document.getElementById("mPrecoBox");
+  const mObs = document.getElementById("mObs");
+  const mPreview = document.getElementById("mPreview");
+
+  function openMovModal(itemId, tipo){
+    const it = DB.items.find(x=>x.id===itemId);
+    if(!it) return;
+    MODAL_ITEM_ID = itemId;
+
+    mTipo.value = tipo;
+    mQtd.value = 1;
+    mPreco.value = (num(it.lastCost||it.avgCost)||0).toFixed(2);
+    mObs.value = "";
+
+    mTitle.textContent = `Movimentação — ${it.code}`;
+    mSub.textContent = `${it.desc} • Estoque: ${Math.round(num(it.stock))} • CM: ${money.format(num(it.avgCost))}`;
+
+    updateMovPreview();
+    modalMov.classList.add("show");
+    mQtd.focus();
+  }
+
+  function closeMovModal(){
+    modalMov.classList.remove("show");
+    MODAL_ITEM_ID = null;
+  }
+
+  function updateMovPreview(){
+    const it = DB.items.find(x=>x.id===MODAL_ITEM_ID);
+    if(!it){ mPreview.textContent="—"; return; }
+
+    const tipo = mTipo.value;
+    const q = Math.round(num(mQtd.value));
+    const est = Math.round(num(it.stock));
+
+    if(tipo==="ENTRADA"){
+      mPrecoBox.style.display="";
+      const p = num(mPreco.value);
+      const novoEst = est + q;
+      mPreview.textContent = `Vai ENTRAR ${q} un • Preço compra ${money.format(p)} • Estoque após: ${novoEst}`;
+    }else{
+      mPrecoBox.style.display="none";
+      const novoEst = est - q;
+      mPreview.textContent = `Vai SAIR ${q} un • Estoque após: ${novoEst < 0 ? "INSUFICIENTE" : novoEst}`;
+    }
+  }
+
+  document.getElementById("mClose").onclick = closeMovModal;
+  document.getElementById("mCancel").onclick = closeMovModal;
+  modalMov.addEventListener("click", (e)=>{ if(e.target===modalMov) closeMovModal(); });
+
+  [mTipo,mQtd,mPreco].forEach(el=>{
+    el.addEventListener("input", updateMovPreview);
+    el.addEventListener("change", updateMovPreview);
+  });
+
+  document.getElementById("mSave").onclick = ()=>{
+    const it = DB.items.find(x=>x.id===MODAL_ITEM_ID);
+    if(!it) return;
+
+    const tipo = mTipo.value;
+    const q = Math.round(num(mQtd.value));
+    if(!(q>0)){ toast("Qtd inválida."); return; }
+
+    const obs = (mObs.value||"").trim();
+
+    const move = {
+      id: uid(),
+      at: nowISO(),
+      type: tipo,
+      itemId: it.id,
+      qty: q,
+      priceBuy: (tipo==="ENTRADA") ? num(mPreco.value) : 0,
+      priceSell: 0,
+      reason: (tipo==="ENTRADA") ? "ENTRADA" : "SAIDA",
+      obs
+    };
+
+    try{
+      applyMove(move);
+      DB.moves.push(move);
+      saveDB();
+      refreshAll();
+      closeMovModal();
+      toast("Movimentação salva.");
+    }catch(e){
+      toast(e.message || "Erro ao salvar.");
+    }
+  };
+
+  // =====================
+  // Histórico (Venda x Custo)
+  // =====================
   const hBusca=document.getElementById("hBusca");
+
   function refreshHist(){
     const tb=document.querySelector("#tblHist tbody");
     tb.innerHTML="";
     const q=(hBusca.value||"").trim().toLowerCase();
+
     const moves=[...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||""))
       .filter(m=>{
         if(!q) return true;
@@ -872,28 +1175,38 @@
 
     if(moves.length===0){
       const tr=document.createElement("tr");
-      tr.innerHTML=`<td colspan="8" class="muted" style="padding:14px">Sem movimentações.</td>`;
+      tr.innerHTML=`<td colspan="10" class="muted" style="padding:14px">Sem movimentações.</td>`;
       tb.appendChild(tr);
       return;
     }
 
     for(const m of moves){
       const it=DB.items.find(x=>x.id===m.itemId);
-      const total = (m.type==="ENTRADA")
-        ? (num(m.qty)*num(m.price))
-        : (num(m.qty)*num(it?.avgCost));
-      const tipoPill = (m.type==="ENTRADA")
+
+      const qty = Math.round(num(m.qty));
+      const buyUnit = (m.type==="ENTRADA") ? num(m.priceBuy) : 0;
+      const sellUnit = (m.type==="VENDA") ? num(m.priceSell) : 0;
+
+      const custo = (m.type==="ENTRADA") ? (qty*buyUnit) : (qty * num(it?.avgCost));
+      const venda = (m.type==="VENDA") ? (qty*sellUnit) : 0;
+      const lucro = (m.type==="VENDA") ? (venda - (qty * num(it?.avgCost))) : 0;
+
+      const tipoPill = m.type==="ENTRADA"
         ? `<span class="pill ok">ENTRADA</span>`
-        : `<span class="pill low">SAÍDA</span>`;
+        : (m.type==="VENDA"
+            ? `<span class="pill info">VENDA</span>`
+            : `<span class="pill warn">SAÍDA</span>`);
 
       const tr=document.createElement("tr");
       tr.innerHTML=`
         <td class="muted">${toLocal(m.at)}</td>
         <td>${tipoPill}</td>
         <td><b>${esc(it?.code||"—")}</b> <span class="muted">— ${esc(it?.desc||"—")}</span></td>
-        <td style="text-align:right"><b>${fmt(m.qty)}</b></td>
-        <td style="text-align:right">${m.type==="ENTRADA" ? money.format(num(m.price)) : "<span class='muted'>—</span>"}</td>
-        <td style="text-align:right"><b>${money.format(total)}</b></td>
+        <td style="text-align:right"><b>${qty.toLocaleString("pt-BR")}</b></td>
+        <td style="text-align:right">${m.type==="ENTRADA" ? money.format(buyUnit) : "<span class='muted'>—</span>"}</td>
+        <td style="text-align:right">${m.type==="VENDA" ? money.format(sellUnit) : "<span class='muted'>—</span>"}</td>
+        <td style="text-align:right">${money.format(custo)}</td>
+        <td style="text-align:right">${m.type==="VENDA" ? `<b>${money.format(lucro)}</b>` : "<span class='muted'>—</span>"}</td>
         <td>${esc(m.reason||"—")}</td>
         <td class="muted">${esc(m.obs||"")}</td>
       `;
@@ -902,9 +1215,11 @@
   }
   hBusca.addEventListener("input", refreshHist);
 
-  // Backup / CSV / Reset
+  // =====================
+  // CSV / Backup / Import / Reset
+  // =====================
   document.getElementById("btnBackup").onclick=()=>{
-    const payload = {version:1, exportedAt: nowISO(), items: DB.items, moves: DB.moves};
+    const payload = {version:2, exportedAt: nowISO(), items: DB.items, moves: DB.moves};
     const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
     const url = URL.createObjectURL(blob);
     const a=document.createElement("a");
@@ -914,13 +1229,51 @@
     toast("Backup baixado.");
   };
 
+  const fileImport = document.getElementById("fileImport");
+  document.getElementById("btnImport").onclick=()=> fileImport.click();
+  fileImport.addEventListener("change",(e)=>{
+    const f = e.target.files?.[0];
+    e.target.value="";
+    if(!f) return;
+    const fr = new FileReader();
+    fr.onload=()=>{
+      try{
+        const payload = JSON.parse(fr.result);
+        if(!payload || !Array.isArray(payload.items) || !Array.isArray(payload.moves)){
+          throw new Error("JSON inválido.");
+        }
+        if(!confirm("Importar vai SUBSTITUIR seus dados atuais. Continuar?")) return;
+        DB = { items: payload.items, moves: payload.moves };
+        saveDB();
+        CART=[];
+        refreshAll();
+        refreshCart();
+        toast("Importado com sucesso.");
+      }catch(err){
+        toast(err.message || "Falha ao importar.");
+      }
+    };
+    fr.readAsText(f,"utf-8");
+  });
+
   document.getElementById("btnCsv").onclick=()=>{
-    const header=["data_hora","tipo","codigo","descricao","qtd","preco","total","motivo","obs"];
+    const header=["data_hora","tipo","codigo","descricao","qtd","preco_compra_unit","preco_venda_unit","total_custo","total_venda","lucro","motivo","obs"];
     const rows = [...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||"")).map(m=>{
       const it=DB.items.find(x=>x.id===m.itemId);
-      const total=(m.type==="ENTRADA") ? (num(m.qty)*num(m.price)) : (num(m.qty)*num(it?.avgCost));
-      return [toLocal(m.at), m.type, it?.code||"", it?.desc||"", num(m.qty), (m.type==="ENTRADA")? num(m.price) : "", total, m.reason||"", m.obs||""];
+      const qty = Math.round(num(m.qty));
+      const buyUnit = (m.type==="ENTRADA") ? num(m.priceBuy) : "";
+      const sellUnit = (m.type==="VENDA") ? num(m.priceSell) : "";
+
+      const totalCusto = (m.type==="ENTRADA") ? (qty*num(m.priceBuy)) : (qty*num(it?.avgCost));
+      const totalVenda = (m.type==="VENDA") ? (qty*num(m.priceSell)) : "";
+      const lucro = (m.type==="VENDA") ? ((qty*num(m.priceSell)) - (qty*num(it?.avgCost))) : "";
+
+      return [
+        toLocal(m.at), m.type, it?.code||"", it?.desc||"",
+        qty, buyUnit, sellUnit, totalCusto, totalVenda, lucro, m.reason||"", m.obs||""
+      ];
     });
+
     const escCSV = (v)=>{
       const s=String(v??"");
       return /[",\n;]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
@@ -946,12 +1299,14 @@
     toast("Dados apagados.");
   };
 
+  // =====================
   // Refresh geral
+  // =====================
   function refreshAll(){
     refreshKPIs();
     refreshItensTable();
     refreshHist();
-    refreshVendaSelect(vBusca.value);
+    refreshVendaSelect();
     refreshVendaInfo();
   }
 
@@ -960,6 +1315,7 @@
   refreshAll();
   refreshCart();
   setTab("venda");
+  vCodigo.focus();
 </script>
 </body>
 </html>
