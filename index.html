@@ -4,21 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ampertech — Estoque & Vendas</title>
-  <meta name="theme-color" content="#f5f7fb" />
+  <meta name="theme-color" content="#0b5ed7" />
   <style>
     :root{
-      --bg:#f5f7fb;
+      --bg:#eef3ff;
       --card:#ffffff;
-      --text:#0f172a;
-      --muted:#64748b;
-      --line:rgba(15,23,42,.12);
+      --text:#0b1220;
+      --muted:#5b6b85;
+      --line:rgba(11,18,32,.12);
 
       --ok:#16a34a;
-      --info:#0284c7;
+      --info:#0b5ed7;   /* mais forte */
       --warn:#d97706;
       --danger:#e11d48;
 
-      --shadow: 0 10px 28px rgba(2,6,23,.10);
+      --shadow: 0 12px 30px rgba(2,6,23,.14);
       --r:18px;
       --r2:14px;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -29,52 +29,55 @@
       font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 10% 0%, rgba(2,132,199,.10), transparent 55%),
-        radial-gradient(1000px 500px at 100% 0%, rgba(22,163,74,.10), transparent 55%),
+        radial-gradient(1100px 560px at 20% 0%, rgba(11,94,215,.22), transparent 55%),
+        radial-gradient(900px 520px at 100% 0%, rgba(22,163,74,.16), transparent 55%),
+        linear-gradient(180deg, rgba(11,94,215,.08), transparent 40%),
         var(--bg);
     }
     .wrap{max-width:1150px; margin:0 auto; padding:16px 12px 90px}
+
     header{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       padding:8px 4px 14px; flex-wrap:wrap;
     }
     .brand{display:flex; gap:10px; align-items:center}
     .logo{
-      width:44px; height:44px; border-radius:14px;
-      background: linear-gradient(135deg, rgba(2,132,199,.18), rgba(22,163,74,.16));
-      border:1px solid rgba(15,23,42,.10);
+      width:46px; height:46px; border-radius:16px;
+      background: linear-gradient(135deg, rgba(11,94,215,.35), rgba(22,163,74,.22));
+      border:1px solid rgba(255,255,255,.55);
       box-shadow: var(--shadow);
       display:grid; place-items:center;
-      font-weight:900; letter-spacing:.5px;
+      font-weight:950; letter-spacing:.5px;
+      color:#081225;
     }
     .title b{font-size:15px}
     .title small{display:block; margin-top:2px; color:var(--muted); font-size:12px}
 
     .btn{
-      border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.90);
+      border:1px solid rgba(11,18,32,.12);
+      background:rgba(255,255,255,.92);
       color:var(--text);
       padding:10px 12px;
       border-radius:14px;
       cursor:pointer;
-      font-weight:900;
+      font-weight:950;
       font-size:13px;
       display:inline-flex; align-items:center; gap:8px;
       transition:.12s ease;
-      box-shadow: 0 6px 16px rgba(2,6,23,.08);
+      box-shadow: 0 8px 18px rgba(2,6,23,.10);
       user-select:none;
       white-space:nowrap;
     }
     .btn:hover{transform:translateY(-1px); background:#fff}
     .btn:active{transform:translateY(0)}
-    .btn.primary{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
-    .btn.info{border-color:rgba(2,132,199,.30); background:rgba(2,132,199,.10)}
-    .btn.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
-    .btn.danger{border-color:rgba(225,29,72,.25); background:rgba(225,29,72,.08)}
+    .btn.primary{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.12)}
+    .btn.info{border-color:rgba(11,94,215,.35); background:rgba(11,94,215,.12)}
+    .btn.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.12)}
+    .btn.danger{border-color:rgba(225,29,72,.25); background:rgba(225,29,72,.10)}
 
     .card{
       background: var(--card);
-      border:1px solid rgba(15,23,42,.10);
+      border:1px solid rgba(11,18,32,.10);
       border-radius: var(--r);
       box-shadow: var(--shadow);
       overflow:hidden;
@@ -84,45 +87,38 @@
       border-bottom:1px solid var(--line);
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       flex-wrap:wrap;
-      background: linear-gradient(180deg, rgba(2,132,199,.06), transparent);
+      background:
+        radial-gradient(900px 280px at 0% 0%, rgba(11,94,215,.18), transparent 55%),
+        linear-gradient(180deg, rgba(11,94,215,.10), transparent);
     }
     .hd h2{margin:0; font-size:14px}
     .hd p{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35}
     .bd{padding:14px}
 
-    .kpis{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px}
-    @media(max-width:980px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
-    .kpi{
-      border:1px solid rgba(15,23,42,.08);
-      background: rgba(2,132,199,.04);
-      border-radius: var(--r2);
-      padding:12px;
-      min-height:74px;
-    }
-    .kpi small{color:var(--muted); font-weight:900; letter-spacing:.2px}
-    .kpi b{display:block; margin-top:6px; font-size:16px}
-
     .tabs{display:flex; gap:10px; flex-wrap:wrap}
     .tab{
       padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.90);
+      border:1px solid rgba(11,18,32,.12);
+      background:rgba(255,255,255,.92);
       cursor:pointer;
-      font-weight:900;
+      font-weight:950;
       font-size:13px;
       white-space:nowrap;
     }
-    .tab.active{border-color:rgba(2,132,199,.35); background:rgba(2,132,199,.10)}
+    .tab.active{
+      border-color:rgba(11,94,215,.55);
+      background:rgba(11,94,215,.14);
+    }
 
     .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:12px}
     @media(max-width:980px){ .grid{grid-template-columns:1fr} }
 
-    label{font-size:11px; color:var(--muted); font-weight:900; letter-spacing:.2px}
+    label{font-size:11px; color:var(--muted); font-weight:950; letter-spacing:.2px}
     input, select{
       width:100%;
       border-radius:14px;
-      border:1px solid rgba(15,23,42,.12);
+      border:1px solid rgba(11,18,32,.12);
       background:#fff;
       color:var(--text);
       padding:10px 11px;
@@ -130,8 +126,8 @@
       outline:none;
     }
     input:focus, select:focus{
-      border-color: rgba(2,132,199,.45);
-      box-shadow: 0 0 0 3px rgba(2,132,199,.12);
+      border-color: rgba(11,94,215,.55);
+      box-shadow: 0 0 0 3px rgba(11,94,215,.18);
     }
 
     .row{display:grid; grid-template-columns:repeat(12,1fr); gap:10px; align-items:end}
@@ -142,14 +138,13 @@
     .span5{grid-column:span 5}
     .span6{grid-column:span 6}
     .span7{grid-column:span 7}
-    .span8{grid-column:span 8}
     .span12{grid-column:span 12}
 
     .table{
       width:100%;
       border-collapse:separate;
       border-spacing:0;
-      border:1px solid rgba(15,23,42,.10);
+      border:1px solid rgba(11,18,32,.10);
       border-radius:16px;
       overflow:hidden;
       background: #fff;
@@ -157,7 +152,7 @@
     .table th,.table td{
       padding:10px;
       font-size:12px;
-      border-bottom:1px solid rgba(15,23,42,.08);
+      border-bottom:1px solid rgba(11,18,32,.08);
       text-align:left;
       white-space:nowrap;
       vertical-align:middle;
@@ -165,51 +160,50 @@
     .table th{
       font-size:11px;
       color:var(--muted);
-      font-weight:900;
-      background: rgba(2,132,199,.06);
+      font-weight:950;
+      background: rgba(11,94,215,.10);
       position:sticky; top:0;
       z-index:1;
     }
-    .table tr:hover td{background: rgba(2,132,199,.04)}
+    .table tr:hover td{background: rgba(11,94,215,.06)}
     .muted{color:var(--muted)}
 
     .pill{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(15,23,42,.12);
-      background: rgba(15,23,42,.04);
-      font-weight:900;
+      border:1px solid rgba(11,18,32,.12);
+      background: rgba(11,18,32,.04);
+      font-weight:950;
       font-size:11px;
       white-space:nowrap;
     }
-    .pill.ok{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
-    .pill.low{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
-    .pill.zero{border-color:rgba(225,29,72,.22); background:rgba(225,29,72,.08)}
-    .pill.info{border-color:rgba(2,132,199,.30); background:rgba(2,132,199,.10)}
-    .pill.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
+    .pill.ok{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.12)}
+    .pill.low{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.12)}
+    .pill.zero{border-color:rgba(225,29,72,.22); background:rgba(225,29,72,.10)}
+    .pill.info{border-color:rgba(11,94,215,.35); background:rgba(11,94,215,.14)}
+    .pill.warn{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.12)}
 
     .hr{height:1px; background:var(--line); margin:12px 0}
 
     .toast{
       position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
       background: rgba(255,255,255,.96);
-      border:1px solid rgba(15,23,42,.14);
+      border:1px solid rgba(11,18,32,.14);
       padding:10px 12px;
       border-radius:999px;
       box-shadow: var(--shadow);
       display:none;
       font-size:12px;
-      font-weight:900;
+      font-weight:950;
       z-index:60;
     }
     .toast.show{display:block}
     .hide{display:none !important}
 
-    /* Modal simples */
     .modal{
       position:fixed; inset:0;
-      background: rgba(2,6,23,.40);
+      background: rgba(2,6,23,.42);
       display:none;
       align-items:center; justify-content:center;
       padding:16px;
@@ -220,7 +214,7 @@
     .modal .box{
       width:min(720px, 100%);
       background:#fff;
-      border:1px solid rgba(15,23,42,.14);
+      border:1px solid rgba(11,18,32,.14);
       border-radius: 20px;
       box-shadow: var(--shadow);
       overflow:hidden;
@@ -229,32 +223,33 @@
       padding:14px;
       border-bottom:1px solid var(--line);
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background: linear-gradient(180deg, rgba(2,132,199,.06), transparent);
+      background: linear-gradient(180deg, rgba(11,94,215,.14), transparent);
     }
     .modal .mh b{font-size:14px}
     .x{
       width:40px; height:40px;
       border-radius:14px;
-      border:1px solid rgba(15,23,42,.12);
+      border:1px solid rgba(11,18,32,.12);
       background: rgba(255,255,255,.9);
       cursor:pointer;
       display:grid; place-items:center;
-      font-weight:900;
+      font-weight:950;
     }
     .modal .mb{padding:14px}
     .modal .mf{
       padding:12px 14px;
       border-top:1px solid var(--line);
       display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
-      background: rgba(2,132,199,.04);
+      background: rgba(11,94,215,.08);
     }
 
     .bigInput{
       font-size:16px;
       padding:12px 12px;
       border-radius:16px;
-      font-weight:800;
+      font-weight:900;
     }
+    .hint{font-size:12px; color:var(--muted); margin-top:6px}
   </style>
 </head>
 <body>
@@ -264,7 +259,7 @@
         <div class="logo">AT</div>
         <div class="title">
           <b>Ampertech — Estoque & Vendas</b>
-          <small>Venda intuitiva + Entrada/Saída fácil • Tema claro • Sem banco (localStorage)</small>
+          <small>Cadastro com preço sugerido • Venda com sugestão automática</small>
         </div>
       </div>
 
@@ -275,31 +270,16 @@
       </div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap">
-        <button class="btn info" id="btnBackup">Backup JSON</button>
-        <button class="btn" id="btnImport">Importar JSON</button>
         <button class="btn danger" id="btnReset">Limpar tudo</button>
       </div>
     </header>
-
-    <!-- KPIs -->
-    <section class="card" style="margin-bottom:12px">
-      <div class="bd">
-        <div class="kpis">
-          <div class="kpi"><small>Itens</small><b id="kItens">0</b></div>
-          <div class="kpi"><small>Estoque total</small><b id="kQtd">0</b></div>
-          <div class="kpi"><small>Valor estoque (custo médio)</small><b id="kValor">R$ 0,00</b></div>
-          <div class="kpi"><small>Alertas (baixo/zerado)</small><b id="kAlertas">0</b></div>
-          <div class="kpi"><small>Vendas (hoje)</small><b id="kVendasHoje">R$ 0,00</b></div>
-        </div>
-      </div>
-    </section>
 
     <!-- VENDA -->
     <section class="card" id="viewVenda">
       <div class="hd">
         <div>
-          <h2>Venda Rápida (intuitiva)</h2>
-          <p>Bipe/cole o <b>código</b> e aperte <b>Enter</b> para adicionar. Ou selecione no dropdown.</p>
+          <h2>Venda Rápida</h2>
+          <p>Digite parte do nome/código e escolha. Ao selecionar, o <b>preço sugerido</b> entra automático.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <button class="btn" id="btnLimparCarrinho">Limpar carrinho</button>
@@ -309,17 +289,21 @@
 
       <div class="bd">
         <div class="grid">
-          <!-- LADO ESQUERDO: ADICIONAR -->
-          <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
+          <!-- Adicionar -->
+          <div class="card" style="border-color:rgba(11,18,32,.10); box-shadow:none">
             <div class="bd">
               <div class="row">
                 <div class="field span12">
-                  <label>Bipar/colar código (recomendado)</label>
-                  <input id="vCodigo" class="bigInput" placeholder="Ex: CAP-IPH13 (Enter para adicionar)" />
+                  <label>Pesquisar produto (nome/código)</label>
+                  <input id="vBuscaProduto" class="bigInput"
+                         list="dlProdutos"
+                         placeholder="Ex: capa iphone / carregador / CAP-IPH13..." />
+                  <datalist id="dlProdutos"></datalist>
+                  <div class="hint">Ao escolher, ele seleciona o item e sugere o preço.</div>
                 </div>
 
                 <div class="field span7">
-                  <label>Ou selecione o item</label>
+                  <label>Item selecionado</label>
                   <select id="vItem"></select>
                 </div>
 
@@ -343,19 +327,15 @@
                 <button class="btn primary" id="btnAdd">Adicionar no carrinho</button>
                 <span class="pill info" id="vInfoEstoque">—</span>
               </div>
-
-              <div class="muted" style="margin-top:10px; font-size:12px">
-                * Agora a venda <b>grava preço de venda</b> e o histórico mostra <b>Faturamento</b> e <b>Custo (CMV)</b>.
-              </div>
             </div>
           </div>
 
-          <!-- LADO DIREITO: CARRINHO -->
-          <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
+          <!-- Carrinho -->
+          <div class="card" style="border-color:rgba(11,18,32,.10); box-shadow:none">
             <div class="hd">
               <div>
                 <h2>Carrinho</h2>
-                <p class="muted">Itens adicionados nesta venda.</p>
+                <p class="muted">Venda vs Custo.</p>
               </div>
               <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
                 <div class="pill ok" id="vTotalVenda">Venda: R$ 0,00</div>
@@ -376,12 +356,9 @@
                 </thead>
                 <tbody></tbody>
               </table>
-
-              <div class="muted" style="margin-top:10px; font-size:12px">
-                Dica: se você usar leitor, só bipa o código e dá Enter (ele tenta adicionar 1 unidade).
-              </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -390,8 +367,8 @@
     <section class="card hide" id="viewItens" style="margin-top:12px">
       <div class="hd">
         <div>
-          <h2>Itens (com Entrada/Saída fácil)</h2>
-          <p>Não precisa editar estoque “na mão”. Use <b>Entrada</b> e <b>Saída</b> por item.</p>
+          <h2>Itens (Cadastro + Entrada/Saída)</h2>
+          <p>Cadastre com <b>preço sugerido</b> e use Entrada/Saída por item.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="iBusca" placeholder="Buscar item..." style="min-width:220px" />
@@ -422,9 +399,13 @@
             </select>
           </div>
 
-          <div class="field span2">
+          <div class="field span3">
             <label>Custo (R$) (compra)</label>
             <input id="iCusto" type="number" step="0.01" placeholder="0,00" />
+          </div>
+          <div class="field span3">
+            <label>Preço sugerido venda (R$)</label>
+            <input id="iVendaSug" type="number" step="0.01" placeholder="Ex: 49,90" />
           </div>
           <div class="field span2">
             <label>Estoque inicial</label>
@@ -434,9 +415,9 @@
             <label>Mínimo</label>
             <input id="iMin" type="number" step="1" placeholder="0" />
           </div>
-          <div class="field span6">
+          <div class="field span2">
             <label>Obs</label>
-            <input id="iObs" placeholder="Ex: modelo, cor, fornecedor..." />
+            <input id="iObs" placeholder="Ex: modelo, cor..." />
           </div>
         </div>
 
@@ -453,7 +434,7 @@
                 <th style="text-align:right">Estoque</th>
                 <th style="text-align:right">Mínimo</th>
                 <th style="text-align:right">Custo médio</th>
-                <th style="text-align:right">Valor estoque</th>
+                <th style="text-align:right">Sug. venda</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -470,7 +451,7 @@
       <div class="hd">
         <div>
           <h2>Histórico (Venda x Custo)</h2>
-          <p>Agora o histórico mostra <b>Venda (R$)</b>, <b>Custo (R$)</b> e <b>Lucro bruto</b> por movimentação de venda.</p>
+          <p>Quando é VENDA: mostra venda, custo e lucro.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="hBusca" placeholder="Buscar no histórico..." style="min-width:220px" />
@@ -502,7 +483,7 @@
 
   </div>
 
-  <!-- Modal Entrada/Saída por item -->
+  <!-- Modal Entrada/Saída -->
   <div class="modal" id="modalMov">
     <div class="box">
       <div class="mh">
@@ -546,13 +527,9 @@
   </div>
 
   <div class="toast" id="toast">OK</div>
-  <input type="file" id="fileImport" accept="application/json" style="display:none" />
 
 <script>
-  // =====================
-  // DB / Helpers
-  // =====================
-  const LS_KEY = "ampertech_estoque_vendas_v2";
+  const LS_KEY = "ampertech_estoque_vendas_v4";
   const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
   const num = (v)=>{ const n=Number(v); return Number.isFinite(n)?n:0; };
   const nowISO = ()=> new Date().toISOString();
@@ -561,7 +538,7 @@
 
   let DB = loadDB();
   let editItemId = null;
-  let CART = []; // {itemId, qty, salePrice}
+  let CART = [];
   let MODAL_ITEM_ID = null;
 
   function toast(msg){
@@ -577,11 +554,11 @@
       const db=JSON.parse(raw);
       db.items ??= [];
       db.moves ??= [];
-      // migração básica: garantir campos
       for(const it of db.items){
         it.stock ??= 0;
         it.avgCost ??= 0;
         it.minStock ??= 0;
+        it.suggestSell ??= 0; // novo campo
       }
       return db;
     }catch{ return {items:[], moves:[]}; }
@@ -590,8 +567,6 @@
   function esc(s){
     return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
-
-  function itemValue(it){ return num(it.stock) * num(it.avgCost); }
   function status(it){
     const est=num(it.stock), min=num(it.minStock);
     if(est<=0) return `<span class="pill zero">Zerado</span>`;
@@ -599,18 +574,9 @@
     return `<span class="pill ok">OK</span>`;
   }
 
-  // =====================
-  // Regras de movimentação
-  // =====================
-  // Movimentação padrão:
-  // ENTRADA: usa priceBuy (m.priceBuy) para custo médio
-  // SAIDA: baixa estoque pelo custo médio (não altera CM)
-  //
-  // VENDA: é SAIDA + grava priceSell (m.priceSell) para faturamento
   function applyMove(m){
     const it = DB.items.find(x=>x.id===m.itemId);
     if(!it) throw new Error("Item não encontrado.");
-
     const q = Math.round(num(m.qty));
     if(q<=0) throw new Error("Qtd inválida.");
 
@@ -624,16 +590,14 @@
       it.stock = Math.round(novoEst);
       it.avgCost = +novoCM.toFixed(6);
       it.lastCost = +p.toFixed(6);
-    } else { // SAIDA ou VENDA
+    } else {
       const est = num(it.stock);
       if(q>est) throw new Error("Estoque insuficiente.");
       it.stock = Math.round(est - q);
     }
   }
 
-  // =====================
   // Tabs
-  // =====================
   const tabVenda = document.getElementById("tabVenda");
   const tabItens = document.getElementById("tabItens");
   const tabHist  = document.getElementById("tabHist");
@@ -652,44 +616,15 @@
   tabItens.onclick=()=>setTab("itens");
   tabHist.onclick=()=>setTab("hist");
 
-  // =====================
-  // KPIs
-  // =====================
-  function vendasHojeTotal(){
-    const start = new Date(); start.setHours(0,0,0,0);
-    const startIso = start.toISOString();
-    return DB.moves
-      .filter(m => (m.at||"") >= startIso && m.type==="VENDA")
-      .reduce((a,m)=> a + (num(m.qty) * num(m.priceSell)), 0);
-  }
-
-  function refreshKPIs(){
-    document.getElementById("kItens").textContent = DB.items.length;
-
-    const qtdTotal = DB.items.reduce((a,it)=>a+num(it.stock),0);
-    document.getElementById("kQtd").textContent = qtdTotal.toLocaleString("pt-BR");
-
-    const vTotal = DB.items.reduce((a,it)=>a+itemValue(it),0);
-    document.getElementById("kValor").textContent = money.format(vTotal);
-
-    const alerts = DB.items.filter(it=>{
-      const est=num(it.stock), min=num(it.minStock);
-      return est<=0 || (min>0 && est<=min);
-    }).length;
-    document.getElementById("kAlertas").textContent = alerts;
-
-    document.getElementById("kVendasHoje").textContent = money.format(vendasHojeTotal());
-  }
-
-  // =====================
-  // VENDA (intuitiva)
-  // =====================
-  const vCodigo = document.getElementById("vCodigo");
+  // VENDA
+  const vBuscaProduto = document.getElementById("vBuscaProduto");
+  const dlProdutos = document.getElementById("dlProdutos");
   const vItem  = document.getElementById("vItem");
   const vQtd   = document.getElementById("vQtd");
   const vPreco = document.getElementById("vPreco");
   const vObs   = document.getElementById("vObs");
   const vInfoEstoque = document.getElementById("vInfoEstoque");
+  let DL_MAP = new Map();
 
   function refreshVendaSelect(){
     vItem.innerHTML="";
@@ -700,23 +635,71 @@
       opt.textContent = `${it.code} — ${it.desc} (Est: ${it.stock})`;
       vItem.appendChild(opt);
     }
-    refreshVendaInfo();
+    refreshVendaInfoAndSuggest();
   }
 
-  function refreshVendaInfo(){
+  function rebuildDatalist(){
+    dlProdutos.innerHTML="";
+    DL_MAP = new Map();
+    const list = [...DB.items].sort((a,b)=>(a.desc||"").localeCompare(b.desc||""));
+    for(const it of list){
+      const text = `${it.code} — ${it.desc} (Est: ${it.stock})`;
+      const o = document.createElement("option");
+      o.value = text;
+      dlProdutos.appendChild(o);
+      DL_MAP.set(text, it.id);
+    }
+  }
+
+  function refreshVendaInfoAndSuggest(){
     const it = DB.items.find(x=>x.id===vItem.value);
-    if(!it){ vInfoEstoque.textContent="Cadastre itens para vender."; return; }
+    if(!it){
+      vInfoEstoque.textContent="Cadastre itens para vender.";
+      return;
+    }
     vInfoEstoque.textContent =
-      `Estoque: ${it.stock} • Custo médio: ${money.format(num(it.avgCost))} • Categoria: ${it.category||"—"}`;
+      `Estoque: ${it.stock} • CM: ${money.format(num(it.avgCost))} • Sug. venda: ${money.format(num(it.suggestSell))}`;
+
+    // Preenche preço sugerido se estiver vazio ou 0
+    const curr = num(vPreco.value);
+    if(!(curr>0) && num(it.suggestSell)>0){
+      vPreco.value = num(it.suggestSell).toFixed(2);
+    }
   }
 
-  vItem.addEventListener("change", refreshVendaInfo);
+  vItem.addEventListener("change", refreshVendaInfoAndSuggest);
 
-  function findItemByCode(code){
-    const c=(code||"").trim().toLowerCase();
-    if(!c) return null;
-    return DB.items.find(it => (it.code||"").trim().toLowerCase()===c) || null;
+  function trySelectFromSearch(){
+    const raw = (vBuscaProduto.value||"").trim();
+    if(!raw) return;
+
+    if(DL_MAP.has(raw)){
+      vItem.value = DL_MAP.get(raw);
+      refreshVendaInfoAndSuggest();
+      return;
+    }
+
+    const code = raw.toLowerCase();
+    const it = DB.items.find(x => (x.code||"").trim().toLowerCase() === code);
+    if(it){
+      vItem.value = it.id;
+      refreshVendaInfoAndSuggest();
+      return;
+    }
   }
+
+  vBuscaProduto.addEventListener("input", trySelectFromSearch);
+  vBuscaProduto.addEventListener("change", trySelectFromSearch);
+  vBuscaProduto.addEventListener("keydown", (e)=>{
+    if(e.key==="Enter"){
+      trySelectFromSearch();
+      const it = DB.items.find(x=>x.id===vItem.value);
+      if(it){
+        e.preventDefault();
+        vPreco.focus();
+      }
+    }
+  });
 
   function cartTotals(){
     const totalVenda = CART.reduce((a,c)=> a + (num(c.qty)*num(c.salePrice)), 0);
@@ -743,7 +726,7 @@
         const tr=document.createElement("tr");
         tr.innerHTML=`
           <td><b>${esc(it?.code||"")}</b> <span class="muted">— ${esc(it?.desc||"")}</span></td>
-          <td style="text-align:right"><b>${num(c.qty).toLocaleString("pt-BR")}</b></td>
+          <td style="text-align:right"><b>${Math.round(num(c.qty)).toLocaleString("pt-BR")}</b></td>
           <td style="text-align:right">${money.format(num(c.salePrice))}</td>
           <td style="text-align:right"><b>${money.format(total)}</b></td>
           <td style="text-align:right">${money.format(custo)}</td>
@@ -777,11 +760,8 @@
     if(!(sp>0)){ toast("Informe o preço de venda (R$)."); return; }
 
     const existing = CART.find(x=>x.itemId===it.id && num(x.salePrice)===sp);
-    if(existing){
-      existing.qty += q;
-    }else{
-      CART.push({itemId: it.id, qty: q, salePrice: sp});
-    }
+    if(existing) existing.qty += q;
+    else CART.push({itemId: it.id, qty: q, salePrice: sp});
 
     refreshCart();
     toast("Adicionado no carrinho.");
@@ -792,40 +772,15 @@
     const it = DB.items.find(x=>x.id===vItem.value);
     if(!it){ toast("Selecione um item."); return; }
     addToCart(it.id, vQtd.value||1, vPreco.value);
+
     vQtd.value = 1;
     vPreco.value = "";
-    vCodigo.value = "";
-    vCodigo.focus();
+    vBuscaProduto.value = "";
+    vBuscaProduto.focus();
+
     refreshVendaSelect();
+    rebuildDatalist();
   };
-
-  // Enter no campo código: tenta adicionar 1 unidade
-  vCodigo.addEventListener("keydown", (e)=>{
-    if(e.key!=="Enter") return;
-    e.preventDefault();
-    if(DB.items.length===0){ toast("Cadastre itens antes."); setTab("itens"); return; }
-
-    const it = findItemByCode(vCodigo.value);
-    if(!it){
-      toast("Código não encontrado.");
-      return;
-    }
-
-    // seleciona no dropdown
-    vItem.value = it.id;
-    refreshVendaInfo();
-
-    // se tiver preço preenchido, já adiciona
-    if(num(vPreco.value)>0){
-      addToCart(it.id, 1, vPreco.value);
-      vPreco.value = "";
-      vCodigo.value = "";
-      vCodigo.focus();
-    }else{
-      toast("Agora digite o preço de venda e clique em Adicionar.");
-      vPreco.focus();
-    }
-  });
 
   document.getElementById("btnLimparCarrinho").onclick=()=>{
     if(!confirm("Limpar carrinho?")) return;
@@ -836,7 +791,6 @@
   document.getElementById("btnFinalizar").onclick=()=>{
     if(CART.length===0){ toast("Carrinho vazio."); return; }
 
-    // valida estoque
     for(const c of CART){
       const it = DB.items.find(x=>x.id===c.itemId);
       if(!it) { toast("Item não encontrado."); return; }
@@ -849,19 +803,17 @@
 
     for(const c of CART){
       const it = DB.items.find(x=>x.id===c.itemId);
-
       const move = {
         id: uid(),
         at: nowISO(),
-        type: "VENDA",          // <- agora é VENDA
+        type: "VENDA",
         itemId: it.id,
         qty: Math.round(num(c.qty)),
-        priceBuy: 0,            // não usado na venda
-        priceSell: num(c.salePrice), // <- valor de venda GRAVADO
+        priceBuy: 0,
+        priceSell: num(c.salePrice),
         reason: "VENDA",
         obs: `${vendaId}${obsVenda ? " • " + obsVenda : ""}`
       };
-
       applyMove(move);
       DB.moves.push(move);
     }
@@ -870,16 +822,14 @@
     CART=[];
     vObs.value="";
     vPreco.value="";
-    vCodigo.value="";
+    vBuscaProduto.value="";
     refreshAll();
     refreshCart();
     toast("Venda finalizada!");
-    vCodigo.focus();
+    vBuscaProduto.focus();
   };
 
-  // =====================
-  // ITENS (cadastro) + Movimentação fácil
-  // =====================
+  // ITENS
   const iBusca=document.getElementById("iBusca");
   function clearItemForm(){
     editItemId=null;
@@ -888,6 +838,7 @@
     document.getElementById("iCat").value="";
     document.getElementById("iUn").value="UN";
     document.getElementById("iCusto").value="";
+    document.getElementById("iVendaSug").value="";
     document.getElementById("iEst").value="0";
     document.getElementById("iMin").value="0";
     document.getElementById("iObs").value="";
@@ -906,6 +857,7 @@
     const cat  = document.getElementById("iCat").value.trim();
     const unit = document.getElementById("iUn").value;
     const cost = num(document.getElementById("iCusto").value);
+    const vendaSug = num(document.getElementById("iVendaSug").value);
     const est  = Math.round(num(document.getElementById("iEst").value));
     const min  = Math.round(num(document.getElementById("iMin").value));
     const obs  = document.getElementById("iObs").value.trim();
@@ -918,13 +870,10 @@
       if(!it) return;
 
       it.code=code; it.desc=desc; it.category=cat; it.unit=unit; it.minStock=min; it.obs=obs;
-
-      // custo médio inicial se não tiver
+      it.suggestSell = vendaSug;
       if(num(it.avgCost)<=0 && cost>0) it.avgCost = +cost.toFixed(6);
       if(cost>0) it.lastCost = +cost.toFixed(6);
 
-      // ajuste apenas do "estoque inicial" se usuário colocou diferente:
-      // (geramos ajuste via ENTRADA/SAÍDA automático para manter histórico)
       const old = Math.round(num(it.stock));
       const diff = est - old;
       if(diff!==0){
@@ -940,19 +889,13 @@
           obs: "Ajuste pelo cadastro"
         };
         it.stock = old;
-        try{
-          applyMove(m);
-          DB.moves.push(m);
-        }catch(e){
-          it.stock = est;
-        }
+        try{ applyMove(m); DB.moves.push(m); }catch(e){ it.stock = est; }
       }
 
       saveDB(); refreshAll(); toast("Item atualizado.");
       return;
     }
 
-    // novo item
     const it = {
       id: uid(),
       code, desc, category:cat, unit,
@@ -960,11 +903,11 @@
       minStock: min,
       avgCost: (cost>0? +cost.toFixed(6) : 0),
       lastCost: (cost>0? +cost.toFixed(6) : 0),
+      suggestSell: vendaSug,
       obs
     };
     DB.items.push(it);
 
-    // estoque inicial vira ENTRADA se tiver custo
     if(est>0 && cost>0){
       const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: est, priceBuy: cost, priceSell: 0, reason:"ESTOQUE INICIAL", obs };
       applyMove(m); DB.moves.push(m);
@@ -1003,7 +946,7 @@
         <td style="text-align:right"><b>${Math.round(num(it.stock)).toLocaleString("pt-BR")}</b></td>
         <td style="text-align:right" class="muted">${Math.round(num(it.minStock)).toLocaleString("pt-BR")}</td>
         <td style="text-align:right">${money.format(num(it.avgCost))}</td>
-        <td style="text-align:right"><b>${money.format(itemValue(it))}</b></td>
+        <td style="text-align:right"><b>${money.format(num(it.suggestSell))}</b></td>
         <td>${status(it)}</td>
         <td>
           <div style="display:flex; gap:8px; flex-wrap:wrap">
@@ -1027,6 +970,7 @@
         document.getElementById("iCat").value=it.category||"";
         document.getElementById("iUn").value=it.unit||"UN";
         document.getElementById("iCusto").value=(num(it.lastCost||it.avgCost)||0).toFixed(2);
+        document.getElementById("iVendaSug").value=(num(it.suggestSell)||0).toFixed(2);
         document.getElementById("iEst").value=Math.round(num(it.stock));
         document.getElementById("iMin").value=Math.round(num(it.minStock));
         document.getElementById("iObs").value=it.obs||"";
@@ -1047,18 +991,12 @@
       };
     });
 
-    tb.querySelectorAll("[data-ent]").forEach(b=>{
-      b.onclick=()=> openMovModal(b.dataset.ent, "ENTRADA");
-    });
-    tb.querySelectorAll("[data-sai]").forEach(b=>{
-      b.onclick=()=> openMovModal(b.dataset.sai, "SAIDA");
-    });
+    tb.querySelectorAll("[data-ent]").forEach(b=> b.onclick=()=> openMovModal(b.dataset.ent, "ENTRADA"));
+    tb.querySelectorAll("[data-sai]").forEach(b=> b.onclick=()=> openMovModal(b.dataset.sai, "SAIDA"));
   }
   iBusca.addEventListener("input", refreshItensTable);
 
-  // =====================
   // Modal Entrada/Saída
-  // =====================
   const modalMov = document.getElementById("modalMov");
   const mTitle = document.getElementById("mTitle");
   const mSub = document.getElementById("mSub");
@@ -1086,16 +1024,13 @@
     modalMov.classList.add("show");
     mQtd.focus();
   }
-
   function closeMovModal(){
     modalMov.classList.remove("show");
     MODAL_ITEM_ID = null;
   }
-
   function updateMovPreview(){
     const it = DB.items.find(x=>x.id===MODAL_ITEM_ID);
     if(!it){ mPreview.textContent="—"; return; }
-
     const tipo = mTipo.value;
     const q = Math.round(num(mQtd.value));
     const est = Math.round(num(it.stock));
@@ -1103,19 +1038,17 @@
     if(tipo==="ENTRADA"){
       mPrecoBox.style.display="";
       const p = num(mPreco.value);
-      const novoEst = est + q;
-      mPreview.textContent = `Vai ENTRAR ${q} un • Preço compra ${money.format(p)} • Estoque após: ${novoEst}`;
+      mPreview.textContent = `Vai ENTRAR ${q} un • Preço compra ${money.format(p)} • Estoque após: ${est + q}`;
     }else{
       mPrecoBox.style.display="none";
-      const novoEst = est - q;
-      mPreview.textContent = `Vai SAIR ${q} un • Estoque após: ${novoEst < 0 ? "INSUFICIENTE" : novoEst}`;
+      const novo = est - q;
+      mPreview.textContent = `Vai SAIR ${q} un • Estoque após: ${novo < 0 ? "INSUFICIENTE" : novo}`;
     }
   }
 
   document.getElementById("mClose").onclick = closeMovModal;
   document.getElementById("mCancel").onclick = closeMovModal;
   modalMov.addEventListener("click", (e)=>{ if(e.target===modalMov) closeMovModal(); });
-
   [mTipo,mQtd,mPreco].forEach(el=>{
     el.addEventListener("input", updateMovPreview);
     el.addEventListener("change", updateMovPreview);
@@ -1129,8 +1062,6 @@
     const q = Math.round(num(mQtd.value));
     if(!(q>0)){ toast("Qtd inválida."); return; }
 
-    const obs = (mObs.value||"").trim();
-
     const move = {
       id: uid(),
       at: nowISO(),
@@ -1140,7 +1071,7 @@
       priceBuy: (tipo==="ENTRADA") ? num(mPreco.value) : 0,
       priceSell: 0,
       reason: (tipo==="ENTRADA") ? "ENTRADA" : "SAIDA",
-      obs
+      obs: (mObs.value||"").trim()
     };
 
     try{
@@ -1155,11 +1086,8 @@
     }
   };
 
-  // =====================
-  // Histórico (Venda x Custo)
-  // =====================
+  // Histórico
   const hBusca=document.getElementById("hBusca");
-
   function refreshHist(){
     const tb=document.querySelector("#tblHist tbody");
     tb.innerHTML="";
@@ -1182,7 +1110,6 @@
 
     for(const m of moves){
       const it=DB.items.find(x=>x.id===m.itemId);
-
       const qty = Math.round(num(m.qty));
       const buyUnit = (m.type==="ENTRADA") ? num(m.priceBuy) : 0;
       const sellUnit = (m.type==="VENDA") ? num(m.priceSell) : 0;
@@ -1215,47 +1142,6 @@
   }
   hBusca.addEventListener("input", refreshHist);
 
-  // =====================
-  // CSV / Backup / Import / Reset
-  // =====================
-  document.getElementById("btnBackup").onclick=()=>{
-    const payload = {version:2, exportedAt: nowISO(), items: DB.items, moves: DB.moves};
-    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url; a.download="ampertech_backup.json";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),800);
-    toast("Backup baixado.");
-  };
-
-  const fileImport = document.getElementById("fileImport");
-  document.getElementById("btnImport").onclick=()=> fileImport.click();
-  fileImport.addEventListener("change",(e)=>{
-    const f = e.target.files?.[0];
-    e.target.value="";
-    if(!f) return;
-    const fr = new FileReader();
-    fr.onload=()=>{
-      try{
-        const payload = JSON.parse(fr.result);
-        if(!payload || !Array.isArray(payload.items) || !Array.isArray(payload.moves)){
-          throw new Error("JSON inválido.");
-        }
-        if(!confirm("Importar vai SUBSTITUIR seus dados atuais. Continuar?")) return;
-        DB = { items: payload.items, moves: payload.moves };
-        saveDB();
-        CART=[];
-        refreshAll();
-        refreshCart();
-        toast("Importado com sucesso.");
-      }catch(err){
-        toast(err.message || "Falha ao importar.");
-      }
-    };
-    fr.readAsText(f,"utf-8");
-  });
-
   document.getElementById("btnCsv").onclick=()=>{
     const header=["data_hora","tipo","codigo","descricao","qtd","preco_compra_unit","preco_venda_unit","total_custo","total_venda","lucro","motivo","obs"];
     const rows = [...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||"")).map(m=>{
@@ -1268,10 +1154,7 @@
       const totalVenda = (m.type==="VENDA") ? (qty*num(m.priceSell)) : "";
       const lucro = (m.type==="VENDA") ? ((qty*num(m.priceSell)) - (qty*num(it?.avgCost))) : "";
 
-      return [
-        toLocal(m.at), m.type, it?.code||"", it?.desc||"",
-        qty, buyUnit, sellUnit, totalCusto, totalVenda, lucro, m.reason||"", m.obs||""
-      ];
+      return [toLocal(m.at), m.type, it?.code||"", it?.desc||"", qty, buyUnit, sellUnit, totalCusto, totalVenda, lucro, m.reason||"", m.obs||""];
     });
 
     const escCSV = (v)=>{
@@ -1299,15 +1182,11 @@
     toast("Dados apagados.");
   };
 
-  // =====================
-  // Refresh geral
-  // =====================
   function refreshAll(){
-    refreshKPIs();
     refreshItensTable();
     refreshHist();
     refreshVendaSelect();
-    refreshVendaInfo();
+    rebuildDatalist();
   }
 
   // init
@@ -1315,7 +1194,7 @@
   refreshAll();
   refreshCart();
   setTab("venda");
-  vCodigo.focus();
+  vBuscaProduto.focus();
 </script>
 </body>
 </html>
