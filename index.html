@@ -1,553 +1,1552 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Impressão de Etiquetas Zebra</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Estoque Pro — Controle de Estoque</title>
+  <meta name="theme-color" content="#0b1220" />
   <style>
-    :root {
-      --cor-primaria: #0f766e;
-      --cor-primaria-escura: #0b524d;
-      --bg-claro: #f1f5f9;
+    :root{
+      --bg:#0b1220;
+      --card:#111a2b;
+      --card2:#0f1726;
+      --muted:#9bb0d0;
+      --text:#e8f0ff;
+      --line:rgba(255,255,255,.08);
+      --accent:#22c55e;
+      --accent2:#38bdf8;
+      --warn:#f59e0b;
+      --danger:#fb7185;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --radius2:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
-
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.12), transparent 55%),
+                  radial-gradient(1000px 500px at 100% 0%, rgba(34,197,94,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      font-family:var(--font);
     }
-
-    body {
-      margin: 0;
-      background: #0f172a;
-      color: #0f172a;
-      display: flex;
-      justify-content: center;
-      padding: 24px;
+    a{color:inherit}
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 14px 90px;
     }
-
-    .app {
-      background: white;
-      width: 100%;
-      max-width: 960px;
+    header{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 6px 16px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:46px; height:46px;
+      border-radius:14px;
+      background:
+        linear-gradient(135deg, rgba(34,197,94,.25), rgba(56,189,248,.25)),
+        rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      display:grid; place-items:center;
+      box-shadow: var(--shadow);
+    }
+    .logo svg{opacity:.95}
+    .title{
+      line-height:1.05;
+    }
+    .title b{font-size:16px; letter-spacing:.2px}
+    .title small{display:block; color:var(--muted); margin-top:2px; font-size:12px}
+    .top-actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:.15s ease;
+      user-select:none;
+      font-weight:600;
+      font-size:13px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.20);
+    }
+    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.08)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(34,197,94,.22), rgba(34,197,94,.10));
+      border-color: rgba(34,197,94,.35);
+    }
+    .btn.info{
+      background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(56,189,248,.10));
+      border-color: rgba(56,189,248,.35);
+    }
+    .btn.danger{
+      background: linear-gradient(135deg, rgba(251,113,133,.20), rgba(251,113,133,.08));
+      border-color: rgba(251,113,133,.35);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      header{flex-direction:column; align-items:flex-start}
+      .top-actions{width:100%; justify-content:flex-start}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .card .hd p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .card .bd{padding:14px}
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .kpis{grid-template-columns: repeat(2, minmax(0,1fr))}
+    }
+    .kpi{
+      background: rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius2);
+      padding:12px;
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi:before{
+      content:"";
+      position:absolute;
+      inset:-40% -40% auto auto;
+      width:140px; height:140px;
+      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,.25), transparent 60%);
+      transform: rotate(12deg);
+      pointer-events:none;
+    }
+    .kpi b{display:block; font-size:18px; margin-top:6px}
+    .kpi small{color:var(--muted); font-weight:600; letter-spacing:.2px}
+    .kpi .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:700;
+      padding:6px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+    }
+    .tag.green{border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.12)}
+    .tag.blue{border-color: rgba(56,189,248,.35); background: rgba(56,189,248,.12)}
+    .tag.warn{border-color: rgba(245,158,11,.40); background: rgba(245,158,11,.12)}
+    .tag.red{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.12)}
+    .row{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:10px;
+      align-items:end;
+    }
+    .field{
+      grid-column: span 3;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .field.span2{grid-column: span 2}
+    .field.span4{grid-column: span 4}
+    .field.span6{grid-column: span 6}
+    .field.span12{grid-column: span 12}
+    label{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.25px;
+    }
+    input, select, textarea{
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,16,28,.55);
+      color:var(--text);
+      padding:10px 11px;
+      font-size:13px;
+      outline:none;
+      transition:.12s ease;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(56,189,248,.45);
+      box-shadow: 0 0 0 3px rgba(56,189,248,.12);
+    }
+    textarea{min-height: 64px; resize: vertical}
+    .inline-actions{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
       border-radius: 16px;
-      padding: 20px 24px 28px;
-      box-shadow:
-        0 18px 45px rgba(15, 23, 42, 0.4),
-        0 0 0 1px rgba(15, 23, 42, 0.4);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(10,16,28,.35);
+    }
+    .table th, .table td{
+      padding:10px 10px;
+      font-size:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      vertical-align:middle;
+      text-align:left;
+      white-space:nowrap;
+    }
+    .table th{
+      font-size:11px;
+      color:var(--muted);
+      font-weight:800;
+      letter-spacing:.25px;
+      background: rgba(255,255,255,.05);
+      position:sticky; top:0;
+      z-index:1;
+    }
+    .table tr:hover td{background: rgba(255,255,255,.04)}
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-weight:700;
+      font-size:11px;
+    }
+    .pill.low{border-color: rgba(245,158,11,.45); background: rgba(245,158,11,.12)}
+    .pill.zero{border-color: rgba(251,113,133,.45); background: rgba(251,113,133,.12)}
+    .muted{color:var(--muted)}
+    .hr{height:1px; background: var(--line); margin:12px 0}
+    .note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:980px){
+      .two{grid-template-columns:1fr}
     }
 
-    h1 {
-      margin: 0 0 4px;
-      font-size: 22px;
-      color: #0f172a;
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+      backdrop-filter: blur(6px);
     }
-
-    .subtitulo {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 18px;
+    .modal.show{display:flex}
+    .modal .box{
+      width:min(920px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
     }
-
-    .linha {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 12px;
+    .modal .box .mh{
+      padding:14px 14px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
     }
-
-    .campo {
-      flex: 1;
-      min-width: 180px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 13px;
+    .modal .box .mh b{font-size:14px}
+    .x{
+      width:40px; height:40px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      display:grid; place-items:center;
     }
-
-    label {
-      font-weight: 600;
-      color: #0f172a;
+    .x:hover{background: rgba(255,255,255,.08)}
+    .modal .box .mb{padding:14px}
+    .foot{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      background: rgba(255,255,255,.03);
     }
-
-    input[type="text"],
-    input[type="number"] {
-      border-radius: 8px;
-      border: 1px solid #cbd5f5;
-      padding: 7px 9px;
-      font-size: 13px;
-      outline: none;
-      background: #f8fafc;
-    }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus {
-      border-color: var(--cor-primaria);
-      box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.25);
-      background: #ffffff;
-    }
-
-    .botoes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 6px 0 16px;
-    }
-
-    button {
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform: translateX(-50%);
+      background: rgba(17,26,43,.92);
+      border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;
       border-radius: 999px;
-      border: none;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.1s ease;
+      box-shadow: var(--shadow);
+      display:none;
+      gap:8px;
+      align-items:center;
+      z-index:60;
+      font-size:12px;
+      font-weight:700;
     }
-
-    .btn-primario {
-      background: var(--cor-primaria);
-      color: white;
-      box-shadow: 0 8px 18px rgba(15, 118, 110, 0.45);
-    }
-
-    .btn-primario:hover {
-      background: var(--cor-primaria-escura);
-      transform: translateY(-1px);
-      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.6);
-    }
-
-    .btn-secundario {
-      background: #e2e8f0;
-      color: #0f172a;
-    }
-
-    .btn-secundario:hover {
-      background: #cbd5f5;
-    }
-
-    .icone {
-      font-size: 14px;
-    }
-
-    .cartao {
-      background: var(--bg-claro);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 14px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .cartao-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .cartao-titulo {
-      font-size: 14px;
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .cartao-subtitulo {
-      font-size: 11px;
-      color: #64748b;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    th, td {
-      border-bottom: 1px solid #e2e8f0;
-      padding: 6px 4px;
-      text-align: left;
-    }
-
-    th {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #6b7280;
-    }
-
-    tbody tr:hover {
-      background: rgba(15, 118, 110, 0.05);
-    }
-
-    .col-qtde {
-      text-align: center;
-      width: 60px;
-    }
-
-    .col-acoes {
-      width: 70px;
-      text-align: center;
-    }
-
-    .tag-total {
-      font-size: 11px;
-      color: #475569;
-    }
-
-    .tag-total strong {
-      color: #0f172a;
-    }
-
-    .link-menor {
-      font-size: 11px;
-      color: #64748b;
-    }
-
-    .btn-mini {
-      padding: 4px 10px;
-      font-size: 11px;
-      border-radius: 999px;
-      background: #fee2e2;
-      color: #b91c1c;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-mini:hover {
-      background: #fecaca;
-    }
-
-    /* ÁREA DAS ETIQUETAS (VISUALIZAÇÃO) */
-    #previewEtiquetas {
-      margin-top: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .preview-etiqueta {
-      border: 1px dashed #cbd5f5;
-      border-radius: 8px;
-      padding: 6px 8px;
-      min-width: 180px;
-      max-width: 220px;
-      font-size: 11px;
-      background: white;
-    }
-
-    .preview-etiqueta-codigo {
-      font-weight: 700;
-      font-size: 13px;
-      margin-bottom: 2px;
-    }
-
-    .preview-etiqueta-descricao {
-      font-size: 11px;
-      color: #475569;
-    }
-
-    /* ÁREA REAL DE IMPRESSÃO */
-    #etiquetasParaImprimir {
-      display: none; /* só aparece na impressão */
-    }
-
-    /* UMA ETIQUETA POR PÁGINA */
-    .etiqueta-print {
-      width: 100%;
-      height: 100%;
-      padding: 4mm;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .etiqueta-codigo {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .etiqueta-descricao {
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    .etiqueta-extra {
-      font-size: 10px;
-      margin-top: 2px;
-      color: #4b5563;
-    }
-
-    /* CONFIGURAÇÕES ESPECÍFICAS PARA IMPRESSÃO */
-    @page {
-      /* AJUSTE AQUI para o tamanho da etiqueta da sua Zebra */
-      size: 60mm 30mm;
-      margin: 0;
-    }
-
-    @media print {
-      body {
-        background: #ffffff;
-        padding: 0;
-      }
-
-      .app {
-        box-shadow: none;
-        border-radius: 0;
-        padding: 0;
-      }
-
-      /* Esconde interface e mostra só as etiquetas */
-      .linha,
-      .botoes,
-      .cartao,
-      h1,
-      .subtitulo,
-      #previewEtiquetas {
-        display: none !important;
-      }
-
-      #etiquetasParaImprimir {
-        display: block !important;
-      }
-
-      .etiqueta-print {
-        page-break-after: always; /* cada etiqueta em uma “página” (etiqueta) */
-      }
+    .toast.show{display:inline-flex}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:11px;
+      padding:4px 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      font-weight:800;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <h1>Impressão de Etiquetas – Zebra</h1>
-    <div class="subtitulo">
-      Digite código, descrição e quantidade. Depois gere as etiquetas e mande imprimir escolhendo a impressora Zebra.
-    </div>
-
-    <div class="linha">
-      <div class="campo">
-        <label for="codigo">Código</label>
-        <input type="text" id="codigo" placeholder="Ex: 12345">
-      </div>
-      <div class="campo">
-        <label for="descricao">Descrição</label>
-        <input type="text" id="descricao" placeholder="Nome do produto / info da etiqueta">
-      </div>
-      <div class="campo" style="max-width: 120px;">
-        <label for="qtde">Qtde etiquetas</label>
-        <input type="number" id="qtde" min="1" value="1">
-      </div>
-    </div>
-
-    <div class="botoes">
-      <button class="btn-primario" onclick="adicionarItem()">
-        <span class="icone">➕</span> Adicionar à lista
-      </button>
-      <button class="btn-secundario" onclick="limparLista()">
-        <span class="icone">🧹</span> Limpar lista
-      </button>
-      <button class="btn-primario" style="margin-left:auto;" onclick="gerarEtiquetasEImprimir()">
-        <span class="icone">🖨️</span> Gerar etiquetas e imprimir
-      </button>
-    </div>
-
-    <div class="cartao">
-      <div class="cartao-header">
-        <div>
-          <div class="cartao-titulo">Itens para impressão</div>
-          <div class="cartao-subtitulo">Cada linha pode gerar várias etiquetas, conforme a quantidade.</div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" title="Estoque Pro">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" stroke="rgba(232,240,255,.95)" stroke-width="1.7"/>
+            <path d="M12 3v18" stroke="rgba(56,189,248,.75)" stroke-width="1.7"/>
+            <path d="M4 7.5l8 4.5 8-4.5" stroke="rgba(34,197,94,.75)" stroke-width="1.7"/>
+          </svg>
         </div>
-        <div class="tag-total">
-          Total de etiquetas: <strong id="totalEtiquetas">0</strong>
+        <div class="title">
+          <b>Estoque Pro</b>
+          <small>Controle de estoque + valor • Entradas e saídas • Histórico</small>
         </div>
       </div>
 
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 90px;">Código</th>
-              <th>Descrição</th>
-              <th class="col-qtde">Qtde</th>
-              <th class="col-acoes">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaItens">
-            <!-- Linhas adicionadas via JS -->
-          </tbody>
-        </table>
+      <div class="top-actions">
+        <button class="btn info" id="btnBackup">Backup/Importar</button>
+        <button class="btn" id="btnCsv">CSV</button>
+        <button class="btn danger" id="btnLimpar">Limpar tudo</button>
+        <button class="btn primary" id="btnMov">Nova movimentação</button>
       </div>
-      <div style="margin-top:6px;" class="link-menor">
-        Dica: ajuste o tamanho de página da Zebra (ex.: 60 x 30 mm) nas propriedades da impressora antes de imprimir.
+    </header>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="bd">
+        <div class="kpis">
+          <div class="kpi">
+            <span class="tag blue">Itens</span>
+            <b id="kpiItens">0</b>
+            <small class="muted">cadastrados</small>
+          </div>
+          <div class="kpi">
+            <span class="tag green">Estoque</span>
+            <b id="kpiQtd">0</b>
+            <small class="muted">quantidade total</small>
+          </div>
+          <div class="kpi">
+            <span class="tag blue">Valor</span>
+            <b id="kpiValor">R$ 0,00</b>
+            <small class="muted">valor do estoque (custo médio)</small>
+          </div>
+          <div class="kpi">
+            <span class="tag warn">Alertas</span>
+            <b id="kpiBaixo">0</b>
+            <small class="muted">itens com estoque baixo/zerado</small>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div>
-      <div class="cartao-header">
-        <div class="cartao-titulo">Pré-visualização das etiquetas</div>
-        <div class="cartao-subtitulo">Exemplo visual (não é exatamente o tamanho real).</div>
-      </div>
-      <div id="previewEtiquetas">
-        <!-- Preview de algumas etiquetas (limite para não pesar a tela) -->
-      </div>
-    </div>
+    <div class="grid">
+      <!-- ESQUERDA -->
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2>Itens</h2>
+            <p>Cadastre os itens e depois movimente (entrada/saída). O sistema calcula custo médio e valor do estoque.</p>
+          </div>
+          <div class="inline-actions">
+            <input id="q" placeholder="Buscar por código, descrição ou categoria…" style="min-width:260px" />
+            <select id="filtro">
+              <option value="todos">Todos</option>
+              <option value="baixo">Somente baixo</option>
+              <option value="zerado">Somente zerado</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- ÁREA OCULTA – USADA NA IMPRESSÃO -->
-    <div id="etiquetasParaImprimir"></div>
+        <div class="bd">
+          <div class="card" style="background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); box-shadow:none">
+            <div class="hd">
+              <div>
+                <h2 id="formTitle">Novo item</h2>
+                <p class="muted">Dica: use um código interno (ex: GR0001, PARF-10, etc.).</p>
+              </div>
+              <div class="inline-actions">
+                <button class="btn" id="btnNovo">Novo</button>
+                <button class="btn primary" id="btnSalvarItem">Salvar item</button>
+              </div>
+            </div>
+            <div class="bd">
+              <div class="row">
+                <div class="field span2">
+                  <label>Código *</label>
+                  <input id="itCodigo" placeholder="Ex: GR0851" />
+                </div>
+                <div class="field span6">
+                  <label>Descrição *</label>
+                  <input id="itDesc" placeholder="Ex: Tábua 38,5x28,5" />
+                </div>
+                <div class="field span2">
+                  <label>Categoria</label>
+                  <input id="itCat" placeholder="Ex: Tábuas" />
+                </div>
+                <div class="field span2">
+                  <label>Unidade</label>
+                  <select id="itUn">
+                    <option value="UN">UN</option>
+                    <option value="KG">KG</option>
+                    <option value="MT">MT</option>
+                    <option value="PC">PC</option>
+                    <option value="CX">CX</option>
+                  </select>
+                </div>
+
+                <div class="field span2">
+                  <label>Custo (R$)</label>
+                  <input id="itCusto" type="number" step="0.0001" placeholder="0,00" />
+                </div>
+                <div class="field span2">
+                  <label>Estoque inicial</label>
+                  <input id="itEstoque" type="number" step="0.0001" placeholder="0" />
+                </div>
+                <div class="field span2">
+                  <label>Estoque mínimo</label>
+                  <input id="itMin" type="number" step="0.0001" placeholder="0" />
+                </div>
+                <div class="field span6">
+                  <label>Observações</label>
+                  <input id="itObs" placeholder="Ex: fornecedor padrão, local, detalhes…" />
+                </div>
+              </div>
+              <div class="note" style="margin-top:10px">
+                <span class="kbd">Regra de valor</span> Entradas atualizam o <b>custo médio (média ponderada)</b>.
+                Saídas baixam o estoque pelo custo médio atual.
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div style="overflow:auto; border-radius:16px">
+            <table class="table" id="tblItens">
+              <thead>
+                <tr>
+                  <th style="min-width:120px">Código</th>
+                  <th style="min-width:280px">Descrição</th>
+                  <th style="min-width:140px">Categoria</th>
+                  <th>UN</th>
+                  <th style="text-align:right">Estoque</th>
+                  <th style="text-align:right">Mínimo</th>
+                  <th style="text-align:right">Custo médio</th>
+                  <th style="text-align:right">Valor estoque</th>
+                  <th style="min-width:170px">Status</th>
+                  <th style="min-width:170px">Ações</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- DIREITA -->
+      <aside class="card">
+        <div class="hd">
+          <div>
+            <h2>Movimentações</h2>
+            <p>Entrada/saída com histórico. Pode exportar tudo para CSV/JSON e usar como backup.</p>
+          </div>
+          <button class="btn primary" id="btnMov2">Nova movimentação</button>
+        </div>
+
+        <div class="bd">
+          <div class="two">
+            <div class="kpi">
+              <span class="tag blue">Última entrada</span>
+              <b id="kpiUltEnt">—</b>
+              <small class="muted" id="kpiUltEntSub">—</small>
+            </div>
+            <div class="kpi">
+              <span class="tag warn">Última saída</span>
+              <b id="kpiUltSai">—</b>
+              <small class="muted" id="kpiUltSaiSub">—</small>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="inline-actions" style="justify-content:space-between; gap:12px">
+            <div class="inline-actions">
+              <input id="qMov" placeholder="Buscar no histórico…" />
+              <select id="fMov">
+                <option value="todas">Todas</option>
+                <option value="ENTRADA">Entradas</option>
+                <option value="SAIDA">Saídas</option>
+              </select>
+            </div>
+            <div class="inline-actions">
+              <button class="btn" id="btnResumoDia">Hoje</button>
+              <button class="btn" id="btnResumoMes">Mês</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; overflow:auto; border-radius:16px; max-height:520px">
+            <table class="table" id="tblMov">
+              <thead>
+                <tr>
+                  <th style="min-width:150px">Data/Hora</th>
+                  <th>Tipo</th>
+                  <th style="min-width:120px">Código</th>
+                  <th style="min-width:220px">Descrição</th>
+                  <th style="text-align:right">Qtd</th>
+                  <th style="text-align:right">Preço (R$)</th>
+                  <th style="text-align:right">Total (R$)</th>
+                  <th style="min-width:160px">Motivo</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="note" style="margin-top:10px">
+            <span class="kbd">Dica</span> use “Motivo” para rastrear: compra, ajuste, perda, venda, OS, etc.
+          </div>
+        </div>
+      </aside>
+    </div>
   </div>
 
-  <script>
-    let itens = [];
+  <!-- MODAL MOVIMENTAÇÃO -->
+  <div class="modal" id="modalMov">
+    <div class="box">
+      <div class="mh">
+        <div>
+          <b>Nova movimentação</b>
+          <div class="muted" style="font-size:12px; margin-top:3px">Entrada atualiza custo médio. Saída baixa pelo custo médio atual.</div>
+        </div>
+        <div class="x" id="closeMov" title="Fechar">✕</div>
+      </div>
+      <div class="mb">
+        <div class="row">
+          <div class="field span3">
+            <label>Tipo *</label>
+            <select id="mvTipo">
+              <option value="ENTRADA">ENTRADA</option>
+              <option value="SAIDA">SAÍDA</option>
+            </select>
+          </div>
+          <div class="field span4">
+            <label>Item *</label>
+            <select id="mvItem"></select>
+          </div>
+          <div class="field span2">
+            <label>Quantidade *</label>
+            <input id="mvQtd" type="number" step="0.0001" placeholder="0" />
+          </div>
+          <div class="field span3" id="boxPreco">
+            <label>Preço unit. (R$) <span class="muted">(na ENTRADA)</span></label>
+            <input id="mvPreco" type="number" step="0.0001" placeholder="0,00" />
+          </div>
 
-    function atualizarTabela() {
-      const tbody = document.getElementById('tabelaItens');
-      tbody.innerHTML = '';
+          <div class="field span6">
+            <label>Motivo / Documento</label>
+            <input id="mvMotivo" placeholder="Ex: NF 12345, venda balcão, ajuste inventário…" />
+          </div>
+          <div class="field span6">
+            <label>Observação</label>
+            <input id="mvObs" placeholder="Ex: lote, fornecedor, responsável, etc." />
+          </div>
+        </div>
 
-      let total = 0;
+        <div class="hr"></div>
 
-      itens.forEach((item, index) => {
-        total += item.qtde;
+        <div class="two">
+          <div class="kpi">
+            <span class="tag blue">Estoque atual</span>
+            <b id="mvEstAtual">0</b>
+            <small class="muted" id="mvEstAtualSub">—</small>
+          </div>
+          <div class="kpi">
+            <span class="tag green">Após movimentação</span>
+            <b id="mvEstDepois">0</b>
+            <small class="muted" id="mvEstDepoisSub">—</small>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <button class="btn" id="btnCancelarMov">Cancelar</button>
+        <button class="btn primary" id="btnSalvarMov">Salvar movimentação</button>
+      </div>
+    </div>
+  </div>
 
-        const tr = document.createElement('tr');
+  <!-- MODAL BACKUP -->
+  <div class="modal" id="modalBackup">
+    <div class="box">
+      <div class="mh">
+        <div>
+          <b>Backup / Importar</b>
+          <div class="muted" style="font-size:12px; margin-top:3px">Exporta/importa seus dados em JSON (ideal para backup).</div>
+        </div>
+        <div class="x" id="closeBackup" title="Fechar">✕</div>
+      </div>
+      <div class="mb">
+        <div class="two">
+          <div>
+            <div class="inline-actions" style="justify-content:space-between">
+              <b>Exportar</b>
+              <button class="btn info" id="btnExportJson">Baixar JSON</button>
+            </div>
+            <p class="note">Baixe um arquivo .json com todos os itens e movimentações.</p>
+            <div class="hr"></div>
+            <div class="inline-actions" style="justify-content:space-between">
+              <b>Importar</b>
+              <label class="btn" style="cursor:pointer">
+                Selecionar JSON
+                <input type="file" id="fileImportJson" accept="application/json" style="display:none" />
+              </label>
+            </div>
+            <p class="note">Importa um backup JSON e substitui seus dados atuais.</p>
+          </div>
 
-        const tdCodigo = document.createElement('td');
-        tdCodigo.textContent = item.codigo;
-        tr.appendChild(tdCodigo);
+          <div>
+            <b>Prévia do backup</b>
+            <textarea id="backupPreview" readonly placeholder="Aqui aparece um resumo ao exportar/importar."></textarea>
+            <p class="note">Dica: guarde esse backup no Drive/OneDrive.</p>
+          </div>
+        </div>
+      </div>
+      <div class="foot">
+        <button class="btn" id="btnFecharBackup">Fechar</button>
+      </div>
+    </div>
+  </div>
 
-        const tdDesc = document.createElement('td');
-        tdDesc.textContent = item.descricao;
-        tr.appendChild(tdDesc);
+  <!-- MODAL CSV -->
+  <div class="modal" id="modalCsv">
+    <div class="box">
+      <div class="mh">
+        <div>
+          <b>Exportar CSV</b>
+          <div class="muted" style="font-size:12px; margin-top:3px">Baixe em formato CSV (abre no Excel).</div>
+        </div>
+        <div class="x" id="closeCsv" title="Fechar">✕</div>
+      </div>
+      <div class="mb">
+        <div class="two">
+          <div class="kpi">
+            <span class="tag blue">Itens</span>
+            <b>CSV de itens</b>
+            <small class="muted">Inclui custo médio, estoque, valor.</small>
+            <div style="margin-top:10px">
+              <button class="btn info" id="btnExportCsvItens">Baixar itens.csv</button>
+            </div>
+          </div>
+          <div class="kpi">
+            <span class="tag warn">Movimentações</span>
+            <b>CSV de histórico</b>
+            <small class="muted">Data, tipo, item, qtd, preço, total.</small>
+            <div style="margin-top:10px">
+              <button class="btn info" id="btnExportCsvMov">Baixar movimentacoes.csv</button>
+            </div>
+          </div>
+        </div>
+        <div class="note" style="margin-top:12px">
+          <span class="kbd">Obs</span> CSV é ótimo para relatórios no Excel, mas para restaurar dados use o JSON.
+        </div>
+      </div>
+      <div class="foot">
+        <button class="btn" id="btnFecharCsv">Fechar</button>
+      </div>
+    </div>
+  </div>
 
-        const tdQtde = document.createElement('td');
-        tdQtde.className = 'col-qtde';
-        tdQtde.textContent = item.qtde;
-        tr.appendChild(tdQtde);
+  <div class="toast" id="toast">✅ <span id="toastTxt">Ok</span></div>
 
-        const tdAcoes = document.createElement('td');
-        tdAcoes.className = 'col-acoes';
-        const btnRemover = document.createElement('button');
-        btnRemover.className = 'btn-mini';
-        btnRemover.textContent = 'Remover';
-        btnRemover.onclick = () => removerItem(index);
-        tdAcoes.appendChild(btnRemover);
-        tr.appendChild(tdAcoes);
+<script>
+/* =========================
+   ESTOQUE PRO — localStorage
+   ========================= */
 
-        tbody.appendChild(tr);
-      });
+const LS_KEY = "estoque_pro_v1";
+const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+const numBR = (v) => {
+  const n = Number(v);
+  return (Number.isFinite(n) ? n : 0);
+};
+const fmt = (n, dec=2) => {
+  const x = numBR(n);
+  return x.toLocaleString("pt-BR",{minimumFractionDigits:dec, maximumFractionDigits:dec});
+};
+const nowISO = () => new Date().toISOString();
+const toLocalDT = (iso) => {
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR");
+};
 
-      document.getElementById('totalEtiquetas').textContent = total;
-      atualizarPreview();
+function uid(){
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  const tx = document.getElementById("toastTxt");
+  tx.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+function loadDB(){
+  const raw = localStorage.getItem(LS_KEY);
+  if(!raw){
+    return {
+      items: [],
+      moves: []
+    };
+  }
+  try{
+    const db = JSON.parse(raw);
+    db.items ??= [];
+    db.moves ??= [];
+    return db;
+  }catch(e){
+    console.warn("DB inválido, resetando.", e);
+    return {items:[], moves:[]};
+  }
+}
+
+function saveDB(){
+  localStorage.setItem(LS_KEY, JSON.stringify(DB));
+}
+
+let DB = loadDB();
+let editingItemId = null;
+
+/* ========== Regras de custo médio ==========
+   - Item tem: estoque, custoMedio
+   - ENTRADA (qtd, preco):
+       novoCM = (estoqueAtual*cm + qtd*preco) / (estoqueAtual + qtd)
+       estoque += qtd
+   - SAIDA (qtd):
+       estoque -= qtd
+       cm permanece
+*/
+function applyMove(move){
+  const it = DB.items.find(x=>x.id===move.itemId);
+  if(!it) throw new Error("Item não encontrado.");
+  const qtd = numBR(move.qty);
+
+  if(move.type === "ENTRADA"){
+    const p = numBR(move.price);
+    const est = numBR(it.stock);
+    const cm = numBR(it.avgCost);
+
+    const novoEst = est + qtd;
+    const novoCM = (novoEst <= 0) ? 0 : ((est*cm) + (qtd*p)) / novoEst;
+
+    it.stock = +novoEst.toFixed(6);
+    it.avgCost = +novoCM.toFixed(6);
+    // opcional: atualizar "lastCost"
+    it.lastCost = +p.toFixed(6);
+  } else {
+    const est = numBR(it.stock);
+    if(qtd > est + 1e-9) throw new Error("Estoque insuficiente para essa saída.");
+    it.stock = +(est - qtd).toFixed(6);
+  }
+}
+
+/* ========== UI Helpers ========== */
+function setText(id, txt){ document.getElementById(id).textContent = txt; }
+
+function buildItemOption(it){
+  const opt = document.createElement("option");
+  opt.value = it.id;
+  opt.textContent = `${it.code} — ${it.desc}`;
+  return opt;
+}
+
+function statusPill(it){
+  const est = numBR(it.stock);
+  const min = numBR(it.minStock);
+  if(est <= 0){
+    return `<span class="pill zero">Zerado</span>`;
+  }
+  if(est <= min && min > 0){
+    return `<span class="pill low">Baixo</span>`;
+  }
+  return `<span class="pill">OK</span>`;
+}
+
+function itemValue(it){
+  return numBR(it.stock) * numBR(it.avgCost);
+}
+
+function refreshKPIs(){
+  const itens = DB.items.length;
+  const qtdTotal = DB.items.reduce((a,it)=>a + numBR(it.stock), 0);
+  const valorTotal = DB.items.reduce((a,it)=>a + itemValue(it), 0);
+  const alerts = DB.items.filter(it=>{
+    const est = numBR(it.stock);
+    const min = numBR(it.minStock);
+    return est<=0 || (min>0 && est<=min);
+  }).length;
+
+  setText("kpiItens", itens);
+  setText("kpiQtd", fmt(qtdTotal, 2));
+  setText("kpiValor", money.format(valorTotal));
+  setText("kpiBaixo", alerts);
+
+  // ultimas
+  const lastEnt = [...DB.moves].reverse().find(m=>m.type==="ENTRADA");
+  const lastSai = [...DB.moves].reverse().find(m=>m.type==="SAIDA");
+  if(lastEnt){
+    const it = DB.items.find(x=>x.id===lastEnt.itemId);
+    setText("kpiUltEnt", `${fmt(lastEnt.qty,2)} ${it?.unit||""}`);
+    setText("kpiUltEntSub", `${it?.code||"—"} • ${toLocalDT(lastEnt.at)}`);
+  }else{
+    setText("kpiUltEnt", "—");
+    setText("kpiUltEntSub", "—");
+  }
+  if(lastSai){
+    const it = DB.items.find(x=>x.id===lastSai.itemId);
+    setText("kpiUltSai", `${fmt(lastSai.qty,2)} ${it?.unit||""}`);
+    setText("kpiUltSaiSub", `${it?.code||"—"} • ${toLocalDT(lastSai.at)}`);
+  }else{
+    setText("kpiUltSai", "—");
+    setText("kpiUltSaiSub", "—");
+  }
+}
+
+function refreshItemSelect(){
+  const sel = document.getElementById("mvItem");
+  sel.innerHTML = "";
+  const itemsSorted = [...DB.items].sort((a,b)=>(a.code||"").localeCompare(b.code||""));
+  for(const it of itemsSorted){
+    sel.appendChild(buildItemOption(it));
+  }
+}
+
+function matchesItemFilter(it){
+  const q = (document.getElementById("q").value || "").trim().toLowerCase();
+  const filtro = document.getElementById("filtro").value;
+
+  const text = `${it.code} ${it.desc} ${it.category}`.toLowerCase();
+  if(q && !text.includes(q)) return false;
+
+  const est = numBR(it.stock);
+  const min = numBR(it.minStock);
+
+  if(filtro==="baixo"){
+    return (min>0 && est>0 && est<=min);
+  }
+  if(filtro==="zerado"){
+    return est<=0;
+  }
+  return true;
+}
+
+function refreshItemsTable(){
+  const tb = document.querySelector("#tblItens tbody");
+  tb.innerHTML = "";
+
+  const itemsSorted = [...DB.items].sort((a,b)=>(a.code||"").localeCompare(b.code||""));
+  const filtered = itemsSorted.filter(matchesItemFilter);
+
+  if(filtered.length===0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="10" class="muted" style="padding:14px">Nenhum item encontrado.</td>`;
+    tb.appendChild(tr);
+    return;
+  }
+
+  for(const it of filtered){
+    const tr = document.createElement("tr");
+    const val = itemValue(it);
+
+    tr.innerHTML = `
+      <td><b>${escapeHTML(it.code||"")}</b></td>
+      <td title="${escapeHTML(it.obs||"")}">${escapeHTML(it.desc||"")}</td>
+      <td class="muted">${escapeHTML(it.category||"—")}</td>
+      <td class="muted">${escapeHTML(it.unit||"UN")}</td>
+      <td style="text-align:right"><b>${fmt(it.stock,2)}</b></td>
+      <td style="text-align:right" class="muted">${fmt(it.minStock,2)}</td>
+      <td style="text-align:right">${money.format(numBR(it.avgCost))}</td>
+      <td style="text-align:right"><b>${money.format(val)}</b></td>
+      <td>${statusPill(it)}</td>
+      <td>
+        <div class="inline-actions">
+          <button class="btn" data-edit="${it.id}">Editar</button>
+          <button class="btn danger" data-del="${it.id}">Excluir</button>
+        </div>
+      </td>
+    `;
+    tb.appendChild(tr);
+  }
+
+  // actions
+  tb.querySelectorAll("[data-edit]").forEach(btn=>{
+    btn.addEventListener("click", ()=>loadItemToForm(btn.dataset.edit));
+  });
+  tb.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", ()=>deleteItem(btn.dataset.del));
+  });
+}
+
+function matchesMoveFilter(m){
+  const q = (document.getElementById("qMov").value || "").trim().toLowerCase();
+  const f = document.getElementById("fMov").value;
+
+  if(f !== "todas" && m.type !== f) return false;
+
+  const it = DB.items.find(x=>x.id===m.itemId);
+  const text = `${m.type} ${it?.code||""} ${it?.desc||""} ${m.reason||""} ${m.obs||""}`.toLowerCase();
+  if(q && !text.includes(q)) return false;
+
+  return true;
+}
+
+function refreshMovesTable(){
+  const tb = document.querySelector("#tblMov tbody");
+  tb.innerHTML = "";
+
+  const moves = [...DB.moves].sort((a,b)=> (b.at||"").localeCompare(a.at||""));
+  const filtered = moves.filter(matchesMoveFilter);
+
+  if(filtered.length===0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="8" class="muted" style="padding:14px">Nenhuma movimentação encontrada.</td>`;
+    tb.appendChild(tr);
+    return;
+  }
+
+  for(const m of filtered){
+    const it = DB.items.find(x=>x.id===m.itemId);
+    const total = (m.type==="ENTRADA") ? (numBR(m.qty)*numBR(m.price)) : (numBR(m.qty)*numBR(it?.avgCost));
+    const tipoPill = m.type==="ENTRADA"
+      ? `<span class="pill" style="border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.10)">ENTRADA</span>`
+      : `<span class="pill" style="border-color:rgba(245,158,11,.40); background:rgba(245,158,11,.10)">SAÍDA</span>`;
+
+    tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="muted">${toLocalDT(m.at)}</td>
+      <td>${tipoPill}</td>
+      <td><b>${escapeHTML(it?.code||"—")}</b></td>
+      <td>${escapeHTML(it?.desc||"—")}</td>
+      <td style="text-align:right"><b>${fmt(m.qty,2)}</b></td>
+      <td style="text-align:right">${m.type==="ENTRADA" ? money.format(numBR(m.price)) : "<span class='muted'>—</span>"}</td>
+      <td style="text-align:right"><b>${money.format(total)}</b></td>
+      <td>${escapeHTML(m.reason||"—")}</td>
+    `;
+    tb.appendChild(tr);
+  }
+}
+
+/* ========== CRUD Itens ========== */
+function clearForm(){
+  editingItemId = null;
+  setText("formTitle", "Novo item");
+  document.getElementById("itCodigo").value = "";
+  document.getElementById("itDesc").value = "";
+  document.getElementById("itCat").value = "";
+  document.getElementById("itUn").value = "UN";
+  document.getElementById("itCusto").value = "";
+  document.getElementById("itEstoque").value = "";
+  document.getElementById("itMin").value = "";
+  document.getElementById("itObs").value = "";
+  document.getElementById("itCodigo").focus();
+}
+
+function loadItemToForm(id){
+  const it = DB.items.find(x=>x.id===id);
+  if(!it) return;
+
+  editingItemId = id;
+  setText("formTitle", `Editar item: ${it.code}`);
+  document.getElementById("itCodigo").value = it.code || "";
+  document.getElementById("itDesc").value = it.desc || "";
+  document.getElementById("itCat").value = it.category || "";
+  document.getElementById("itUn").value = it.unit || "UN";
+  document.getElementById("itCusto").value = (numBR(it.lastCost || it.avgCost) || 0);
+  document.getElementById("itEstoque").value = numBR(it.stock) || 0;
+  document.getElementById("itMin").value = numBR(it.minStock) || 0;
+  document.getElementById("itObs").value = it.obs || "";
+  toast("Item carregado para edição.");
+}
+
+function codeExists(code, ignoreId=null){
+  const c = (code||"").trim().toLowerCase();
+  return DB.items.some(it => (it.code||"").trim().toLowerCase()===c && it.id!==ignoreId);
+}
+
+function saveItem(){
+  const code = document.getElementById("itCodigo").value.trim();
+  const desc = document.getElementById("itDesc").value.trim();
+  const category = document.getElementById("itCat").value.trim();
+  const unit = document.getElementById("itUn").value;
+  const lastCost = numBR(document.getElementById("itCusto").value);
+  const stockInput = numBR(document.getElementById("itEstoque").value);
+  const minStock = numBR(document.getElementById("itMin").value);
+  const obs = document.getElementById("itObs").value.trim();
+
+  if(!code || !desc){
+    toast("Preencha Código e Descrição.");
+    return;
+  }
+  if(codeExists(code, editingItemId)){
+    toast("Já existe um item com esse código.");
+    return;
+  }
+
+  if(editingItemId){
+    const it = DB.items.find(x=>x.id===editingItemId);
+    if(!it) return;
+
+    it.code = code;
+    it.desc = desc;
+    it.category = category;
+    it.unit = unit;
+    it.minStock = +minStock.toFixed(6);
+    it.obs = obs;
+
+    // Se usuário alterou estoque manualmente no cadastro, vamos ajustar:
+    // (isso é útil pra inventário inicial/ajuste rápido)
+    const oldStock = numBR(it.stock);
+    const newStock = stockInput;
+    it.stock = +newStock.toFixed(6);
+
+    // custo médio: se o item ainda não tinha custo médio, use o lastCost
+    if(numBR(it.avgCost) <= 0 && lastCost > 0){
+      it.avgCost = +lastCost.toFixed(6);
     }
+    it.lastCost = +lastCost.toFixed(6);
 
-    function atualizarPreview() {
-      const preview = document.getElementById('previewEtiquetas');
-      preview.innerHTML = '';
-
-      let contador = 0;
-      const LIMITE_PREVIEW = 20; // pra não travar a tela se tiver muita etiqueta
-
-      itens.forEach(item => {
-        for (let i = 0; i < item.qtde && contador < LIMITE_PREVIEW; i++) {
-          contador++;
-
-          const div = document.createElement('div');
-          div.className = 'preview-etiqueta';
-
-          const cod = document.createElement('div');
-          cod.className = 'preview-etiqueta-codigo';
-          cod.textContent = item.codigo || '(sem código)';
-          div.appendChild(cod);
-
-          const desc = document.createElement('div');
-          desc.className = 'preview-etiqueta-descricao';
-          desc.textContent = item.descricao || '(sem descrição)';
-          div.appendChild(desc);
-
-          preview.appendChild(div);
+    // Se houve diferença de estoque, registrar uma movimentação automática de ajuste:
+    const diff = newStock - oldStock;
+    if(Math.abs(diff) > 1e-9){
+      const m = {
+        id: uid(),
+        at: nowISO(),
+        type: diff>0 ? "ENTRADA" : "SAIDA",
+        itemId: it.id,
+        qty: Math.abs(diff),
+        price: diff>0 ? lastCost : 0,
+        reason: "Ajuste (edição do item)",
+        obs: "Movimentação gerada automaticamente"
+      };
+      // aplicar regra de custo médio se for entrada
+      if(m.type==="ENTRADA"){
+        // garantir custo no ajuste
+        m.price = lastCost > 0 ? lastCost : numBR(it.avgCost);
+        // voltar o estoque para oldStock para aplicar corretamente a movimentação
+        it.stock = +oldStock.toFixed(6);
+        try{
+          applyMove(m);
+          DB.moves.push(m);
+        }catch(e){
+          // fallback: simplesmente manter o estoque ajustado
+          it.stock = +newStock.toFixed(6);
         }
-      });
-
-      if (contador === 0) {
-        const vazio = document.createElement('div');
-        vazio.className = 'preview-etiqueta';
-        vazio.textContent = 'Nenhum item adicionado ainda.';
-        preview.appendChild(vazio);
-      } else if (contador >= 20) {
-        const msg = document.createElement('div');
-        msg.className = 'preview-etiqueta';
-        msg.textContent = 'Prévia limitada a 20 etiquetas para não travar. Na impressão sairão todas.';
-        preview.appendChild(msg);
-      }
-    }
-
-    function adicionarItem() {
-      const codigo = document.getElementById('codigo').value.trim();
-      const descricao = document.getElementById('descricao').value.trim();
-      let qtde = parseInt(document.getElementById('qtde').value, 10);
-
-      if (!codigo && !descricao) {
-        alert('Preencha pelo menos o código ou a descrição.');
-        return;
-      }
-
-      if (isNaN(qtde) || qtde < 1) {
-        qtde = 1;
-      }
-
-      itens.push({ codigo, descricao, qtde });
-
-      document.getElementById('codigo').value = '';
-      document.getElementById('descricao').value = '';
-      document.getElementById('qtde').value = '1';
-      document.getElementById('codigo').focus();
-
-      atualizarTabela();
-    }
-
-    function removerItem(index) {
-      itens.splice(index, 1);
-      atualizarTabela();
-    }
-
-    function limparLista() {
-      if (!confirm('Tem certeza que deseja limpar a lista inteira?')) return;
-      itens = [];
-      atualizarTabela();
-    }
-
-    function gerarEtiquetasEImprimir() {
-      if (itens.length === 0) {
-        alert('Adicione pelo menos um item antes de imprimir.');
-        return;
-      }
-
-      const container = document.getElementById('etiquetasParaImprimir');
-      container.innerHTML = '';
-
-      itens.forEach(item => {
-        for (let i = 0; i < item.qtde; i++) {
-          const div = document.createElement('div');
-          div.className = 'etiqueta-print';
-
-          const cod = document.createElement('div');
-          cod.className = 'etiqueta-codigo';
-          cod.textContent = item.codigo || '';
-          div.appendChild(cod);
-
-          const desc = document.createElement('div');
-          desc.className = 'etiqueta-descricao';
-          desc.textContent = item.descricao || '';
-          div.appendChild(desc);
-
-          container.appendChild(div);
+      }else{
+        // saída: não mexe em custo médio
+        // voltar e aplicar
+        it.stock = +oldStock.toFixed(6);
+        try{
+          applyMove(m);
+          DB.moves.push(m);
+        }catch(e){
+          it.stock = +newStock.toFixed(6);
         }
-      });
-
-      window.print();
+      }
     }
 
-    // Inicializa preview vazio
-    atualizarPreview();
-  </script>
+    saveDB();
+    refreshAll();
+    toast("Item atualizado.");
+    return;
+  }
+
+  // novo item
+  const it = {
+    id: uid(),
+    code,
+    desc,
+    category,
+    unit,
+    stock: 0,
+    minStock: +minStock.toFixed(6),
+    avgCost: 0,
+    lastCost: +lastCost.toFixed(6),
+    obs
+  };
+
+  // estoque inicial (se tiver)
+  DB.items.push(it);
+
+  // se estoque inicial > 0, cria entrada inicial para custo médio
+  if(stockInput > 0){
+    const price = lastCost > 0 ? lastCost : 0;
+    if(price <= 0){
+      it.stock = +stockInput.toFixed(6);
+      it.avgCost = 0;
+    }else{
+      const m = {
+        id: uid(),
+        at: nowISO(),
+        type: "ENTRADA",
+        itemId: it.id,
+        qty: stockInput,
+        price,
+        reason: "Estoque inicial",
+        obs: obs || ""
+      };
+      applyMove(m);
+      DB.moves.push(m);
+    }
+  }
+
+  // se custo foi informado e ainda não tem custo médio, setar
+  if(numBR(it.avgCost) <= 0 && lastCost > 0){
+    it.avgCost = +lastCost.toFixed(6);
+  }
+
+  saveDB();
+  refreshAll();
+  toast("Item salvo.");
+  clearForm();
+}
+
+function deleteItem(id){
+  const it = DB.items.find(x=>x.id===id);
+  if(!it) return;
+
+  const hasMoves = DB.moves.some(m=>m.itemId===id);
+  const msg = hasMoves
+    ? `Excluir "${it.code}"? Isso também vai remover todo o histórico de movimentações desse item.`
+    : `Excluir "${it.code}"?`;
+  if(!confirm(msg)) return;
+
+  DB.items = DB.items.filter(x=>x.id!==id);
+  DB.moves = DB.moves.filter(m=>m.itemId!==id);
+  saveDB();
+  refreshAll();
+  if(editingItemId===id) clearForm();
+  toast("Item excluído.");
+}
+
+/* ========== Movimentação ========== */
+function openMovModal(){
+  if(DB.items.length===0){
+    toast("Cadastre ao menos 1 item antes de movimentar.");
+    return;
+  }
+  refreshItemSelect();
+  document.getElementById("mvTipo").value = "ENTRADA";
+  document.getElementById("mvQtd").value = "";
+  document.getElementById("mvPreco").value = "";
+  document.getElementById("mvMotivo").value = "";
+  document.getElementById("mvObs").value = "";
+  document.getElementById("modalMov").classList.add("show");
+  updateMovPreview();
+  document.getElementById("mvQtd").focus();
+}
+
+function closeMovModal(){
+  document.getElementById("modalMov").classList.remove("show");
+}
+
+function updateMovPreview(){
+  const itemId = document.getElementById("mvItem").value;
+  const tipo = document.getElementById("mvTipo").value;
+  const qtd = numBR(document.getElementById("mvQtd").value);
+  const preco = numBR(document.getElementById("mvPreco").value);
+
+  const it = DB.items.find(x=>x.id===itemId);
+  if(!it){
+    setText("mvEstAtual","0");
+    setText("mvEstDepois","0");
+    setText("mvEstAtualSub","—");
+    setText("mvEstDepoisSub","—");
+    return;
+  }
+
+  const est = numBR(it.stock);
+  setText("mvEstAtual", fmt(est,2));
+  setText("mvEstAtualSub", `${it.code} • CM ${money.format(numBR(it.avgCost))}`);
+
+  let depois = est;
+  if(tipo==="ENTRADA") depois = est + qtd;
+  else depois = est - qtd;
+
+  setText("mvEstDepois", fmt(depois,2));
+
+  // texto extra
+  if(tipo==="ENTRADA"){
+    const cm = numBR(it.avgCost);
+    const novoEst = est + qtd;
+    const novoCM = (novoEst<=0) ? 0 : ((est*cm) + (qtd*preco)) / novoEst;
+    setText("mvEstDepoisSub", `Novo CM ≈ ${money.format(novoCM)} • Total entrada ${money.format(qtd*preco)}`);
+    document.getElementById("boxPreco").style.display = "";
+  }else{
+    const totalSaida = qtd * numBR(it.avgCost);
+    setText("mvEstDepoisSub", `Baixa pelo CM ${money.format(numBR(it.avgCost))} • Total saída ${money.format(totalSaida)}`);
+    document.getElementById("boxPreco").style.display = "none";
+  }
+}
+
+function saveMove(){
+  const type = document.getElementById("mvTipo").value;
+  const itemId = document.getElementById("mvItem").value;
+  const qty = numBR(document.getElementById("mvQtd").value);
+  const price = numBR(document.getElementById("mvPreco").value);
+  const reason = document.getElementById("mvMotivo").value.trim();
+  const obs = document.getElementById("mvObs").value.trim();
+
+  if(!itemId){
+    toast("Selecione um item.");
+    return;
+  }
+  if(!(qty > 0)){
+    toast("Quantidade deve ser maior que zero.");
+    return;
+  }
+  if(type==="ENTRADA" && !(price > 0)){
+    toast("Na ENTRADA, informe um preço unitário.");
+    return;
+  }
+
+  const move = {
+    id: uid(),
+    at: nowISO(),
+    type,
+    itemId,
+    qty,
+    price: type==="ENTRADA" ? price : 0,
+    reason: reason || (type==="ENTRADA" ? "Entrada" : "Saída"),
+    obs
+  };
+
+  try{
+    applyMove(move);
+    DB.moves.push(move);
+    saveDB();
+    refreshAll();
+    closeMovModal();
+    toast("Movimentação salva.");
+  }catch(e){
+    toast(e.message || "Erro ao salvar movimentação.");
+  }
+}
+
+/* ========== Backup / CSV ==========
+   - JSON: exporta/importa
+   - CSV: itens e movimentações
+*/
+function openBackupModal(){
+  document.getElementById("modalBackup").classList.add("show");
+  updateBackupPreview();
+}
+function closeBackupModal(){
+  document.getElementById("modalBackup").classList.remove("show");
+}
+function openCsvModal(){
+  document.getElementById("modalCsv").classList.add("show");
+}
+function closeCsvModal(){
+  document.getElementById("modalCsv").classList.remove("show");
+}
+
+function updateBackupPreview(){
+  const resumo = {
+    itens: DB.items.length,
+    movimentacoes: DB.moves.length,
+    geradoEm: new Date().toLocaleString("pt-BR"),
+    valorEstoque: money.format(DB.items.reduce((a,it)=>a+itemValue(it),0))
+  };
+  document.getElementById("backupPreview").value =
+    "Resumo do banco:\n" +
+    `• Itens: ${resumo.itens}\n` +
+    `• Movimentações: ${resumo.movimentacoes}\n` +
+    `• Valor do estoque: ${resumo.valorEstoque}\n` +
+    `• Gerado em: ${resumo.geradoEm}\n\n` +
+    "Você pode exportar o JSON para backup ou importar um JSON para restaurar.";
+}
+
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 800);
+}
+
+function exportJSON(){
+  const payload = {
+    version: 1,
+    exportedAt: nowISO(),
+    items: DB.items,
+    moves: DB.moves
+  };
+  downloadFile("estoque_backup.json", JSON.stringify(payload, null, 2), "application/json");
+  toast("Backup JSON baixado.");
+  updateBackupPreview();
+}
+
+function importJSONFile(file){
+  const fr = new FileReader();
+  fr.onload = () => {
+    try{
+      const payload = JSON.parse(fr.result);
+      if(!payload || !Array.isArray(payload.items) || !Array.isArray(payload.moves)){
+        throw new Error("Arquivo inválido: faltam itens/movimentações.");
+      }
+      if(!confirm("Importar este backup vai SUBSTITUIR os dados atuais. Continuar?")) return;
+
+      // validação mínima
+      for(const it of payload.items){
+        if(!it.id) it.id = uid();
+      }
+      for(const m of payload.moves){
+        if(!m.id) m.id = uid();
+      }
+
+      DB = { items: payload.items, moves: payload.moves };
+      saveDB();
+      refreshAll();
+      updateBackupPreview();
+      toast("Backup importado com sucesso.");
+    }catch(e){
+      toast(e.message || "Falha ao importar JSON.");
+    }
+  };
+  fr.readAsText(file, "utf-8");
+}
+
+function csvEscape(v){
+  const s = String(v ?? "");
+  if(/[",\n;]/.test(s)){
+    return `"${s.replace(/"/g,'""')}"`;
+  }
+  return s;
+}
+
+function exportCSVItens(){
+  const header = ["codigo","descricao","categoria","unidade","estoque","minimo","custo_medio","valor_estoque","obs"];
+  const rows = DB.items
+    .slice()
+    .sort((a,b)=>(a.code||"").localeCompare(b.code||""))
+    .map(it => ([
+      it.code, it.desc, it.category, it.unit,
+      numBR(it.stock), numBR(it.minStock),
+      numBR(it.avgCost), itemValue(it),
+      it.obs || ""
+    ]));
+  const csv = [header, ...rows].map(r=>r.map(csvEscape).join(";")).join("\n");
+  downloadFile("itens.csv", csv, "text/csv;charset=utf-8");
+  toast("CSV de itens baixado.");
+}
+
+function exportCSVMov(){
+  const header = ["data_hora","tipo","codigo","descricao","qtd","preco_unit","total_estimado","motivo","obs"];
+  const rows = DB.moves
+    .slice()
+    .sort((a,b)=>(b.at||"").localeCompare(a.at||""))
+    .map(m=>{
+      const it = DB.items.find(x=>x.id===m.itemId);
+      const total = (m.type==="ENTRADA") ? (numBR(m.qty)*numBR(m.price)) : (numBR(m.qty)*numBR(it?.avgCost));
+      return [
+        toLocalDT(m.at), m.type, it?.code||"", it?.desc||"",
+        numBR(m.qty),
+        m.type==="ENTRADA" ? numBR(m.price) : "",
+        total,
+        m.reason||"", m.obs||""
+      ];
+    });
+  const csv = [header, ...rows].map(r=>r.map(csvEscape).join(";")).join("\n");
+  downloadFile("movimentacoes.csv", csv, "text/csv;charset=utf-8");
+  toast("CSV de movimentações baixado.");
+}
+
+/* ========== Resumo rápido (Hoje / Mês) ========== */
+function resumoPeriodo(tipo){
+  const now = new Date();
+  const start = new Date(now);
+  if(tipo==="dia"){
+    start.setHours(0,0,0,0);
+  }else{
+    start.setDate(1);
+    start.setHours(0,0,0,0);
+  }
+  const startIso = start.toISOString();
+
+  const moves = DB.moves.filter(m => (m.at||"") >= startIso);
+  const ent = moves.filter(m=>m.type==="ENTRADA");
+  const sai = moves.filter(m=>m.type==="SAIDA");
+
+  const totalEnt = ent.reduce((a,m)=>a + (numBR(m.qty)*numBR(m.price)), 0);
+  const totalSai = sai.reduce((a,m)=>{
+    const it = DB.items.find(x=>x.id===m.itemId);
+    return a + (numBR(m.qty)*numBR(it?.avgCost));
+  }, 0);
+
+  const qtdEnt = ent.reduce((a,m)=>a + numBR(m.qty), 0);
+  const qtdSai = sai.reduce((a,m)=>a + numBR(m.qty), 0);
+
+  alert(
+    (tipo==="dia" ? "Resumo de HOJE" : "Resumo do MÊS") + "\n\n" +
+    `Entradas: ${fmt(qtdEnt,2)} itens • ${money.format(totalEnt)}\n` +
+    `Saídas:   ${fmt(qtdSai,2)} itens • ${money.format(totalSai)}\n` +
+    `Movimentações: ${moves.length}`
+  );
+}
+
+/* ========== Segurança básica / util ========= */
+function escapeHTML(s){
+  return String(s||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* ========== Refresh Geral ========== */
+function refreshAll(){
+  refreshKPIs();
+  refreshItemSelect();
+  refreshItemsTable();
+  refreshMovesTable();
+  updateBackupPreview();
+}
+
+/* ========== Eventos ========= */
+document.getElementById("btnSalvarItem").addEventListener("click", saveItem);
+document.getElementById("btnNovo").addEventListener("click", clearForm);
+document.getElementById("q").addEventListener("input", refreshItemsTable);
+document.getElementById("filtro").addEventListener("change", refreshItemsTable);
+
+document.getElementById("qMov").addEventListener("input", refreshMovesTable);
+document.getElementById("fMov").addEventListener("change", refreshMovesTable);
+
+document.getElementById("btnMov").addEventListener("click", openMovModal);
+document.getElementById("btnMov2").addEventListener("click", openMovModal);
+document.getElementById("closeMov").addEventListener("click", closeMovModal);
+document.getElementById("btnCancelarMov").addEventListener("click", closeMovModal);
+document.getElementById("modalMov").addEventListener("click", (e)=>{ if(e.target.id==="modalMov") closeMovModal(); });
+
+["mvTipo","mvItem","mvQtd","mvPreco"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", updateMovPreview);
+  document.getElementById(id).addEventListener("change", updateMovPreview);
+});
+document.getElementById("btnSalvarMov").addEventListener("click", saveMove);
+
+// Backup
+document.getElementById("btnBackup").addEventListener("click", openBackupModal);
+document.getElementById("closeBackup").addEventListener("click", closeBackupModal);
+document.getElementById("btnFecharBackup").addEventListener("click", closeBackupModal);
+document.getElementById("modalBackup").addEventListener("click", (e)=>{ if(e.target.id==="modalBackup") closeBackupModal(); });
+
+document.getElementById("btnExportJson").addEventListener("click", exportJSON);
+document.getElementById("fileImportJson").addEventListener("change", (e)=>{
+  const f = e.target.files?.[0];
+  if(f) importJSONFile(f);
+  e.target.value = "";
+});
+
+// CSV
+document.getElementById("btnCsv").addEventListener("click", openCsvModal);
+document.getElementById("closeCsv").addEventListener("click", closeCsvModal);
+document.getElementById("btnFecharCsv").addEventListener("click", closeCsvModal);
+document.getElementById("modalCsv").addEventListener("click", (e)=>{ if(e.target.id==="modalCsv") closeCsvModal(); });
+
+document.getElementById("btnExportCsvItens").addEventListener("click", exportCSVItens);
+document.getElementById("btnExportCsvMov").addEventListener("click", exportCSVMov);
+
+// Resumos
+document.getElementById("btnResumoDia").addEventListener("click", ()=>resumoPeriodo("dia"));
+document.getElementById("btnResumoMes").addEventListener("click", ()=>resumoPeriodo("mes"));
+
+// Limpar tudo
+document.getElementById("btnLimpar").addEventListener("click", ()=>{
+  if(!confirm("Isso vai APAGAR tudo (itens e movimentações). Continuar?")) return;
+  localStorage.removeItem(LS_KEY);
+  DB = {items:[], moves:[]};
+  clearForm();
+  refreshAll();
+  toast("Dados apagados.");
+});
+
+// Atalhos teclado
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){
+    closeMovModal(); closeBackupModal(); closeCsvModal();
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
+    e.preventDefault();
+    document.getElementById("q").focus();
+  }
+});
+
+// Inicial
+clearForm();
+refreshAll();
+</script>
 </body>
 </html>
