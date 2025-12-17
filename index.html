@@ -4,19 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ampertech — Estoque & Vendas</title>
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="theme-color" content="#f5f7fb" />
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#101a2b;
-      --muted:#9bb0d0;
-      --text:#e8f0ff;
-      --line:rgba(255,255,255,.10);
-      --ok:#22c55e;
-      --info:#38bdf8;
-      --warn:#f59e0b;
-      --danger:#fb7185;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:rgba(15,23,42,.12);
+
+      --ok:#16a34a;
+      --info:#0284c7;
+      --warn:#d97706;
+      --danger:#e11d48;
+
+      --shadow: 0 10px 28px rgba(2,6,23,.10);
       --r:18px;
       --r2:14px;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -27,8 +29,8 @@
       font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 10% 0%, rgba(56,189,248,.12), transparent 55%),
-        radial-gradient(1000px 500px at 100% 0%, rgba(34,197,94,.12), transparent 55%),
+        radial-gradient(1200px 600px at 10% 0%, rgba(2,132,199,.10), transparent 55%),
+        radial-gradient(1000px 500px at 100% 0%, rgba(22,163,74,.10), transparent 55%),
         var(--bg);
     }
     .wrap{max-width:1100px; margin:0 auto; padding:16px 12px 90px}
@@ -40,18 +42,20 @@
     .brand{display:flex; gap:10px; align-items:center}
     .logo{
       width:44px; height:44px; border-radius:14px;
-      background: linear-gradient(135deg, rgba(56,189,248,.22), rgba(34,197,94,.18));
-      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(135deg, rgba(2,132,199,.18), rgba(22,163,74,.16));
+      border:1px solid rgba(15,23,42,.10);
       box-shadow: var(--shadow);
       display:grid; place-items:center;
       font-weight:900;
       letter-spacing:.5px;
+      color:#0f172a;
     }
     .title b{font-size:15px}
     .title small{display:block; margin-top:2px; color:var(--muted); font-size:12px}
+
     .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.85);
       color:var(--text);
       padding:10px 12px;
       border-radius:14px;
@@ -60,17 +64,18 @@
       font-size:13px;
       display:inline-flex; align-items:center; gap:8px;
       transition:.12s ease;
-      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+      box-shadow: 0 6px 16px rgba(2,6,23,.08);
       user-select:none;
     }
-    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.08)}
+    .btn:hover{transform:translateY(-1px); background:#fff}
     .btn:active{transform:translateY(0)}
-    .btn.primary{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.12)}
-    .btn.info{border-color:rgba(56,189,248,.35); background:rgba(56,189,248,.12)}
-    .btn.danger{border-color:rgba(251,113,133,.35); background:rgba(251,113,133,.12)}
+    .btn.primary{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
+    .btn.info{border-color:rgba(2,132,199,.30); background:rgba(2,132,199,.10)}
+    .btn.danger{border-color:rgba(225,29,72,.25); background:rgba(225,29,72,.08)}
+
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.12);
+      background: var(--card);
+      border:1px solid rgba(15,23,42,.10);
       border-radius: var(--r);
       box-shadow: var(--shadow);
       overflow:hidden;
@@ -79,8 +84,8 @@
       padding:14px;
       border-bottom:1px solid var(--line);
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
       flex-wrap:wrap;
+      background: linear-gradient(180deg, rgba(2,132,199,.06), transparent);
     }
     .hd h2{margin:0; font-size:14px}
     .hd p{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35}
@@ -89,46 +94,48 @@
     .kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
     @media(max-width:900px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
     .kpi{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
+      border:1px solid rgba(15,23,42,.08);
+      background: rgba(2,132,199,.04);
       border-radius: var(--r2);
       padding:12px;
     }
-    .kpi small{color:var(--muted); font-weight:800; letter-spacing:.2px}
+    .kpi small{color:var(--muted); font-weight:900; letter-spacing:.2px}
     .kpi b{display:block; margin-top:6px; font-size:18px}
 
     .tabs{display:flex; gap:10px; flex-wrap:wrap}
     .tab{
       padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.85);
       cursor:pointer;
       font-weight:900;
       font-size:13px;
     }
-    .tab.active{border-color:rgba(56,189,248,.40); background:rgba(56,189,248,.10)}
+    .tab.active{border-color:rgba(2,132,199,.35); background:rgba(2,132,199,.10)}
+
     .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:12px}
     @media(max-width:980px){ .grid{grid-template-columns:1fr} }
 
     label{font-size:11px; color:var(--muted); font-weight:900; letter-spacing:.2px}
-    input, select, textarea{
+    input, select{
       width:100%;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,16,28,.55);
+      border:1px solid rgba(15,23,42,.12);
+      background:#fff;
       color:var(--text);
       padding:10px 11px;
       font-size:13px;
       outline:none;
     }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(56,189,248,.45);
-      box-shadow: 0 0 0 3px rgba(56,189,248,.12);
+    input:focus, select:focus{
+      border-color: rgba(2,132,199,.45);
+      box-shadow: 0 0 0 3px rgba(2,132,199,.12);
     }
     .row{display:grid; grid-template-columns:repeat(12,1fr); gap:10px; align-items:end}
     .field{grid-column:span 3; display:flex; flex-direction:column; gap:6px}
     .span2{grid-column:span 2}
+    .span3{grid-column:span 3}
     .span4{grid-column:span 4}
     .span5{grid-column:span 5}
     .span6{grid-column:span 6}
@@ -139,15 +146,15 @@
       width:100%;
       border-collapse:separate;
       border-spacing:0;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(15,23,42,.10);
       border-radius:16px;
       overflow:hidden;
-      background: rgba(10,16,28,.35);
+      background: #fff;
     }
     .table th,.table td{
       padding:10px;
       font-size:12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(15,23,42,.08);
       text-align:left;
       white-space:nowrap;
       vertical-align:middle;
@@ -156,30 +163,31 @@
       font-size:11px;
       color:var(--muted);
       font-weight:900;
-      background: rgba(255,255,255,.05);
+      background: rgba(2,132,199,.06);
       position:sticky; top:0;
       z-index:1;
     }
-    .table tr:hover td{background: rgba(255,255,255,.04)}
+    .table tr:hover td{background: rgba(2,132,199,.04)}
     .muted{color:var(--muted)}
+
     .pill{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      border:1px solid rgba(15,23,42,.12);
+      background: rgba(15,23,42,.04);
       font-weight:900;
       font-size:11px;
     }
-    .pill.ok{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.10)}
-    .pill.low{border-color:rgba(245,158,11,.40); background:rgba(245,158,11,.10)}
-    .pill.zero{border-color:rgba(251,113,133,.35); background:rgba(251,113,133,.10)}
+    .pill.ok{border-color:rgba(22,163,74,.30); background:rgba(22,163,74,.10)}
+    .pill.low{border-color:rgba(217,119,6,.28); background:rgba(217,119,6,.10)}
+    .pill.zero{border-color:rgba(225,29,72,.22); background:rgba(225,29,72,.08)}
     .hr{height:1px; background:var(--line); margin:12px 0}
 
     .toast{
       position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
-      background: rgba(16,26,43,.92);
-      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(15,23,42,.14);
       padding:10px 12px;
       border-radius:999px;
       box-shadow: var(--shadow);
@@ -199,14 +207,16 @@
         <div class="logo">AT</div>
         <div class="title">
           <b>Ampertech — Estoque & Vendas</b>
-          <small>Eletrônicos, capas e acessórios • GitHub Pages • Sem banco</small>
+          <small>Eletrônicos, capas e acessórios • GitHub Pages • Tema claro</small>
         </div>
       </div>
+
       <div class="tabs" role="tablist">
         <div class="tab active" id="tabVenda">Venda</div>
         <div class="tab" id="tabItens">Itens</div>
         <div class="tab" id="tabHist">Histórico</div>
       </div>
+
       <div style="display:flex; gap:10px; flex-wrap:wrap">
         <button class="btn info" id="btnBackup">Backup JSON</button>
         <button class="btn danger" id="btnReset">Limpar tudo</button>
@@ -224,7 +234,7 @@
       </div>
     </section>
 
-    <!-- ====== VENDA (SIMPLIFICADA) ====== -->
+    <!-- VENDA -->
     <section class="card" id="viewVenda">
       <div class="hd">
         <div>
@@ -239,7 +249,7 @@
 
       <div class="bd">
         <div class="grid">
-          <div class="card" style="background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); box-shadow:none">
+          <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
             <div class="bd">
               <div class="row">
                 <div class="field span12">
@@ -264,18 +274,18 @@
 
                 <div class="field span12">
                   <label>Observação / cliente (opcional)</label>
-                  <input id="vObs" placeholder="Ex: Cliente João / Whats / Pix / Cartão..." />
+                  <input id="vObs" placeholder="Ex: Cliente João / Pix / Cartão..." />
                 </div>
               </div>
 
-              <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+              <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center">
                 <button class="btn primary" id="btnAdd">Adicionar no carrinho</button>
                 <span class="muted" id="vInfoEstoque">—</span>
               </div>
             </div>
           </div>
 
-          <div class="card" style="background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.10); box-shadow:none">
+          <div class="card" style="border-color:rgba(15,23,42,.10); box-shadow:none">
             <div class="hd">
               <div>
                 <h2>Carrinho</h2>
@@ -296,8 +306,9 @@
                 </thead>
                 <tbody></tbody>
               </table>
+
               <div class="muted" style="margin-top:10px; font-size:12px">
-                Dica: para capas e acessórios, você pode deixar “Preço venda” e só registrar a saída no estoque (se quiser).
+                Dica: para capas/acessórios, pode deixar “Preço venda” vazio e registrar só a saída.
               </div>
             </div>
           </div>
@@ -305,12 +316,12 @@
       </div>
     </section>
 
-    <!-- ====== ITENS ====== -->
+    <!-- ITENS -->
     <section class="card hide" id="viewItens" style="margin-top:12px">
       <div class="hd">
         <div>
           <h2>Cadastro de Itens</h2>
-          <p>Cadastre produtos da Ampertech (eletrônicos, capas, acessórios). Entradas ajustam custo médio.</p>
+          <p>Cadastre produtos. Entradas atualizam custo médio.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="iBusca" placeholder="Buscar item..." style="min-width:220px" />
@@ -355,13 +366,13 @@
           </div>
           <div class="field span6">
             <label>Obs</label>
-            <input id="iObs" placeholder="Ex: fornecedor, cor, modelo, etc." />
+            <input id="iObs" placeholder="Ex: fornecedor, cor, modelo..." />
           </div>
 
           <div class="field span12">
-            <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
               <button class="btn info" id="btnEntradaRapida">Entrada rápida</button>
-              <span class="muted">Entrada rápida gera movimentação de ENTRADA (atualiza custo médio).</span>
+              <span class="muted">Entrada rápida gera ENTRADA (atualiza custo médio).</span>
             </div>
           </div>
         </div>
@@ -391,12 +402,12 @@
       </div>
     </section>
 
-    <!-- ====== HISTÓRICO ====== -->
+    <!-- HISTÓRICO -->
     <section class="card hide" id="viewHist" style="margin-top:12px">
       <div class="hd">
         <div>
           <h2>Histórico</h2>
-          <p>Movimentações: ENTRADA / SAÍDA / VENDA. (Venda é uma SAÍDA com motivo “VENDA”).</p>
+          <p>Movimentações: ENTRADA / SAÍDA / VENDA.</p>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
           <input id="hBusca" placeholder="Buscar no histórico..." style="min-width:220px" />
@@ -429,7 +440,6 @@
   <div class="toast" id="toast">OK</div>
 
 <script>
-  // ===== Helpers / DB =====
   const LS_KEY = "ampertech_estoque_vendas_v1";
   const money = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
   const num = (v)=>{ const n=Number(v); return Number.isFinite(n)?n:0; };
@@ -463,12 +473,9 @@
     return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
-  // ===== Regras custo médio =====
-  // item: stock, avgCost
   function applyMove(m){
     const it = DB.items.find(x=>x.id===m.itemId);
     if(!it) throw new Error("Item não encontrado.");
-
     const q = num(m.qty);
     if(q<=0) throw new Error("Qtd inválida.");
 
@@ -482,7 +489,7 @@
       it.stock = Math.round(novoEst);
       it.avgCost = +novoCM.toFixed(6);
       it.lastCost = +p.toFixed(6);
-    }else{ // SAIDA
+    }else{
       const est = num(it.stock);
       if(q>est) throw new Error("Estoque insuficiente.");
       it.stock = Math.round(est - q);
@@ -497,7 +504,7 @@
     return `<span class="pill ok">OK</span>`;
   }
 
-  // ===== Tabs =====
+  // Tabs
   const tabVenda = document.getElementById("tabVenda");
   const tabItens = document.getElementById("tabItens");
   const tabHist  = document.getElementById("tabHist");
@@ -516,7 +523,7 @@
   tabItens.onclick=()=>setTab("itens");
   tabHist.onclick=()=>setTab("hist");
 
-  // ===== KPIs =====
+  // KPIs
   function refreshKPIs(){
     document.getElementById("kItens").textContent = DB.items.length;
     const qtdTotal = DB.items.reduce((a,it)=>a+num(it.stock),0);
@@ -530,7 +537,7 @@
     document.getElementById("kAlertas").textContent = alerts;
   }
 
-  // ===== Venda =====
+  // Venda
   const vBusca = document.getElementById("vBusca");
   const vItem  = document.getElementById("vItem");
   const vQtd   = document.getElementById("vQtd");
@@ -568,10 +575,7 @@
   vItem.addEventListener("change", refreshVendaInfo);
 
   function cartTotal(){
-    return CART.reduce((a,c)=>{
-      const p = num(c.salePrice);
-      return a + (num(c.qty)*p);
-    },0);
+    return CART.reduce((a,c)=> a + (num(c.qty)*num(c.salePrice)), 0);
   }
 
   function refreshCart(){
@@ -615,10 +619,8 @@
     if(!(q>0)){ toast("Quantidade inválida."); return; }
     if(q>num(it.stock)){ toast("Estoque insuficiente."); return; }
 
-    // Preço venda é opcional: se vazio, grava como 0 no carrinho
     const sp = num(vPreco.value || 0);
 
-    // se já existe no carrinho, soma qtd (mantém o último preço informado)
     const existing = CART.find(x=>x.itemId===it.id);
     if(existing){
       existing.qty += q;
@@ -643,7 +645,6 @@
   document.getElementById("btnFinalizar").onclick=()=>{
     if(CART.length===0){ toast("Carrinho vazio."); return; }
 
-    // valida estoque novamente
     for(const c of CART){
       const it = DB.items.find(x=>x.id===c.itemId);
       if(!it) { toast("Item não encontrado."); return; }
@@ -653,7 +654,6 @@
     const obsVenda = (vObs.value||"").trim();
     const vendaId = "VENDA-" + new Date().toISOString().slice(0,10).replaceAll("-","") + "-" + Math.random().toString(16).slice(2,6).toUpperCase();
 
-    // cria SAÍDAS (motivo VENDA)
     for(const c of CART){
       const it = DB.items.find(x=>x.id===c.itemId);
 
@@ -680,7 +680,7 @@
     toast("Venda finalizada!");
   };
 
-  // ===== Itens =====
+  // Itens
   const iBusca=document.getElementById("iBusca");
   function clearItemForm(){
     editItemId=null;
@@ -720,7 +720,6 @@
 
       it.code=code; it.desc=desc; it.category=cat; it.unit=unit; it.minStock=min; it.obs=obs;
 
-      // ajuste rápido de estoque: se mudou, gera movimentação automática
       const old = num(it.stock);
       const diff = est - old;
       if(diff!==0){
@@ -734,24 +733,17 @@
           reason: "Ajuste",
           obs: "Ajuste pelo cadastro"
         };
-
-        // aplica corretamente
+        it.stock = Math.round(old);
         if(m.type==="ENTRADA"){
-          // volta estoque e aplica entrada (pra custo médio)
-          it.stock = Math.round(old);
           if(cost>0 && num(it.avgCost)<=0) it.avgCost = cost;
-          applyMove(m);
-          DB.moves.push(m);
+          applyMove(m); DB.moves.push(m);
         }else{
-          it.stock = Math.round(old);
-          applyMove(m);
-          DB.moves.push(m);
+          applyMove(m); DB.moves.push(m);
         }
       }else{
         it.stock = Math.round(est);
       }
 
-      // custo médio inicial (se não existir)
       if(num(it.avgCost)<=0 && cost>0) it.avgCost = +cost.toFixed(6);
       it.lastCost = +cost.toFixed(6);
 
@@ -759,7 +751,6 @@
       return;
     }
 
-    // novo
     const it = {
       id: uid(),
       code, desc, category:cat, unit,
@@ -771,11 +762,9 @@
     };
     DB.items.push(it);
 
-    // se estoque inicial > 0 e custo > 0, gera entrada inicial
     if(est>0 && cost>0){
       const m = { id: uid(), at: nowISO(), type:"ENTRADA", itemId: it.id, qty: est, price: cost, reason:"Estoque inicial", obs };
-      applyMove(m);
-      DB.moves.push(m);
+      applyMove(m); DB.moves.push(m);
     }else{
       it.stock = Math.round(est);
     }
@@ -784,7 +773,7 @@
   };
 
   document.getElementById("btnEntradaRapida").onclick=()=>{
-    if(!editItemId){ toast("Carregue um item para editar ou cadastre e depois edite."); return; }
+    if(!editItemId){ toast("Carregue um item para editar."); return; }
     const it = DB.items.find(x=>x.id===editItemId);
     if(!it) return;
     const qtd = Number(prompt("Quantidade de ENTRADA:", "1"));
@@ -867,7 +856,7 @@
   }
   iBusca.addEventListener("input", refreshItensTable);
 
-  // ===== Histórico =====
+  // Histórico
   const hBusca=document.getElementById("hBusca");
   function refreshHist(){
     const tb=document.querySelector("#tblHist tbody");
@@ -913,7 +902,7 @@
   }
   hBusca.addEventListener("input", refreshHist);
 
-  // ===== Backup / CSV / Reset =====
+  // Backup / CSV / Reset
   document.getElementById("btnBackup").onclick=()=>{
     const payload = {version:1, exportedAt: nowISO(), items: DB.items, moves: DB.moves};
     const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
@@ -926,18 +915,11 @@
   };
 
   document.getElementById("btnCsv").onclick=()=>{
-    // CSV do histórico
     const header=["data_hora","tipo","codigo","descricao","qtd","preco","total","motivo","obs"];
     const rows = [...DB.moves].sort((a,b)=>(b.at||"").localeCompare(a.at||"")).map(m=>{
       const it=DB.items.find(x=>x.id===m.itemId);
       const total=(m.type==="ENTRADA") ? (num(m.qty)*num(m.price)) : (num(m.qty)*num(it?.avgCost));
-      return [
-        toLocal(m.at), m.type, it?.code||"", it?.desc||"",
-        num(m.qty),
-        (m.type==="ENTRADA")? num(m.price) : "",
-        total,
-        m.reason||"", m.obs||""
-      ];
+      return [toLocal(m.at), m.type, it?.code||"", it?.desc||"", num(m.qty), (m.type==="ENTRADA")? num(m.price) : "", total, m.reason||"", m.obs||""];
     });
     const escCSV = (v)=>{
       const s=String(v??"");
@@ -964,7 +946,7 @@
     toast("Dados apagados.");
   };
 
-  // ===== Refresh geral =====
+  // Refresh geral
   function refreshAll(){
     refreshKPIs();
     refreshItensTable();
