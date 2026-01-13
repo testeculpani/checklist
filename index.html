@@ -1,910 +1,216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Agendamento do Carro - Empresa</title>
-  <style>
-    :root{
-      --bg:#0b1220;
-      --card:#111a2e;
-      --card2:#0f1830;
-      --text:#e9eefc;
-      --muted:#a8b3d6;
-      --border:rgba(255,255,255,.10);
-      --accent:#6ea8ff;
-      --accent2:#7ef0c1;
-      --danger:#ff6b6b;
-      --warn:#ffd166;
-      --ok:#49f5a6;
-      --shadow: 0 12px 30px rgba(0,0,0,.30);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(110,168,255,.25), transparent 55%),
-                  radial-gradient(900px 500px at 90% 0%, rgba(126,240,193,.18), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-    }
-    header{
-      position:sticky; top:0; z-index:5;
-      backdrop-filter: blur(10px);
-      background: rgba(11,18,32,.70);
-      border-bottom: 1px solid var(--border);
-    }
-    .wrap{max-width:1150px; margin:0 auto; padding:16px}
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex; gap:10px; align-items:center;
-    }
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(110,168,255,.9), rgba(126,240,193,.9));
-      box-shadow: var(--shadow);
-    }
-    h1{font-size:18px; margin:0}
-    .subtitle{font-size:12px; color:var(--muted); margin-top:2px}
+<meta charset="UTF-8">
+<title>Agendamento de Carros</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:16px;
-      padding:16px;
-      max-width:1150px;
-      margin:0 auto;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(17,26,46,.98), rgba(15,24,48,.98));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .card-h{
-      padding:14px 14px 10px 14px;
-      border-bottom:1px solid var(--border);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      flex-wrap:wrap;
-    }
-    .card-h .title{
-      display:flex; flex-direction:column;
-    }
-    .card-h .title strong{font-size:14px}
-    .card-h .title span{font-size:12px; color:var(--muted)}
-    .card-b{padding:14px}
-
-    /* Calendar */
-    .cal-head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
-    }
-    .cal-head .month{
-      font-weight:700; letter-spacing:.3px;
-    }
-    .btn{
-      appearance:none; border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      transition: transform .06s ease, background .2s ease, border-color .2s ease;
-      font-weight:600;
-      font-size:13px;
-      display:inline-flex; align-items:center; gap:8px;
-      user-select:none;
-    }
-    .btn:hover{background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.18)}
-    .btn:active{transform: scale(.98)}
-    .btn.primary{background: rgba(110,168,255,.14); border-color: rgba(110,168,255,.35)}
-    .btn.primary:hover{background: rgba(110,168,255,.20)}
-    .btn.danger{background: rgba(255,107,107,.10); border-color: rgba(255,107,107,.35)}
-    .btn.danger:hover{background: rgba(255,107,107,.16)}
-    .btn.small{padding:8px 10px; border-radius:10px; font-size:12px}
-
-    .cal-grid{
-      display:grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap:8px;
-    }
-    .dow{
-      font-size:11px; color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      padding:6px 2px;
-      text-align:center;
-    }
-    .day{
-      min-height:78px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      background: rgba(255,255,255,.03);
-      padding:8px;
-      cursor:pointer;
-      transition: background .2s ease, border-color .2s ease, transform .06s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .day:hover{background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18)}
-    .day:active{transform: scale(.99)}
-    .day.muted{opacity:.45; cursor:default}
-    .day.selected{outline:2px solid rgba(110,168,255,.55); background: rgba(110,168,255,.10)}
-    .day .num{font-weight:800; font-size:12px}
-    .day .badges{
-      margin-top:6px;
-      display:flex; flex-direction:column; gap:4px;
-    }
-    .badge{
-      font-size:11px;
-      padding:4px 6px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .badge.ok{border-color: rgba(73,245,166,.35); background: rgba(73,245,166,.08)}
-    .badge.warn{border-color: rgba(255,209,102,.38); background: rgba(255,209,102,.10)}
-    .badge.acc{border-color: rgba(110,168,255,.40); background: rgba(110,168,255,.10)}
-    .todayDot{
-      position:absolute; top:8px; right:8px;
-      width:8px; height:8px; border-radius:99px;
-      background: var(--accent2);
-      box-shadow: 0 0 0 4px rgba(126,240,193,.14);
-    }
-
-    /* Form */
-    .form{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    @media (max-width: 560px){
-      .form{grid-template-columns:1fr}
-    }
-    label{display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--muted)}
-    input, select, textarea{
-      width:100%;
-      padding:10px 12px;
-      border-radius: 12px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.15);
-      color: var(--text);
-      outline:none;
-    }
-    textarea{min-height:88px; resize:vertical}
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(110,168,255,.55);
-      box-shadow: 0 0 0 4px rgba(110,168,255,.12);
-    }
-    .form-actions{
-      display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .hint{
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.35;
-      margin-top:8px;
-    }
-    .toast{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      display:none;
-      font-size:13px;
-    }
-    .toast.show{display:block}
-    .toast.ok{border-color: rgba(73,245,166,.35); background: rgba(73,245,166,.08)}
-    .toast.err{border-color: rgba(255,107,107,.35); background: rgba(255,107,107,.10)}
-    .toast.warn{border-color: rgba(255,209,102,.38); background: rgba(255,209,102,.10)}
-
-    /* Lists */
-    .list{
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .item{
-      border:1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      padding:12px;
-    }
-    .item .row{
-      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      align-items:flex-start;
-    }
-    .item strong{font-size:13px}
-    .item .meta{font-size:12px; color:var(--muted); margin-top:4px}
-    .item .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-    .chip{
-      font-size:11px; padding:5px 8px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-    }
-    .chip.acc{border-color: rgba(110,168,255,.40); background: rgba(110,168,255,.10)}
-    .chip.ok{border-color: rgba(73,245,166,.35); background: rgba(73,245,166,.08)}
-    .chip.warn{border-color: rgba(255,209,102,.38); background: rgba(255,209,102,.10)}
-    .muted{color:var(--muted)}
-    .toolbar{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .search{
-      display:flex; gap:10px; align-items:center;
-      flex:1;
-      min-width:220px;
-    }
-    .search input{flex:1}
-    footer{
-      max-width:1150px;
-      margin:0 auto;
-      padding: 0 16px 18px 16px;
-      color: rgba(255,255,255,.45);
-      font-size: 12px;
-    }
-    a{color: var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-  </style>
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  margin:0;
+  padding:20px;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+}
+h1{
+  margin-top:0;
+  text-align:center;
+}
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  margin-bottom:20px;
+}
+.day{
+  padding:10px;
+  background:#e9ecef;
+  text-align:center;
+  border-radius:4px;
+  cursor:pointer;
+}
+.day:hover{
+  background:#ced4da;
+}
+.day.selected{
+  background:#0d6efd;
+  color:#fff;
+}
+.form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+.form input, .form select, .form button{
+  padding:8px;
+  font-size:14px;
+}
+.form button{
+  grid-column:1/3;
+  background:#0d6efd;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+.form button:hover{
+  background:#0b5ed7;
+}
+.list{
+  border-top:1px solid #ddd;
+  padding-top:10px;
+}
+.item{
+  padding:8px;
+  border-bottom:1px solid #eee;
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+}
+.small{
+  font-size:12px;
+  color:#666;
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap">
-      <div class="topbar">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"></div>
-          <div>
-            <h1>Agendamento do Carro da Empresa</h1>
-            <div class="subtitle">Calendário + controle de horários (salvo no navegador)</div>
-          </div>
-        </div>
+<div class="container">
+<h1>Agendamento de Carros</h1>
 
-        <div class="toolbar">
-          <div class="search">
-            <input id="q" type="search" placeholder="Buscar por nome, motivo, placa..." />
-          </div>
-          <button class="btn small" id="btnExport">Exportar JSON</button>
-          <button class="btn small" id="btnImport">Importar JSON</button>
-          <button class="btn small danger" id="btnClear">Limpar tudo</button>
-        </div>
-      </div>
-    </div>
-  </header>
+<div id="calendar" class="calendar"></div>
 
-  <main class="grid">
-    <!-- CALENDÁRIO -->
-    <section class="card">
-      <div class="card-h">
-        <div class="title">
-          <strong>Calendário</strong>
-          <span>Clique em um dia para ver/criar agendamentos</span>
-        </div>
-        <div class="toolbar">
-          <button class="btn small" id="prevMonth">◀</button>
-          <div class="month" id="monthLabel"></div>
-          <button class="btn small" id="nextMonth">▶</button>
-          <button class="btn small primary" id="todayBtn">Hoje</button>
-        </div>
-      </div>
+<div class="form">
+  <select id="car">
+    <option value="Triton">Triton</option>
+    <option value="Strada">Strada</option>
+  </select>
 
-      <div class="card-b">
-        <div class="cal-grid" id="dow"></div>
-        <div class="cal-grid" id="cal"></div>
-      </div>
-    </section>
+  <input id="user" placeholder="Quem vai usar">
 
-    <!-- FORM + LISTAS -->
-    <section class="card">
-      <div class="card-h">
-        <div class="title">
-          <strong id="rightTitle">Agendar uso</strong>
-          <span id="selectedLabel">Selecione um dia no calendário</span>
-        </div>
-        <div class="toolbar">
-          <button class="btn small" id="btnNew">Novo</button>
-        </div>
-      </div>
+  <input type="time" id="start">
+  <input type="time" id="end">
 
-      <div class="card-b">
-        <form id="form">
-          <div class="form">
-            <label>
-              Carro / Placa
-              <input id="car" placeholder="Ex.: Onix - ABC1D23" required />
-            </label>
+  <button onclick="save()">Salvar Agendamento</button>
+</div>
 
-            <label>
-              Motorista
-              <input id="driver" placeholder="Nome do colaborador" required />
-            </label>
+<h3>Agendamentos do dia</h3>
+<div id="list" class="list"></div>
 
-            <label>
-              Início (data/hora)
-              <input id="start" type="datetime-local" required />
-            </label>
-
-            <label>
-              Fim (data/hora)
-              <input id="end" type="datetime-local" required />
-            </label>
-
-            <label>
-              Odômetro (opcional)
-              <input id="odo" inputmode="numeric" placeholder="Ex.: 123456" />
-            </label>
-
-            <label>
-              Tipo (opcional)
-              <select id="type">
-                <option value="">—</option>
-                <option>Entrega</option>
-                <option>Coleta</option>
-                <option>Viagem</option>
-                <option>Serviço</option>
-                <option>Outros</option>
-              </select>
-            </label>
-
-            <label style="grid-column: 1 / -1;">
-              Motivo / Observações
-              <textarea id="note" placeholder="Ex.: Buscar material no fornecedor / rota / contatos"></textarea>
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button class="btn danger" type="button" id="btnCancelEdit" style="display:none;">Cancelar edição</button>
-            <button class="btn primary" type="submit" id="btnSave">Salvar agendamento</button>
-          </div>
-
-          <div class="hint">
-            Regras: o sistema bloqueia <b>conflitos de horário</b> para o mesmo carro/placa.
-            Dica: clique no dia e ajuste a hora.
-          </div>
-
-          <div class="toast" id="toast"></div>
-        </form>
-
-        <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-
-        <div class="card-h" style="padding:0 0 10px 0; border:none;">
-          <div class="title">
-            <strong>Agendamentos do dia</strong>
-            <span class="muted" id="dayCount">0 itens</span>
-          </div>
-        </div>
-        <div class="list" id="dayList"></div>
-
-        <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-
-        <div class="card-h" style="padding:0 0 10px 0; border:none;">
-          <div class="title">
-            <strong>Todos (filtrável)</strong>
-            <span class="muted" id="allCount">0 itens</span>
-          </div>
-        </div>
-        <div class="list" id="allList"></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    Feito para uso interno. Dados ficam salvos no <b>seu navegador</b> (localStorage). Para usar em rede/múltiplos PCs, dá pra integrar com Firebase/SQL depois.
-  </footer>
+</div>
 
 <script>
-(() => {
-  const LS_KEY = "ag_car_v1";
+const STORAGE = "agenda_carros";
+let selectedDate = new Date();
 
-  // Elements
-  const dowEl = document.getElementById("dow");
-  const calEl = document.getElementById("cal");
-  const monthLabel = document.getElementById("monthLabel");
-  const selectedLabel = document.getElementById("selectedLabel");
-  const rightTitle = document.getElementById("rightTitle");
+function load(){
+  return JSON.parse(localStorage.getItem(STORAGE) || "[]");
+}
+function saveStorage(data){
+  localStorage.setItem(STORAGE, JSON.stringify(data));
+}
 
-  const prevMonth = document.getElementById("prevMonth");
-  const nextMonth = document.getElementById("nextMonth");
-  const todayBtn = document.getElementById("todayBtn");
+function renderCalendar(){
+  const cal = document.getElementById("calendar");
+  cal.innerHTML = "";
+  const year = selectedDate.getFullYear();
+  const month = selectedDate.getMonth();
+  const days = new Date(year, month+1, 0).getDate();
 
-  const form = document.getElementById("form");
-  const car = document.getElementById("car");
-  const driver = document.getElementById("driver");
-  const start = document.getElementById("start");
-  const end = document.getElementById("end");
-  const odo = document.getElementById("odo");
-  const type = document.getElementById("type");
-  const note = document.getElementById("note");
+  for(let d=1; d<=days; d++){
+    const el = document.createElement("div");
+    el.className = "day";
+    el.innerText = d;
+    const date = new Date(year, month, d);
 
-  const btnSave = document.getElementById("btnSave");
-  const btnNew = document.getElementById("btnNew");
-  const btnCancelEdit = document.getElementById("btnCancelEdit");
-
-  const toast = document.getElementById("toast");
-
-  const dayList = document.getElementById("dayList");
-  const allList = document.getElementById("allList");
-  const dayCount = document.getElementById("dayCount");
-  const allCount = document.getElementById("allCount");
-
-  const q = document.getElementById("q");
-
-  const btnExport = document.getElementById("btnExport");
-  const btnImport = document.getElementById("btnImport");
-  const btnClear = document.getElementById("btnClear");
-
-  // State
-  const now = new Date();
-  let viewYear = now.getFullYear();
-  let viewMonth = now.getMonth(); // 0-11
-  let selectedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  let editingId = null;
-
-  // Utils
-  const pad = (n) => String(n).padStart(2,"0");
-  const toLocalInputValue = (d) => {
-    // yyyy-MM-ddTHH:mm
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  };
-  const parseLocalInput = (s) => {
-    // datetime-local returns "YYYY-MM-DDTHH:mm"
-    // new Date(string) treats as local in modern browsers for this format; still we handle safely:
-    const [datePart, timePart] = s.split("T");
-    const [Y,M,D] = datePart.split("-").map(Number);
-    const [h,m] = timePart.split(":").map(Number);
-    return new Date(Y, M-1, D, h, m, 0, 0);
-  };
-  const sameDay = (a,b) =>
-    a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-
-  const fmtDate = (d) => `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
-  const fmtTime = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  const fmtRange = (a,b) => `${fmtDate(a)} ${fmtTime(a)} → ${fmtDate(b)} ${fmtTime(b)}`;
-
-  const uuid = () => (crypto?.randomUUID ? crypto.randomUUID() : (Date.now()+"-"+Math.random().toString(16).slice(2)));
-
-  function load(){
-    try{
-      return JSON.parse(localStorage.getItem(LS_KEY) || "[]");
-    }catch{
-      return [];
-    }
-  }
-  function save(items){
-    localStorage.setItem(LS_KEY, JSON.stringify(items));
-  }
-
-  function showToast(kind, msg){
-    toast.className = "toast show " + (kind || "");
-    toast.textContent = msg;
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => {
-      toast.className = "toast";
-      toast.textContent = "";
-    }, 3500);
-  }
-
-  function normalizeCar(s){
-    return (s || "").trim().toUpperCase();
-  }
-
-  function overlaps(aStart, aEnd, bStart, bEnd){
-    // overlap if start < otherEnd && otherStart < end
-    return aStart < bEnd && bStart < aEnd;
-  }
-
-  function getItems(){
-    // Sorted by start
-    return load().sort((x,y) => new Date(x.start) - new Date(y.start));
-  }
-
-  function setSelected(d){
-    selectedDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    selectedLabel.textContent = `Dia selecionado: ${fmtDate(selectedDate)}`;
-    // Default suggestion for start/end if empty or not matching selected
-    const s = start.value ? parseLocalInput(start.value) : null;
-    if(!s || !sameDay(s, selectedDate)){
-      const ds = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 8, 0);
-      const de = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0);
-      start.value = toLocalInputValue(ds);
-      end.value = toLocalInputValue(de);
-    }
-    render();
-  }
-
-  // Calendar render
-  function renderDOW(){
-    const labels = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
-    dowEl.innerHTML = labels.map(l => `<div class="dow">${l}</div>`).join("");
-  }
-
-  function monthName(y,m){
-    const dt = new Date(y,m,1);
-    return dt.toLocaleDateString("pt-BR", {month:"long", year:"numeric"});
-  }
-
-  function renderCalendar(){
-    monthLabel.textContent = monthName(viewYear, viewMonth);
-
-    const first = new Date(viewYear, viewMonth, 1);
-    const startDay = first.getDay(); // 0=Dom
-    const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
-
-    const prevDays = startDay; // days from previous month to show
-    const prevMonthLastDay = new Date(viewYear, viewMonth, 0).getDate();
-
-    const items = getItems();
-
-    let cells = [];
-    // previous month cells
-    for(let i=prevDays; i>0; i--){
-      const dayNum = prevMonthLastDay - i + 1;
-      const d = new Date(viewYear, viewMonth-1, dayNum);
-      cells.push(renderDayCell(d, true, items));
-    }
-    // this month cells
-    for(let day=1; day<=daysInMonth; day++){
-      const d = new Date(viewYear, viewMonth, day);
-      cells.push(renderDayCell(d, false, items));
-    }
-    // fill remaining to complete weeks (multiple of 7)
-    while(cells.length % 7 !== 0){
-      const lastCellDate = new Date(viewYear, viewMonth, daysInMonth + (cells.length - (prevDays + daysInMonth)) + 1);
-      cells.push(renderDayCell(lastCellDate, true, items));
+    if(date.toDateString() === selectedDate.toDateString()){
+      el.classList.add("selected");
     }
 
-    calEl.innerHTML = cells.join("");
+    el.onclick = ()=>{
+      selectedDate = date;
+      renderCalendar();
+      renderList();
+    };
+    cal.appendChild(el);
+  }
+}
 
-    // attach click handlers
-    calEl.querySelectorAll("[data-date]").forEach(el => {
-      const muted = el.dataset.muted === "1";
-      if(muted) return; // don't select muted days
-      el.addEventListener("click", () => {
-        const d = new Date(el.dataset.date);
-        setSelected(d);
-      });
-    });
+function renderList(){
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  const data = load();
+
+  const dayItems = data.filter(i =>
+    i.date === selectedDate.toISOString().split("T")[0]
+  );
+
+  if(dayItems.length === 0){
+    list.innerHTML = "<div class='small'>Nenhum agendamento</div>";
+    return;
   }
 
-  function dayBadgesForDate(items, d){
-    const dayItems = items.filter(it => sameDay(new Date(it.start), d) || sameDay(new Date(it.end), d) || (new Date(it.start) < new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59) && new Date(it.end) > new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0,0,0)));
-    // Show up to 2 badges
-    const top = dayItems.slice(0,2).map(it => {
-      const s = new Date(it.start), e = new Date(it.end);
-      const carName = (it.car || "").slice(0,22);
-      const label = `${fmtTime(s)}-${fmtTime(e)} • ${carName}`;
-      const cls = "badge " + (it.type ? "acc" : "ok");
-      return `<div class="${cls}" title="${escapeHtml(it.driver || "")} | ${escapeHtml(it.note || "")}">${escapeHtml(label)}</div>`;
-    });
-    const more = dayItems.length > 2 ? `<div class="badge warn">+${dayItems.length-2} outros</div>` : "";
-    return `<div class="badges">${top.join("")}${more}</div>`;
-  }
-
-  function renderDayCell(d, muted, items){
-    const isToday = sameDay(d, new Date());
-    const isSelected = sameDay(d, selectedDate) && d.getMonth()===viewMonth && d.getFullYear()===viewYear;
-    const cls = ["day", muted ? "muted" : "", isSelected ? "selected" : ""].join(" ").trim();
-    const badges = dayBadgesForDate(items, d);
-    const dot = isToday && !muted ? `<span class="todayDot" title="Hoje"></span>` : "";
-    return `
-      <div class="${cls}" data-date="${d.toISOString()}" data-muted="${muted ? "1":"0"}">
-        ${dot}
-        <div class="num">${d.getDate()}</div>
-        ${badges}
+  dayItems.forEach(i=>{
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <div>
+        <strong>${i.car}</strong> - ${i.user}<br>
+        <span class="small">${i.start} às ${i.end}</span>
       </div>
     `;
-  }
-
-  // Lists render
-  function renderLists(){
-    const items = getItems();
-    const query = (q.value || "").trim().toLowerCase();
-
-    const filtered = query ? items.filter(it => {
-      const blob = [
-        it.car, it.driver, it.type, it.note,
-        new Date(it.start).toLocaleString("pt-BR"),
-        new Date(it.end).toLocaleString("pt-BR")
-      ].join(" ").toLowerCase();
-      return blob.includes(query);
-    }) : items;
-
-    const dayItems = filtered.filter(it => {
-      const s = new Date(it.start), e = new Date(it.end);
-      // include if overlaps selected day
-      const dayStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0,0,0);
-      const dayEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 23,59,59,999);
-      return overlaps(s, e, dayStart, dayEnd);
-    });
-
-    dayCount.textContent = `${dayItems.length} item(ns)`;
-    allCount.textContent = `${filtered.length} item(ns)`;
-
-    dayList.innerHTML = dayItems.length ? dayItems.map(renderItem).join("") : `<div class="muted">Nenhum agendamento para este dia.</div>`;
-    allList.innerHTML = filtered.length ? filtered.map(renderItem).join("") : `<div class="muted">Nada para mostrar.</div>`;
-
-    // item actions
-    document.querySelectorAll("[data-action='edit']").forEach(btn => {
-      btn.addEventListener("click", () => startEdit(btn.dataset.id));
-    });
-    document.querySelectorAll("[data-action='del']").forEach(btn => {
-      btn.addEventListener("click", () => delItem(btn.dataset.id));
-    });
-  }
-
-  function renderItem(it){
-    const s = new Date(it.start);
-    const e = new Date(it.end);
-    const chips = [
-      `<span class="chip acc">${escapeHtml(normalizeCar(it.car))}</span>`,
-      it.type ? `<span class="chip ok">${escapeHtml(it.type)}</span>` : "",
-      it.odo ? `<span class="chip warn">Odômetro: ${escapeHtml(String(it.odo))}</span>` : ""
-    ].filter(Boolean).join("");
-
-    return `
-      <div class="item">
-        <div class="row">
-          <div>
-            <strong>${escapeHtml(it.driver || "—")}</strong>
-            <div class="meta">${escapeHtml(fmtRange(s,e))}</div>
-            ${it.note ? `<div class="meta">${escapeHtml(it.note)}</div>` : ""}
-            <div class="chips">${chips}</div>
-          </div>
-          <div class="toolbar">
-            <button class="btn small" type="button" data-action="edit" data-id="${it.id}">Editar</button>
-            <button class="btn small danger" type="button" data-action="del" data-id="${it.id}">Excluir</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function escapeHtml(str){
-    return (str ?? "").toString()
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  // CRUD
-  function validateAndBuild(){
-    const carV = normalizeCar(car.value);
-    const driverV = driver.value.trim();
-    const startV = start.value;
-    const endV = end.value;
-
-    if(!carV) return {ok:false, msg:"Informe o carro/placa."};
-    if(!driverV) return {ok:false, msg:"Informe o motorista."};
-    if(!startV || !endV) return {ok:false, msg:"Informe início e fim."};
-
-    const s = parseLocalInput(startV);
-    const e = parseLocalInput(endV);
-
-    if(!(s instanceof Date) || isNaN(s)) return {ok:false, msg:"Data/hora inicial inválida."};
-    if(!(e instanceof Date) || isNaN(e)) return {ok:false, msg:"Data/hora final inválida."};
-    if(e <= s) return {ok:false, msg:"O fim precisa ser depois do início."};
-
-    const it = {
-      id: editingId || uuid(),
-      car: carV,
-      driver: driverV,
-      start: s.toISOString(),
-      end: e.toISOString(),
-      odo: (odo.value || "").trim(),
-      type: (type.value || "").trim(),
-      note: (note.value || "").trim(),
-      createdAt: editingId ? undefined : new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    // Conflict check: same car overlaps (ignore itself in edit)
-    const items = getItems();
-    const conflicts = items.filter(x => x.id !== it.id && normalizeCar(x.car) === it.car)
-      .some(x => overlaps(new Date(x.start), new Date(x.end), s, e));
-
-    if(conflicts){
-      return {ok:false, msg:`Conflito: já existe agendamento para este carro nesse horário (${it.car}).`};
-    }
-
-    return {ok:true, item: it};
-  }
-
-  function upsertItem(newItem){
-    const items = getItems();
-    const idx = items.findIndex(x => x.id === newItem.id);
-    if(idx >= 0){
-      items[idx] = {...items[idx], ...newItem};
-    }else{
-      items.push(newItem);
-    }
-    save(items);
-  }
-
-  function delItem(id){
-    const items = getItems();
-    const it = items.find(x => x.id === id);
-    if(!it) return;
-    const ok = confirm(`Excluir este agendamento?\n\n${it.driver}\n${it.car}\n${new Date(it.start).toLocaleString("pt-BR")} → ${new Date(it.end).toLocaleString("pt-BR")}`);
-    if(!ok) return;
-
-    save(items.filter(x => x.id !== id));
-    if(editingId === id) resetForm();
-    showToast("ok", "Agendamento excluído.");
-    render();
-  }
-
-  function startEdit(id){
-    const items = getItems();
-    const it = items.find(x => x.id === id);
-    if(!it) return;
-    editingId = id;
-
-    rightTitle.textContent = "Editando agendamento";
-    btnSave.textContent = "Salvar alterações";
-    btnCancelEdit.style.display = "inline-flex";
-
-    car.value = it.car || "";
-    driver.value = it.driver || "";
-    start.value = toLocalInputValue(new Date(it.start));
-    end.value = toLocalInputValue(new Date(it.end));
-    odo.value = it.odo || "";
-    type.value = it.type || "";
-    note.value = it.note || "";
-
-    // Focus
-    driver.focus();
-  }
-
-  function resetForm(){
-    editingId = null;
-    rightTitle.textContent = "Agendar uso";
-    btnSave.textContent = "Salvar agendamento";
-    btnCancelEdit.style.display = "none";
-
-    // Keep selected day, reset times
-    car.value = "";
-    driver.value = "";
-    odo.value = "";
-    type.value = "";
-    note.value = "";
-
-    const ds = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 8, 0);
-    const de = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0);
-    start.value = toLocalInputValue(ds);
-    end.value = toLocalInputValue(de);
-    car.focus();
-  }
-
-  // Export/Import/Clear
-  function exportJSON(){
-    const data = getItems();
-    const blob = new Blob([JSON.stringify({exportedAt:new Date().toISOString(), items:data}, null, 2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `agendamentos_carro_${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  async function importJSON(){
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if(!file) return;
-      const text = await file.text();
-      try{
-        const parsed = JSON.parse(text);
-        const items = Array.isArray(parsed) ? parsed : (parsed.items || []);
-        if(!Array.isArray(items)) throw new Error("Formato inválido");
-        // basic sanitize
-        const cleaned = items
-          .filter(x => x && x.car && x.driver && x.start && x.end && x.id)
-          .map(x => ({
-            id: String(x.id),
-            car: normalizeCar(x.car),
-            driver: String(x.driver),
-            start: new Date(x.start).toISOString(),
-            end: new Date(x.end).toISOString(),
-            odo: x.odo ? String(x.odo) : "",
-            type: x.type ? String(x.type) : "",
-            note: x.note ? String(x.note) : "",
-            createdAt: x.createdAt ? String(x.createdAt) : undefined,
-            updatedAt: new Date().toISOString()
-          }));
-        save(cleaned);
-        showToast("ok", `Importado: ${cleaned.length} item(ns).`);
-        render();
-      }catch(e){
-        showToast("err", "Falha ao importar: JSON inválido.");
-      }
-    };
-    input.click();
-  }
-
-  function clearAll(){
-    const ok = confirm("Tem certeza que deseja APAGAR TODOS os agendamentos deste navegador?");
-    if(!ok) return;
-    localStorage.removeItem(LS_KEY);
-    resetForm();
-    showToast("ok", "Tudo limpo.");
-    render();
-  }
-
-  // Render all
-  function render(){
-    renderCalendar();
-    renderLists();
-  }
-
-  // Events
-  prevMonth.addEventListener("click", () => {
-    viewMonth--;
-    if(viewMonth < 0){ viewMonth = 11; viewYear--; }
-    render();
+    list.appendChild(div);
   });
-  nextMonth.addEventListener("click", () => {
-    viewMonth++;
-    if(viewMonth > 11){ viewMonth = 0; viewYear++; }
-    render();
-  });
-  todayBtn.addEventListener("click", () => {
-    const t = new Date();
-    viewYear = t.getFullYear();
-    viewMonth = t.getMonth();
-    setSelected(t);
-  });
+}
 
-  btnNew.addEventListener("click", resetForm);
-  btnCancelEdit.addEventListener("click", () => {
-    resetForm();
-    showToast("warn", "Edição cancelada.");
-  });
+function save(){
+  const car = document.getElementById("car").value;
+  const user = document.getElementById("user").value;
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
 
-  form.addEventListener("submit", (ev) => {
-    ev.preventDefault();
-    const res = validateAndBuild();
-    if(!res.ok){
-      showToast("err", res.msg);
-      return;
-    }
-    upsertItem(res.item);
-    showToast("ok", editingId ? "Alterações salvas." : "Agendamento criado.");
-    resetForm();
-    render();
-  });
+  if(!user || !start || !end){
+    alert("Preencha tudo");
+    return;
+  }
 
-  q.addEventListener("input", renderLists);
+  if(end <= start){
+    alert("Hora final deve ser maior que a inicial");
+    return;
+  }
 
-  btnExport.addEventListener("click", exportJSON);
-  btnImport.addEventListener("click", importJSON);
-  btnClear.addEventListener("click", clearAll);
+  const date = selectedDate.toISOString().split("T")[0];
+  const data = load();
 
-  // Init
-  renderDOW();
-  setSelected(selectedDate);
-  resetForm();
-  render();
+  const conflict = data.some(i =>
+    i.car === car &&
+    i.date === date &&
+    start < i.end &&
+    end > i.start
+  );
 
-})();
+  if(conflict){
+    alert("Conflito de horário para este carro");
+    return;
+  }
+
+  data.push({car, user, date, start, end});
+  saveStorage(data);
+
+  document.getElementById("user").value = "";
+  renderList();
+}
+
+renderCalendar();
+renderList();
 </script>
+
 </body>
 </html>
