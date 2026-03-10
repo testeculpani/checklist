@@ -252,58 +252,6 @@
       border: 1px solid rgba(255,255,255,.06);
     }
 
-    .progress-wrap {
-      display: none;
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .progress-label {
-      font-size: 12px;
-      color: #d9e4ff;
-      font-weight: 800;
-    }
-
-    .progress-percent {
-      font-size: 12px;
-      color: #9db0d3;
-      font-weight: 700;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 12px;
-      background: rgba(255,255,255,.08);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(135deg, #4f8cff, #72c7ff);
-      transition: width .35s ease;
-    }
-
-    .progress-subtext {
-      margin-top: 7px;
-      font-size: 12px;
-      color: #9db0d3;
-      line-height: 1.45;
-    }
-
     .right {
       display: grid;
       gap: 18px;
@@ -619,7 +567,7 @@
         <h1 class="title">Projeto Kauan — Rota Inteligente por Cidades</h1>
         <p class="subtitle">
           Cole vários pedidos de uma vez, deixe a ferramenta identificar as cidades automaticamente e gere uma sequência de entrega pensada para reduzir distância, tempo e melhor aproveitamento do diesel.
-          Agora o sistema mostra progresso, agrupa cidades duplicadas e lida melhor com falhas da API pública.
+          Agora o sistema também junta cidades repetidas em uma única parada, imprime a rota e lida melhor com falhas da API pública.
         </p>
       </div>
       <div class="hero-card hero-side">
@@ -707,21 +655,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         <div class="btns-2">
           <button class="success-btn" id="printBtn">Imprimir rota</button>
           <button class="secondary" id="resetMapBtn">Recentralizar mapa</button>
-        </div>
-
-        <div id="progressWrap" class="progress-wrap">
-          <div class="progress-top">
-            <span id="progressLabel" class="progress-label">Processando...</span>
-            <span id="progressPercent" class="progress-percent">0%</span>
-          </div>
-
-          <div class="progress-track">
-            <div id="progressBar" class="progress-bar"></div>
-          </div>
-
-          <div id="progressSubtext" class="progress-subtext">
-            Preparando cálculo...
-          </div>
         </div>
 
         <div class="note">
@@ -870,19 +803,13 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       printOrigin: document.getElementById('printOrigin'),
       printDriver: document.getElementById('printDriver'),
       printPlate: document.getElementById('printPlate'),
-      printNotes: document.getElementById('printNotes'),
-      progressWrap: document.getElementById('progressWrap'),
-      progressBar: document.getElementById('progressBar'),
-      progressLabel: document.getElementById('progressLabel'),
-      progressPercent: document.getElementById('progressPercent'),
-      progressSubtext: document.getElementById('progressSubtext')
+      printNotes: document.getElementById('printNotes')
     };
 
     let currentMarkers = [];
     let currentRouteLayer = null;
     let lastRouteText = '';
     let lastGroupedCities = [];
-    let progressHideTimer = null;
 
     const BRAZIL_CITY_ALIASES = {
       'santa izabel parana': 'Santa Izabel do Oeste, PR',
@@ -945,34 +872,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
-    }
-
-    function showProgress() {
-      if (progressHideTimer) {
-        clearTimeout(progressHideTimer);
-        progressHideTimer = null;
-      }
-      els.progressWrap.style.display = 'block';
-      updateProgress(0, 'Iniciando...', 'Preparando cálculo da rota');
-    }
-
-    function hideProgress() {
-      if (progressHideTimer) clearTimeout(progressHideTimer);
-      progressHideTimer = setTimeout(() => {
-        els.progressWrap.style.display = 'none';
-        els.progressBar.style.width = '0%';
-        els.progressPercent.textContent = '0%';
-        els.progressLabel.textContent = 'Processando...';
-        els.progressSubtext.textContent = 'Preparando cálculo...';
-      }, 700);
-    }
-
-    function updateProgress(percent, label, subtext = '') {
-      const safePercent = Math.max(0, Math.min(100, percent));
-      els.progressBar.style.width = `${safePercent}%`;
-      els.progressPercent.textContent = `${Math.round(safePercent)}%`;
-      els.progressLabel.textContent = label || 'Processando...';
-      els.progressSubtext.textContent = subtext || '';
     }
 
     function guessCityFromLine(line) {
@@ -1283,9 +1182,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
     async function calculateRoute() {
       try {
-        showProgress();
-        updateProgress(5, 'Iniciando', 'Preparando dados para cálculo');
-
         const originText = els.origin.value.trim();
         const rawOrders = els.orders.value.trim();
         els.metricOrigin.textContent = originText || '—';
@@ -1293,13 +1189,15 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
         if (!originText) {
           setStatus('Informe a cidade de partida', 'err');
-          throw new Error('Informe a cidade de partida.');
+          alert('Informe a cidade de partida.');
+          return;
         }
 
         const lines = extractLines(rawOrders);
         if (!lines.length) {
           setStatus('Cole ao menos 1 pedido ou cidade', 'err');
-          throw new Error('Cole ao menos 1 pedido ou cidade.');
+          alert('Cole ao menos 1 pedido ou cidade.');
+          return;
         }
 
         els.calcBtn.disabled = true;
@@ -1311,25 +1209,11 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
 
-        updateProgress(12, 'Origem localizada', 'Cidade de partida encontrada com sucesso');
-
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
+        for (const line of lines) {
           const guessedCity = guessCityFromLine(line);
-
-          const start = 15;
-          const end = 70;
-          const percent = start + ((i + 1) / lines.length) * (end - start);
-
-          updateProgress(
-            percent,
-            `Localizando cidades (${i + 1}/${lines.length})`,
-            `Buscando: ${guessedCity}`
-          );
 
           try {
             const geo = await geocodePlace(guessedCity);
-
             if (!geo) {
               geocodedRows.push({
                 original: line,
@@ -1354,8 +1238,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
             });
           }
         }
-
-        updateProgress(75, 'Agrupando pedidos', 'Juntando cidades repetidas em uma única parada');
 
         const groupedCities = groupCities(geocodedRows);
         lastGroupedCities = groupedCities;
@@ -1383,8 +1265,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         let routeGeometry = null;
         let fallback = false;
 
-        updateProgress(82, 'Calculando rota', 'Montando sequência ideal de entregas');
-
         try {
           const routeData = await buildOptimizedRoute(pointsForRoute);
           const trip = routeData.trips[0];
@@ -1409,8 +1289,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
           routeGeometry = trip.geometry;
         } catch (onlineError) {
           console.warn('Falha na rota online, usando fallback local:', onlineError);
-          fallback = true;
-          updateProgress(88, 'Rota online indisponível', 'Usando estimativa por proximidade');
 
           const fallbackData = buildFallbackRoute(pointsForRoute);
           orderedPoints = fallbackData.orderedPoints;
@@ -1418,13 +1296,12 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
           totalDistance = fallbackData.totalDistance;
           totalDuration = fallbackData.totalDuration;
           routeGeometry = fallbackData.geojson;
+          fallback = true;
         }
 
         if (!orderedPoints.length) {
           throw new Error('Não foi possível ordenar as cidades da rota.');
         }
-
-        updateProgress(96, 'Finalizando', 'Montando mapa e resumo da rota');
 
         clearMap();
         renderMarkers(orderedPoints);
@@ -1437,14 +1314,9 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
         renderRouteSteps(orderedPoints, legs, totalDistance, totalDuration, fuelCost, fallback);
         setStatus(fallback ? 'Rota estimada por proximidade (fallback)' : 'Rota calculada com sucesso', 'ok');
-
-        updateProgress(100, 'Concluído', 'Rota pronta para uso');
-        hideProgress();
       } catch (error) {
         console.error(error);
         setStatus(error.message || 'Erro ao calcular rota', 'err');
-        updateProgress(100, 'Erro no processamento', error.message || 'Não foi possível concluir a rota');
-        hideProgress();
         alert(error.message || 'Erro ao calcular rota.');
       } finally {
         els.calcBtn.disabled = false;
@@ -1499,7 +1371,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       lastRouteText = '';
       lastGroupedCities = [];
       updatePrintInfo();
-      hideProgress();
     });
 
     els.copyBtn.addEventListener('click', async () => {
