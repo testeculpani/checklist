@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projeto Kauan — Rota Inteligente</title>
+  <title>Projeto Kauan — Rota Inteligente por Cidades</title>
   <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://router.project-osrm.org" />
   <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
@@ -26,6 +26,7 @@
     }
 
     * { box-sizing: border-box; }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -33,6 +34,7 @@
       background: radial-gradient(circle at top, #12213f 0%, var(--bg) 48%, #070d18 100%);
       color: var(--text);
     }
+
     body { min-height: 100vh; }
 
     .wrap {
@@ -186,9 +188,7 @@
       line-height: 1.45;
     }
 
-    .small-textarea {
-      min-height: 90px;
-    }
+    .small-textarea { min-height: 90px; }
 
     .row {
       display: grid;
@@ -360,6 +360,7 @@
       color: var(--muted);
       font-size: 12px;
       margin-top: 4px;
+      line-height: 1.45;
     }
 
     .leg {
@@ -426,9 +427,7 @@
       line-height: 1.5;
     }
 
-    .print-only {
-      display: none;
-    }
+    .print-only { display: none; }
 
     @media (max-width: 1120px) {
       .hero, .grid { grid-template-columns: 1fr; }
@@ -451,29 +450,12 @@
         color: #111 !important;
       }
 
-      body {
-        min-height: auto;
-      }
+      body { min-height: auto; }
+      .wrap { max-width: 100%; padding: 0; }
+      .hero, .panel, .footer-tip, .status { display: none !important; }
+      .right { display: block; }
 
-      .wrap {
-        max-width: 100%;
-        padding: 0;
-      }
-
-      .hero,
-      .panel,
-      .footer-tip,
-      .status {
-        display: none !important;
-      }
-
-      .right {
-        display: block;
-      }
-
-      .map-card,
-      .route-card,
-      .table-card {
+      .map-card, .route-card, .table-card {
         background: #fff !important;
         color: #111 !important;
         border: 1px solid #d9d9d9 !important;
@@ -486,9 +468,7 @@
         padding: 12px !important;
       }
 
-      .print-only {
-        display: block !important;
-      }
+      .print-only { display: block !important; }
 
       .print-header {
         margin-bottom: 14px;
@@ -555,9 +535,7 @@
         box-shadow: none !important;
       }
 
-      .summary {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .summary { grid-template-columns: repeat(2, 1fr); }
 
       .summary .box .label,
       .summary .box .sub,
@@ -577,13 +555,8 @@
         page-break-inside: avoid;
       }
 
-      table {
-        font-size: 11px;
-      }
-
-      th, td {
-        padding: 8px 6px;
-      }
+      table { font-size: 11px; }
+      th, td { padding: 8px 6px; }
     }
   </style>
 </head>
@@ -591,10 +564,10 @@
   <div class="wrap">
     <section class="hero">
       <div class="hero-card">
-        <h1 class="title">Projeto Kauan — Rota Inteligente de Entregas</h1>
+        <h1 class="title">Projeto Kauan — Rota Inteligente por Cidades</h1>
         <p class="subtitle">
           Cole vários pedidos de uma vez, deixe a ferramenta identificar as cidades automaticamente e gere uma sequência de entrega pensada para reduzir distância, tempo e melhor aproveitamento do diesel.
-          Agora o sistema também junta cidades repetidas em uma única parada e permite imprimir a rota.
+          Agora o sistema também junta cidades repetidas em uma única parada, imprime a rota e lida melhor com falhas da API pública.
         </p>
       </div>
       <div class="hero-card hero-side">
@@ -625,7 +598,7 @@
       <aside class="panel">
         <h2 class="section-title">Entrada dos pedidos</h2>
         <div class="mini">
-          Pode colar pedidos completos. Se houver 5 pedidos para a mesma cidade, o sistema junta tudo em uma única parada e mostra quantos pedidos ficaram naquela cidade.
+          Pode colar pedidos completos. Se houver vários pedidos para a mesma cidade, o sistema junta tudo em uma única parada e mostra quantos pedidos ficaram naquela cidade.
         </div>
 
         <div class="field">
@@ -668,7 +641,8 @@ Pedido 102 - Toledo PR
 Pedido 103 - Francisco Beltrão PR
 Pedido 104 - Cascavel PR
 Pedido 105 - Toledo PR
-Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
+Pedido 106 - Cascavel PR
+Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         </div>
 
         <div class="btns">
@@ -684,12 +658,12 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
         </div>
 
         <div class="note">
-          <strong>Dica:</strong> para maior precisão, use linhas separadas. Ex.: <em>Pedido 224 — Rua X, Cascavel, PR</em>. Se houver cidades repetidas, elas serão agrupadas automaticamente.
+          <strong>Dica:</strong> para maior precisão, use cidade + UF. Ex.: <em>Cascavel, PR</em>. Se houver muitas cidades, a API pública pode limitar; nesse caso o app usa fallback por proximidade.
         </div>
       </aside>
 
       <div class="right">
-        <div class="print-only print-header" id="printHeader">
+        <div class="print-only print-header">
           <div class="print-title">Rota de Entregas — Projeto Kauan</div>
           <div class="print-subtitle">Resumo pronto para impressão</div>
           <div class="print-grid">
@@ -719,7 +693,7 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
           </div>
           <div id="map"></div>
           <div class="footer-tip">
-            A rota usa OpenStreetMap + OSRM. Se a API online falhar, o sistema usa estimativa por proximidade para não travar.
+            A rota usa OpenStreetMap + OSRM. Quando a API online falha ou há muitos pontos, o sistema usa estimativa por proximidade para não travar.
           </div>
         </section>
 
@@ -846,6 +820,27 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
       'ampere': 'Ampére, PR'
     };
 
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeout = 12000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        return response;
+      } catch (error) {
+        clearTimeout(timer);
+        throw error;
+      }
+    }
+
     function normalizeText(text) {
       return String(text || '')
         .normalize('NFD')
@@ -897,49 +892,78 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
 
     async function geocodePlace(query) {
       const tries = [query];
+
       if (!/,\s*[A-Z]{2}$/i.test(query) && !/brasil/i.test(query)) {
         tries.push(`${query}, Brasil`);
       }
 
+      let lastError = null;
+
       for (const attempt of tries) {
         const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&countrycodes=br&q=${encodeURIComponent(attempt)}`;
-        const res = await fetch(url, {
-          headers: {
-            'Accept': 'application/json'
+
+        for (let retry = 0; retry < 3; retry++) {
+          try {
+            await sleep(350);
+
+            const res = await fetchWithTimeout(url, {
+              headers: {
+                'Accept': 'application/json'
+              }
+            }, 12000);
+
+            if (!res.ok) {
+              lastError = new Error(`Erro HTTP ${res.status}`);
+              await sleep(700);
+              continue;
+            }
+
+            const data = await res.json();
+
+            if (!data.length) {
+              break;
+            }
+
+            const item = data[0];
+            const addr = item.address || {};
+            const city = addr.city || addr.town || addr.village || addr.municipality || query;
+            const stateCode = addr.state_code || '';
+            const displayCity = stateCode ? `${city}, ${stateCode}` : city;
+
+            return {
+              query,
+              label: item.display_name,
+              lat: Number(item.lat),
+              lon: Number(item.lon),
+              displayCity
+            };
+          } catch (error) {
+            lastError = error;
+            await sleep(900);
           }
-        });
-
-        if (!res.ok) continue;
-
-        const data = await res.json();
-        if (!data.length) continue;
-
-        const item = data[0];
-        const addr = item.address || {};
-        const city = addr.city || addr.town || addr.village || addr.municipality || query;
-        const stateCode = addr.state_code || '';
-        const displayCity = stateCode ? `${city}, ${stateCode}` : city;
-
-        return {
-          query,
-          label: item.display_name,
-          lat: Number(item.lat),
-          lon: Number(item.lon),
-          displayCity
-        };
+        }
       }
 
+      console.warn('Falha ao localizar:', query, lastError);
       return null;
     }
 
     async function buildOptimizedRoute(points) {
+      if (points.length > 12) {
+        throw new Error('Muitos pontos para rota online pública.');
+      }
+
       const coords = points.map(p => `${p.lon},${p.lat}`).join(';');
       const url = `https://router.project-osrm.org/trip/v1/driving/${coords}?roundtrip=false&source=first&steps=true&geometries=geojson&overview=full`;
-      const res = await fetch(url);
 
-      if (!res.ok) throw new Error('Falha ao calcular rota online.');
+      const res = await fetchWithTimeout(url, {}, 15000);
+
+      if (!res.ok) {
+        throw new Error(`Falha ao calcular rota online. HTTP ${res.status}`);
+      }
 
       const data = await res.json();
+
       if (!data.trips || !data.trips.length || !data.waypoints || !data.waypoints.length) {
         throw new Error('Rota online não encontrada.');
       }
@@ -1065,6 +1089,7 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
 
       for (const row of rows) {
         if (row.error) continue;
+
         const key = normalizeText(row.displayCity || row.query);
 
         if (!groupedMap.has(key)) {
@@ -1176,11 +1201,12 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
         }
 
         els.calcBtn.disabled = true;
-        setStatus('Localizando cidades, agrupando pedidos e calculando rota...');
+        setStatus('Localizando cidades, agrupando pedidos e calculando rota... isso pode levar alguns segundos');
         clearMap();
 
         const geocodedRows = [];
         const originGeo = await geocodePlace(originText);
+
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
 
         for (const line of lines) {
@@ -1218,7 +1244,7 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
         renderTable(groupedCities);
 
         if (!groupedCities.length) {
-          throw new Error('Não foi possível localizar cidades válidas para montar a rota.');
+          throw new Error('Nenhuma cidade válida foi localizada. Tente informar cidade + UF.');
         }
 
         const pointsForRoute = [
