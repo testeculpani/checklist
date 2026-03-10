@@ -11,7 +11,6 @@
   <style>
     :root {
       --bg: #0b1220;
-      --bg-soft: #101a2f;
       --card: rgba(18, 28, 48, 0.92);
       --card-2: rgba(23, 35, 61, 0.98);
       --line: rgba(255,255,255,0.08);
@@ -154,9 +153,7 @@
       margin-bottom: 14px;
     }
 
-    .field {
-      margin-bottom: 14px;
-    }
+    .field { margin-bottom: 14px; }
 
     .field label {
       display: block;
@@ -206,9 +203,9 @@
       margin-top: 14px;
     }
 
-    .btns-3 {
+    .btns-2 {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-top: 10px;
     }
@@ -429,7 +426,7 @@
       line-height: 1.5;
     }
 
-    .hidden-print {
+    .print-only {
       display: none;
     }
 
@@ -442,16 +439,20 @@
     @media (max-width: 700px) {
       .wrap { padding: 14px; }
       .title { font-size: 28px; }
-      .hero-side, .row, .btns, .btns-3, .summary { grid-template-columns: 1fr; }
+      .hero-side, .row, .btns, .btns-2, .summary { grid-template-columns: 1fr; }
       #map { height: 360px; }
       .step { grid-template-columns: 48px 1fr; }
       .leg { grid-column: 2; text-align: left; }
     }
 
     @media print {
-      body {
+      html, body {
         background: #fff !important;
         color: #111 !important;
+      }
+
+      body {
+        min-height: auto;
       }
 
       .wrap {
@@ -461,54 +462,28 @@
 
       .hero,
       .panel,
-      .table-card,
       .footer-tip,
       .status {
         display: none !important;
       }
 
-      .map-card,
-      .route-card {
-        background: #fff !important;
-        color: #111 !important;
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        page-break-inside: avoid;
-      }
-
       .right {
-        gap: 12px;
+        display: block;
       }
 
-      .pill {
-        color: #111 !important;
-        border: 1px solid #ccc !important;
-        background: #f3f3f3 !important;
-      }
-
-      .summary .box,
-      .step,
-      table {
+      .map-card,
+      .route-card,
+      .table-card {
         background: #fff !important;
         color: #111 !important;
-        border: 1px solid #ddd !important;
-      }
-
-      .step .meta,
-      .summary .box .label,
-      .summary .box .sub {
-        color: #555 !important;
-      }
-
-      .badge {
-        color: #111 !important;
-        background: #f2f4f7 !important;
-        border: 1px solid #ccc !important;
-      }
-
-      #map {
-        height: 380px !important;
-        border: 1px solid #ccc !important;
+        border: 1px solid #d9d9d9 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        border-radius: 10px !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 14px;
+        padding: 12px !important;
       }
 
       .print-only {
@@ -516,46 +491,98 @@
       }
 
       .print-header {
-        margin-bottom: 18px;
-        border: 1px solid #ddd;
-        border-radius: 14px;
-        padding: 16px;
+        margin-bottom: 14px;
+        border: 1px solid #d9d9d9;
+        border-radius: 10px;
+        padding: 12px;
+        page-break-inside: avoid;
       }
 
       .print-title {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 800;
+        color: #111;
         margin-bottom: 6px;
       }
 
       .print-subtitle {
-        font-size: 13px;
-        color: #555;
-        margin-bottom: 14px;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 10px;
       }
 
       .print-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
+        gap: 8px;
       }
 
       .print-box {
         border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 10px;
+        border-radius: 8px;
+        padding: 8px;
       }
 
       .print-box .k {
-        font-size: 11px;
+        font-size: 10px;
         color: #666;
         margin-bottom: 4px;
         text-transform: uppercase;
       }
 
       .print-box .v {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
+        color: #111;
+      }
+
+      .head-row h3,
+      .step .city,
+      th,
+      td,
+      .summary .box .value,
+      .leg {
+        color: #111 !important;
+      }
+
+      .pill,
+      .summary .box,
+      .step,
+      table {
+        background: #fff !important;
+        color: #111 !important;
+        border: 1px solid #d9d9d9 !important;
+        box-shadow: none !important;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .summary .box .label,
+      .summary .box .sub,
+      .step .meta {
+        color: #666 !important;
+      }
+
+      .badge {
+        background: #f3f3f3 !important;
+        color: #111 !important;
+        border: 1px solid #d0d0d0 !important;
+      }
+
+      #map {
+        height: 260px !important;
+        border: 1px solid #d9d9d9 !important;
+        page-break-inside: avoid;
+      }
+
+      table {
+        font-size: 11px;
+      }
+
+      th, td {
+        padding: 8px 6px;
       }
     }
   </style>
@@ -651,10 +678,9 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
           <button class="secondary" id="copyBtn">Copiar sequência</button>
         </div>
 
-        <div class="btns-3">
+        <div class="btns-2">
           <button class="success-btn" id="printBtn">Imprimir rota</button>
-          <button class="secondary" id="expandAllBtn">Expandir tabela</button>
-          <button class="secondary" id="collapseAllBtn">Enxugar tabela</button>
+          <button class="secondary" id="resetMapBtn">Recentralizar mapa</button>
         </div>
 
         <div class="note">
@@ -663,7 +689,7 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
       </aside>
 
       <div class="right">
-        <div class="print-only hidden-print print-header" id="printHeader">
+        <div class="print-only print-header" id="printHeader">
           <div class="print-title">Rota de Entregas — Projeto Kauan</div>
           <div class="print-subtitle">Resumo pronto para impressão</div>
           <div class="print-grid">
@@ -786,8 +812,7 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
       clearBtn: document.getElementById('clearBtn'),
       copyBtn: document.getElementById('copyBtn'),
       printBtn: document.getElementById('printBtn'),
-      expandAllBtn: document.getElementById('expandAllBtn'),
-      collapseAllBtn: document.getElementById('collapseAllBtn'),
+      resetMapBtn: document.getElementById('resetMapBtn'),
       metricOrigin: document.getElementById('metricOrigin'),
       metricMode: document.getElementById('metricMode'),
       metricGrouped: document.getElementById('metricGrouped'),
@@ -810,7 +835,6 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
     let currentMarkers = [];
     let currentRouteLayer = null;
     let lastRouteText = '';
-    let tableExpanded = false;
     let lastGroupedCities = [];
 
     const BRAZIL_CITY_ALIASES = {
@@ -1069,23 +1093,15 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
         return;
       }
 
-      els.cityTableBody.innerHTML = rows.map((r, i) => {
-        const ordersToShow = tableExpanded ? r.orders : r.orders.slice(0, 3);
-        const remaining = r.orders.length - ordersToShow.length;
-
-        return `
-          <tr>
-            <td>${i + 1}</td>
-            <td><strong>${escapeHtml(r.displayCity || r.query)}</strong></td>
-            <td>${r.orders.length}</td>
-            <td>
-              ${ordersToShow.map(item => `• ${escapeHtml(item)}`).join('<br>')}
-              ${remaining > 0 ? `<br><span style="color:#9db0d3;">+ ${remaining} pedido(s)</span>` : ''}
-            </td>
-            <td>${r.lat && r.lon ? `${r.lat.toFixed(4)}, ${r.lon.toFixed(4)}` : '-'}</td>
-          </tr>
-        `;
-      }).join('');
+      els.cityTableBody.innerHTML = rows.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><strong>${escapeHtml(r.displayCity || r.query)}</strong></td>
+          <td>${r.orders.length}</td>
+          <td>${r.orders.map(item => `• ${escapeHtml(item)}`).join('<br>')}</td>
+          <td>${r.lat && r.lon ? `${r.lat.toFixed(4)}, ${r.lon.toFixed(4)}` : '-'}</td>
+        </tr>
+      `).join('');
 
       els.cityCountPill.textContent = `${rows.length} cidades`;
       els.metricGrouped.textContent = `${rows.length} cidades`;
@@ -1164,7 +1180,6 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
         clearMap();
 
         const geocodedRows = [];
-
         const originGeo = await geocodePlace(originText);
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
 
@@ -1359,14 +1374,16 @@ Pedido 106 - Santo Antônio do Sudoeste PR"></textarea>
       }, 150);
     });
 
-    els.expandAllBtn.addEventListener('click', () => {
-      tableExpanded = true;
-      renderTable(lastGroupedCities);
-    });
-
-    els.collapseAllBtn.addEventListener('click', () => {
-      tableExpanded = false;
-      renderTable(lastGroupedCities);
+    els.resetMapBtn.addEventListener('click', () => {
+      if (currentRouteLayer) {
+        try {
+          map.fitBounds(currentRouteLayer.getBounds(), { padding: [30, 30] });
+        } catch {
+          map.setView([-26.05, -53.05], 7);
+        }
+      } else {
+        map.setView([-26.05, -53.05], 7);
+      }
     });
 
     els.driverName.addEventListener('input', updatePrintInfo);
