@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projeto Kauan — Rota Inteligente</title>
   <link rel="preconnect" href="https://unpkg.com" />
-  <link rel="preconnect" href="https://router.project-osrm.org" />
-  <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
@@ -27,21 +25,17 @@
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; font-family: Inter, Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, #12213f 0%, var(--bg) 48%, #070d18 100%); color: var(--text); }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #12213f 0%, var(--bg) 48%, #070d18 100%);
+      color: var(--text);
+    }
     body { min-height: 100vh; }
 
-    .wrap {
-      max-width: 1450px;
-      margin: 0 auto;
-      padding: 22px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
+    .wrap { max-width: 1450px; margin: 0 auto; padding: 22px; }
+    .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; margin-bottom: 18px; }
 
     .hero-card, .panel, .map-card, .table-card, .route-card {
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
@@ -89,7 +83,6 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
-      align-content: stretch;
     }
 
     .metric {
@@ -103,29 +96,11 @@
       justify-content: center;
     }
 
-    .metric .k {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
+    .metric .k { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+    .metric .v { font-weight: 800; font-size: 28px; line-height: 1.1; }
+    .metric .s { color: #b9c8e3; font-size: 12px; margin-top: 6px; }
 
-    .metric .v {
-      font-weight: 800;
-      font-size: 28px;
-      line-height: 1.1;
-    }
-
-    .metric .s {
-      color: #b9c8e3;
-      font-size: 12px;
-      margin-top: 6px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 440px 1fr;
-      gap: 18px;
-    }
+    .grid { display: grid; grid-template-columns: 440px 1fr; gap: 18px; }
 
     .panel {
       padding: 18px;
@@ -135,22 +110,9 @@
       height: fit-content;
     }
 
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 0 0 14px;
-    }
-
-    .mini {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
+    .section-title { font-size: 18px; font-weight: 800; margin: 0 0 14px; }
+    .mini { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+    .field { margin-bottom: 14px; }
 
     .field label {
       display: block;
@@ -160,7 +122,7 @@
       font-weight: 700;
     }
 
-    .input, .textarea, .select {
+    .input, .textarea {
       width: 100%;
       border: 1px solid rgba(255,255,255,.1);
       background: #0f182b;
@@ -172,29 +134,14 @@
       transition: .2s ease;
     }
 
-    .input:focus, .textarea:focus, .select:focus {
+    .input:focus, .textarea:focus {
       border-color: rgba(79,140,255,.7);
       box-shadow: 0 0 0 4px rgba(79,140,255,.12);
     }
 
-    .textarea {
-      min-height: 220px;
-      resize: vertical;
-      line-height: 1.45;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .btns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
+    .textarea { min-height: 220px; resize: vertical; line-height: 1.45; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 
     button {
       border: 0;
@@ -232,12 +179,9 @@
       border: 1px solid rgba(255,255,255,.06);
     }
 
-    .right {
-      display: grid;
-      gap: 18px;
-    }
-
+    .right { display: grid; gap: 18px; }
     .map-card, .route-card, .table-card { padding: 16px; }
+
     .head-row {
       display: flex;
       align-items: center;
@@ -247,10 +191,7 @@
       flex-wrap: wrap;
     }
 
-    .head-row h3 {
-      margin: 0;
-      font-size: 18px;
-    }
+    .head-row h3 { margin: 0; font-size: 18px; }
 
     .pill {
       padding: 8px 12px;
@@ -284,28 +225,11 @@
       padding: 14px;
     }
 
-    .summary .box .label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
+    .summary .box .label { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .summary .box .value { font-size: 24px; font-weight: 800; line-height: 1.1; }
+    .summary .box .sub { margin-top: 6px; color: #c7d4ee; font-size: 12px; }
 
-    .summary .box .value {
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1.1;
-    }
-
-    .summary .box .sub {
-      margin-top: 6px;
-      color: #c7d4ee;
-      font-size: 12px;
-    }
-
-    .route-list {
-      display: grid;
-      gap: 10px;
-    }
+    .route-list { display: grid; gap: 10px; }
 
     .step {
       display: grid;
@@ -330,23 +254,9 @@
       color: #fff;
     }
 
-    .step .city {
-      font-weight: 800;
-      font-size: 15px;
-    }
-
-    .step .meta {
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .leg {
-      text-align: right;
-      font-size: 13px;
-      color: #dbe6ff;
-      font-weight: 700;
-    }
+    .step .city { font-weight: 800; font-size: 15px; }
+    .step .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .leg { text-align: right; font-size: 13px; color: #dbe6ff; font-weight: 700; }
 
     table {
       width: 100%;
@@ -397,12 +307,7 @@
     .ok { background: var(--success); box-shadow: 0 0 14px rgba(32, 201, 151, .45); }
     .err { background: var(--danger); box-shadow: 0 0 14px rgba(255, 107, 107, .45); }
 
-    .footer-tip {
-      color: #9fb3d7;
-      font-size: 12px;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+    .footer-tip { color: #9fb3d7; font-size: 12px; margin-top: 10px; line-height: 1.5; }
 
     @media (max-width: 1120px) {
       .hero, .grid { grid-template-columns: 1fr; }
@@ -427,9 +332,9 @@
         <h1 class="title">Projeto Kauan — Rota Inteligente de Entregas</h1>
         <p class="subtitle">
           Cole vários pedidos de uma vez, deixe a ferramenta identificar as cidades automaticamente e gere uma sequência de entrega pensada para reduzir distância, tempo e melhor aproveitamento do diesel.
-          Funciona direto no navegador com mapa, ordem ideal de paradas e estimativa básica de consumo.
         </p>
       </div>
+
       <div class="hero-card hero-side">
         <div class="metric">
           <div class="k">Origem padrão</div>
@@ -438,7 +343,7 @@
         </div>
         <div class="metric">
           <div class="k">Modo</div>
-          <div class="v">Mais perto</div>
+          <div class="v" id="modeMetric">Mais perto</div>
           <div class="s">Otimização por proximidade da rota</div>
         </div>
         <div class="metric">
@@ -495,7 +400,7 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
         </div>
 
         <div class="note">
-          <strong>Dica:</strong> para maior precisão, use linhas separadas. Ex.: <em>Pedido 224 — Rua X, Cascavel, PR</em>. Se houver duas cidades com nome parecido, incluir o estado ajuda bastante.
+          <strong>Dica:</strong> para maior precisão, use cidade + UF. Ex.: <em>Cascavel, PR</em>.
         </div>
       </aside>
 
@@ -506,7 +411,7 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
             <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Aguardando cálculo</span></div>
           </div>
           <div id="map"></div>
-          <div class="footer-tip">A otimização usa geocodificação do OpenStreetMap e cálculo de rota do OSRM. É ideal para planejamento rápido e visual de entregas.</div>
+          <div class="footer-tip">Se a rota online falhar, o sistema usa uma estimativa por proximidade para não travar.</div>
         </section>
 
         <section class="route-card">
@@ -579,6 +484,7 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map', { zoomControl: true }).setView([-26.05, -53.05], 7);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap'
@@ -602,7 +508,9 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
       sumFuelCost: document.getElementById('sumFuelCost'),
       routeList: document.getElementById('routeList'),
       cityTableBody: document.getElementById('cityTableBody'),
-      cityCountPill: document.getElementById('cityCountPill')
+      cityCountPill: document.getElementById('cityCountPill'),
+      pillMode: document.getElementById('pillMode'),
+      modeMetric: document.getElementById('modeMetric')
     };
 
     let currentMarkers = [];
@@ -619,13 +527,17 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
     };
 
     function normalizeText(text) {
-      return text
+      return String(text || '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9\s,-]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+    }
+
+    function extractLines(raw) {
+      return String(raw || '').split(/\n+/).map(line => line.trim()).filter(Boolean);
     }
 
     function setStatus(text, type = 'loading') {
@@ -635,11 +547,13 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
       if (type === 'err') els.statusDot.classList.add('err');
     }
 
-    function extractLines(raw) {
-      return raw
-        .split(/\n+/)
-        .map(line => line.trim())
-        .filter(Boolean);
+    function escapeHtml(str = '') {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
     }
 
     function guessCityFromLine(line) {
@@ -647,16 +561,6 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
 
       for (const [key, value] of Object.entries(BRAZIL_CITY_ALIASES)) {
         if (clean.includes(key)) return value;
-      }
-
-      const prCities = [
-        'Ampére, PR','Cascavel, PR','Toledo, PR','Francisco Beltrão, PR','Santa Izabel do Oeste, PR','Santo Antônio do Sudoeste, PR',
-        'Pato Branco, PR','Realeza, PR','Dois Vizinhos, PR','Beltrão, PR','Marmeleiro, PR','Barracão, PR','Pranchita, PR','Bom Jesus do Sul, PR'
-      ];
-
-      for (const city of prCities) {
-        const norm = normalizeText(city).replace(', pr','');
-        if (clean.includes(norm)) return city;
       }
 
       const parts = line.split(/[-–—|;,]/).map(p => p.trim()).filter(Boolean);
@@ -668,34 +572,133 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
       return line;
     }
 
+    function getDisplayCityFromLabel(label, fallback) {
+      const txt = String(label || '');
+      const parts = txt.split(',').map(x => x.trim()).filter(Boolean);
+
+      if (parts.length >= 3) {
+        const uf = parts[parts.length - 3];
+        const city = parts[parts.length - 4] || parts[parts.length - 3];
+        if (/^[A-Z]{2}$/.test(uf)) return `${city}, ${uf}`;
+      }
+
+      if (parts.length >= 2) {
+        return `${parts[0]}, ${parts[1]}`;
+      }
+
+      return fallback;
+    }
+
     async function geocodePlace(query) {
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=br&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url, {
-        headers: {
-          'Accept': 'application/json'
+      const searches = [query];
+      if (!/,\s*[A-Z]{2}$/i.test(query) && !/brasil/i.test(query)) {
+        searches.push(`${query}, Brasil`);
+      }
+
+      for (const attempt of searches) {
+        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&countrycodes=br&q=${encodeURIComponent(attempt)}`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+
+        if (!res.ok) continue;
+
+        const data = await res.json();
+        if (data.length) {
+          const item = data[0];
+          const addr = item.address || {};
+          const city = addr.city || addr.town || addr.village || addr.municipality || query;
+          const stateCode = addr.state_code || addr.region_code || '';
+          const displayCity = stateCode ? `${city}, ${stateCode}` : city;
+
+          return {
+            query,
+            label: item.display_name,
+            lat: Number(item.lat),
+            lon: Number(item.lon),
+            displayCity: displayCity || getDisplayCityFromLabel(item.display_name, query)
+          };
         }
-      });
-      if (!res.ok) throw new Error('Falha ao geocodificar');
-      const data = await res.json();
-      if (!data.length) return null;
-      return {
-        query,
-        label: data[0].display_name,
-        lat: Number(data[0].lat),
-        lon: Number(data[0].lon)
-      };
+      }
+
+      return null;
     }
 
     async function buildOptimizedRoute(points) {
       const coords = points.map(p => `${p.lon},${p.lat}`).join(';');
-      const source = 0;
-      const destination = 'last';
-      const url = `https://router.project-osrm.org/trip/v1/driving/${coords}?source=${source}&destination=${destination}&roundtrip=false&steps=true&geometries=geojson&overview=full`;
+      const url = `https://router.project-osrm.org/trip/v1/driving/${coords}?roundtrip=false&source=first&steps=true&geometries=geojson&overview=full`;
+
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Falha ao calcular rota');
+      if (!res.ok) throw new Error('Falha ao calcular rota online.');
+
       const data = await res.json();
-      if (!data.trips || !data.trips.length) throw new Error('Rota não encontrada');
+      if (!data.trips || !data.trips.length || !data.waypoints || !data.waypoints.length) {
+        throw new Error('Rota online não encontrada.');
+      }
+
       return data;
+    }
+
+    function haversineKm(a, b) {
+      const R = 6371;
+      const dLat = (b.lat - a.lat) * Math.PI / 180;
+      const dLon = (b.lon - a.lon) * Math.PI / 180;
+      const lat1 = a.lat * Math.PI / 180;
+      const lat2 = b.lat * Math.PI / 180;
+      const x = Math.sin(dLat / 2) ** 2 + Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
+      const c = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      return R * c;
+    }
+
+    function buildFallbackRoute(points) {
+      const remaining = points.slice(1);
+      const ordered = [points[0]];
+      let current = points[0];
+
+      while (remaining.length) {
+        let bestIdx = 0;
+        let bestDist = Infinity;
+
+        for (let i = 0; i < remaining.length; i++) {
+          const d = haversineKm(current, remaining[i]);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = i;
+          }
+        }
+
+        const next = remaining.splice(bestIdx, 1)[0];
+        ordered.push(next);
+        current = next;
+      }
+
+      const legs = [];
+      let totalDistance = 0;
+      let totalDuration = 0;
+
+      for (let i = 1; i < ordered.length; i++) {
+        const km = haversineKm(ordered[i - 1], ordered[i]) * 1.18;
+        const meters = km * 1000;
+        const seconds = (km / 62) * 3600;
+
+        legs.push({ distance: meters, duration: seconds });
+        totalDistance += meters;
+        totalDuration += seconds;
+      }
+
+      return {
+        orderedPoints: ordered,
+        legs,
+        totalDistance,
+        totalDuration,
+        geojson: {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: ordered.map(p => [p.lon, p.lat])
+          },
+          properties: {}
+        },
+        fallback: true
+      };
     }
 
     function formatKm(meters) {
@@ -725,20 +728,19 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
     function renderMarkers(orderedPoints) {
       orderedPoints.forEach((p, idx) => {
         const marker = L.marker([p.lat, p.lon]).addTo(map);
-        marker.bindPopup(`<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${p.displayCity || p.query}<br><small>${p.label || ''}</small>`);
+        marker.bindPopup(`<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${escapeHtml(p.displayCity || p.query)}<br><small>${escapeHtml(p.label || '')}</small>`);
         currentMarkers.push(marker);
       });
     }
 
     function renderRoute(geojson) {
       currentRouteLayer = L.geoJSON(geojson, {
-        style: {
-          color: '#4f8cff',
-          weight: 5,
-          opacity: 0.95
-        }
+        style: { color: '#4f8cff', weight: 5, opacity: 0.95 }
       }).addTo(map);
-      map.fitBounds(currentRouteLayer.getBounds(), { padding: [30, 30] });
+
+      try {
+        map.fitBounds(currentRouteLayer.getBounds(), { padding: [30, 30] });
+      } catch (e) {}
     }
 
     function renderTable(rows) {
@@ -757,45 +759,43 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
           <td>${r.error ? 'Não localizado' : 'OK'}</td>
         </tr>
       `).join('');
+
       els.cityCountPill.textContent = `${rows.length} locais`;
     }
 
-    function renderRouteSteps(ordered, legs, totalDistance, totalDuration, fuelCost) {
+    function renderRouteSteps(ordered, legs, totalDistance, totalDuration, fuelCost, fallback = false) {
       els.sumStops.textContent = Math.max(ordered.length - 1, 0);
       els.sumDistance.textContent = formatKm(totalDistance);
       els.sumTime.textContent = formatDuration(totalDuration);
       els.sumFuelCost.textContent = formatMoney(fuelCost);
+      els.pillMode.textContent = fallback ? 'Estimativa por proximidade' : 'Sequência otimizada';
+      els.modeMetric.textContent = fallback ? 'Fallback local' : 'Mais perto';
 
       let html = '';
-      let copyLines = [];
+      const copyLines = [];
+
       for (let i = 0; i < ordered.length; i++) {
         const p = ordered[i];
         const prevLeg = i === 0 ? null : legs[i - 1];
         const title = i === 0 ? 'Origem' : `Parada ${i}`;
         const cityName = p.displayCity || p.query;
+
         copyLines.push(`${i === 0 ? 'Origem' : i + 'ª parada'}: ${cityName}`);
+
         html += `
           <div class="step">
             <div class="badge">${i === 0 ? 'S' : i}</div>
             <div>
               <div class="city">${title} — ${escapeHtml(cityName)}</div>
-              <div class="meta">${escapeHtml(p.label || '')}</div>
+              <div class="meta">${escapeHtml(p.label || '')}${fallback ? ' • estimativa por proximidade' : ''}</div>
             </div>
             <div class="leg">${prevLeg ? `${formatKm(prevLeg.distance)}<br><span style="color:#9db0d3;font-weight:600">${formatDuration(prevLeg.duration)}</span>` : 'Início'}</div>
           </div>
         `;
       }
+
       els.routeList.innerHTML = html;
       lastRouteText = copyLines.join('\n');
-    }
-
-    function escapeHtml(str = '') {
-      return str
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
     }
 
     async function calculateRoute() {
@@ -804,18 +804,10 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
         const rawOrders = els.orders.value.trim();
         els.metricOrigin.textContent = originText || '—';
 
-        if (!originText) {
-          setStatus('Informe a cidade de partida', 'err');
-          alert('Informe a cidade de partida.');
-          return;
-        }
+        if (!originText) throw new Error('Informe a cidade de partida.');
 
         const lines = extractLines(rawOrders);
-        if (!lines.length) {
-          setStatus('Cole ao menos 1 pedido ou cidade', 'err');
-          alert('Cole ao menos 1 pedido ou cidade.');
-          return;
-        }
+        if (!lines.length) throw new Error('Cole ao menos 1 pedido ou cidade.');
 
         els.calcBtn.disabled = true;
         setStatus('Localizando cidades e calculando rota...');
@@ -825,59 +817,99 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
 
         const originGeo = await geocodePlace(originText);
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
-        geocodedRows.push({
-          original: originText,
-          query: originText,
-          displayCity: originText,
-          ...originGeo
-        });
+
+        geocodedRows.push({ original: originText, query: originText, ...originGeo });
 
         for (const line of lines) {
           const guessedCity = guessCityFromLine(line);
+
           try {
             const geo = await geocodePlace(guessedCity);
             if (!geo) {
-              geocodedRows.push({ original: line, query: guessedCity, displayCity: guessedCity, error: true });
+              geocodedRows.push({
+                original: line,
+                query: guessedCity,
+                displayCity: guessedCity,
+                error: true
+              });
             } else {
-              geocodedRows.push({ original: line, query: guessedCity, displayCity: guessedCity, ...geo });
+              geocodedRows.push({
+                original: line,
+                query: guessedCity,
+                ...geo
+              });
             }
           } catch (e) {
-            geocodedRows.push({ original: line, query: guessedCity, displayCity: guessedCity, error: true });
+            geocodedRows.push({
+              original: line,
+              query: guessedCity,
+              displayCity: guessedCity,
+              error: true
+            });
           }
         }
 
         renderTable(geocodedRows);
 
         const validPoints = geocodedRows.filter(r => !r.error);
-        if (validPoints.length < 2) throw new Error('Não foi possível localizar destinos suficientes para montar a rota.');
+        if (validPoints.length < 2) {
+          throw new Error('Não foi possível localizar destinos suficientes para montar a rota.');
+        }
 
-        const routeData = await buildOptimizedRoute(validPoints);
-        const trip = routeData.trips[0];
-        const waypoints = routeData.waypoints || [];
+        let orderedPoints = [];
+        let legs = [];
+        let totalDistance = 0;
+        let totalDuration = 0;
+        let routeGeometry = null;
+        let fallback = false;
 
-        const orderedPoints = waypoints
-          .map((w, index) => ({ ...w, point: validPoints[index] }))
-          .sort((a, b) => a.waypoint_index - b.waypoint_index)
-          .map(item => item.point)
-          .filter(Boolean);
+        try {
+          const routeData = await buildOptimizedRoute(validPoints);
+          const trip = routeData.trips[0];
+          const waypoints = routeData.waypoints || [];
+
+          orderedPoints = waypoints
+            .map((w, index) => ({
+              waypointIndex: w.waypoint_index,
+              point: validPoints[index]
+            }))
+            .sort((a, b) => a.waypointIndex - b.waypointIndex)
+            .map(item => item.point)
+            .filter(Boolean);
+
+          if (orderedPoints.length !== validPoints.length) {
+            throw new Error('A rota online retornou uma sequência incompleta.');
+          }
+
+          legs = trip.legs || [];
+          totalDistance = trip.distance || legs.reduce((acc, leg) => acc + (leg.distance || 0), 0);
+          totalDuration = trip.duration || legs.reduce((acc, leg) => acc + (leg.duration || 0), 0);
+          routeGeometry = trip.geometry;
+        } catch (onlineError) {
+          console.warn('Falha na rota online, usando fallback local:', onlineError);
+
+          const fallbackData = buildFallbackRoute(validPoints);
+          orderedPoints = fallbackData.orderedPoints;
+          legs = fallbackData.legs;
+          totalDistance = fallbackData.totalDistance;
+          totalDuration = fallbackData.totalDuration;
+          routeGeometry = fallbackData.geojson;
+          fallback = true;
+        }
+
+        if (!orderedPoints.length) throw new Error('Não foi possível ordenar as cidades da rota.');
 
         clearMap();
         renderMarkers(orderedPoints);
-        renderRoute(trip.geometry);
-
-        const legs = trip.legs || [];
-        const totalDistance = trip.distance || legs.reduce((acc, leg) => acc + (leg.distance || 0), 0);
-        const totalDuration = trip.duration || legs.reduce((acc, leg) => acc + (leg.duration || 0), 0);
+        renderRoute(routeGeometry);
 
         const vehicleKml = Math.max(Number(els.vehicleKml.value || 0), 0.1);
         const dieselPrice = Math.max(Number(els.dieselPrice.value || 0), 0);
         const liters = (totalDistance / 1000) / vehicleKml;
         const fuelCost = liters * dieselPrice;
 
-        if (!orderedPoints.length) throw new Error('Não foi possível ordenar as cidades da rota.');
-
-        renderRouteSteps(orderedPoints, legs, totalDistance, totalDuration, fuelCost);
-        setStatus('Rota calculada com sucesso', 'ok');
+        renderRouteSteps(orderedPoints, legs, totalDistance, totalDuration, fuelCost, fallback);
+        setStatus(fallback ? 'Rota estimada por proximidade (fallback)' : 'Rota calculada com sucesso', 'ok');
       } catch (error) {
         console.error(error);
         setStatus(error.message || 'Erro ao calcular rota', 'err');
@@ -913,11 +945,14 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
             <div class="city">Nenhuma rota calculada ainda</div>
             <div class="meta">Cole os pedidos e clique em “Calcular melhor rota”.</div>
           </div>
-        </div>`;
+        </div>
+      `;
       els.sumStops.textContent = '0';
       els.sumDistance.textContent = '0 km';
       els.sumTime.textContent = '0h';
       els.sumFuelCost.textContent = 'R$ 0,00';
+      els.pillMode.textContent = 'Sequência otimizada';
+      els.modeMetric.textContent = 'Mais perto';
       clearMap();
       map.setView([-26.05, -53.05], 7);
       setStatus('Tela limpa');
@@ -929,6 +964,7 @@ Pedido 105 - Santo Antônio do Sudoeste PR"></textarea>
         alert('Calcule uma rota primeiro para copiar a sequência.');
         return;
       }
+
       try {
         await navigator.clipboard.writeText(lastRouteText);
         setStatus('Sequência copiada para a área de transferência', 'ok');
