@@ -646,7 +646,7 @@
       <div class="hero-card">
         <h1 class="title">Projeto Kauan — Rota por Endereços</h1>
         <p class="subtitle">
-          Cole a lista em colunas (pedido, cliente, rua, bairro, cidade, UF) e o sistema monta a rota usando o endereço completo de cada cliente.
+          Cole a lista em colunas separadas por TAB e o sistema monta a rota usando o endereço completo de cada cliente, com várias tentativas de busca para melhorar a localização.
         </p>
       </div>
       <div class="hero-card hero-side">
@@ -677,7 +677,7 @@
       <aside class="panel">
         <h2 class="section-title">Entrada dos pedidos</h2>
         <div class="mini">
-          Cole exatamente no formato: <strong>pedido TAB cliente TAB rua TAB bairro TAB cidade TAB UF</strong>. O sistema monta o endereço completo automaticamente.
+          Cole no formato: <strong>pedido TAB cliente TAB rua TAB bairro TAB cidade TAB UF</strong>.
         </div>
 
         <div class="field">
@@ -709,7 +709,7 @@
 
         <div class="field">
           <label for="notes">Observações da rota</label>
-          <textarea id="notes" class="textarea small-textarea" placeholder="Ex.: ligar antes de chegar, cliente recebe até 17h, começar pelo centro..."></textarea>
+          <textarea id="notes" class="textarea small-textarea" placeholder="Ex.: ligar antes de chegar, começar pelo centro..."></textarea>
         </div>
 
         <div class="field">
@@ -747,7 +747,7 @@
         </div>
 
         <div class="note">
-          <strong>Dica:</strong> essa versão usa <strong>rua + bairro + cidade + UF</strong> para localizar o cliente. Quanto mais correto estiver o texto, melhor a precisão.
+          <strong>Dica:</strong> agora o sistema tenta buscar em várias combinações: rua+bairro+cidade, rua+cidade, e até cidade/UF quando necessário.
         </div>
       </aside>
 
@@ -972,15 +972,6 @@
       return (Date.now() - lastConsultTime) < CONSULT_COOLDOWN_MS;
     }
 
-    function normalizeText(text) {
-      return String(text || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-
     function setStatus(text, type = 'loading') {
       els.statusText.textContent = text;
       els.statusDot.className = 'dot';
@@ -1033,13 +1024,21 @@
     }
 
     function parseTabLine(line) {
-      const cols = line.split('\t').map(v => v.trim());
+      const cols = line
+        .split('\t')
+        .map(v => v.trim())
+        .filter(v => v !== '');
 
       if (cols.length < 6) return null;
 
-      const [pedido, cliente, rua, bairro, cidade, uf] = cols;
+      const pedido = cols[0] || '';
+      const cliente = cols[1] || '';
+      const rua = cols[2] || '';
+      const bairro = cols[3] || '';
+      const cidade = cols[4] || '';
+      const uf = cols[5] || '';
 
-      const enderecoCompleto = `${rua}, ${bairro}, ${cidade}, ${uf}, Brasil`;
+      if (!rua || !cidade || !uf) return null;
 
       return {
         pedido,
@@ -1048,7 +1047,7 @@
         bairro,
         cidade,
         uf,
-        enderecoCompleto,
+        enderecoCompleto: `${rua}, ${bairro}, ${cidade}, ${uf}, Brasil`,
         original: line
       };
     }
@@ -1058,7 +1057,19 @@
         .split(/\n+/)
         .map(l => l.trim())
         .filter(Boolean)
-        .map(parseTabLine);
+        .map(parseTabLine)
+        .filter(Boolean);
+    }
+
+    function normalizeAddressText(text) {
+      return String(text || '')
+        .replace(/\bAV\b/gi, 'Avenida')
+        .replace(/\bAVENIDA\b/gi, 'Avenida')
+        .replace(/\bRUA\b/gi, 'Rua')
+        .replace(/\bESTRADA\b/gi, 'Estrada')
+        .replace(/\bROD\b/gi, 'Rodovia')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
 
     async function geocodePlace(query) {
@@ -1067,6 +1078,7 @@
       const tries = [base];
 
       if (normalized && normalized !== base) tries.push(normalized);
+
       if (!/brasil/i.test(base)) {
         tries.push(`${base}, Brasil`);
         if (normalized && normalized !== base) tries.push(`${normalized}, Brasil`);
@@ -1074,7 +1086,7 @@
 
       let lastError = null;
 
-      for (const attempt of tries) {
+      for (const attempt of [...new Set(tries)]) {
         const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&countrycodes=br&q=${encodeURIComponent(attempt)}`;
 
         for (let retry = 0; retry < 3; retry++) {
@@ -1115,6 +1127,34 @@
       }
 
       console.warn('Falha ao localizar:', base, lastError);
+      return null;
+    }
+
+    async function geocodeRowAddress(row) {
+      const ruaBase = normalizeAddressText(row.rua);
+      const bairroBase = normalizeAddressText(row.bairro);
+      const cidadeBase = normalizeAddressText(row.cidade);
+      const ufBase = String(row.uf || '').trim().toUpperCase();
+
+      const variants = [
+        `${ruaBase}, ${bairroBase}, ${cidadeBase}, ${ufBase}, Brasil`,
+        `${ruaBase}, ${cidadeBase}, ${ufBase}, Brasil`,
+        `${ruaBase} - ${cidadeBase} - ${ufBase} - Brasil`,
+        `${cidadeBase}, ${ufBase}, Brasil`
+      ];
+
+      const uniqueVariants = [...new Set(variants.filter(Boolean))];
+
+      for (const query of uniqueVariants) {
+        const geo = await geocodePlace(query);
+        if (geo) {
+          return {
+            ...row,
+            ...geo
+          };
+        }
+      }
+
       return null;
     }
 
@@ -1272,7 +1312,7 @@
       `).join('');
 
       els.addressCountPill.textContent = `${rows.length} endereços`;
-      els.metricOrders.textContent = String(rows.length);
+      els.metricOrders.textContent = String(rows.filter(r => !r.error).length);
     }
 
     function renderRouteSteps(ordered, legs, totalDistance, totalDuration, fuelCost, fallback = false) {
@@ -1335,19 +1375,12 @@
           throw new Error('Informe a cidade de partida.');
         }
 
-        const parsed = parseOrders(rawOrders);
+        const rows = parseOrders(rawOrders);
 
-        if (!parsed.length) {
+        if (!rows.length) {
           setStatus('Cole ao menos 1 linha válida', 'err');
           throw new Error('Cole ao menos 1 linha válida no formato pedido TAB cliente TAB rua TAB bairro TAB cidade TAB UF.');
         }
-
-        const invalidRows = parsed.filter(x => !x);
-        if (invalidRows.length === parsed.length) {
-          throw new Error('Nenhuma linha válida encontrada. Verifique se as colunas estão separadas por TAB.');
-        }
-
-        const rows = parsed.filter(Boolean);
 
         els.calcBtn.disabled = true;
         setStatus('Localizando endereços e calculando rota...');
@@ -1368,22 +1401,19 @@
           updateProgress(
             percent,
             `Localizando endereços (${i + 1}/${rows.length})`,
-            `Buscando: ${row.cliente}`
+            `Buscando: ${row.cliente} - ${row.cidade}/${row.uf}`
           );
 
           try {
-            const geo = await geocodePlace(row.enderecoCompleto);
+            const geoRow = await geocodeRowAddress(row);
 
-            if (!geo) {
+            if (!geoRow) {
               geocodedRows.push({
                 ...row,
                 error: true
               });
             } else {
-              geocodedRows.push({
-                ...row,
-                ...geo
-              });
+              geocodedRows.push(geoRow);
             }
           } catch {
             geocodedRows.push({
@@ -1400,7 +1430,7 @@
         renderTable(geocodedRows);
 
         if (!validRows.length) {
-          throw new Error('Nenhum endereço válido foi localizado.');
+          throw new Error('Nenhum endereço válido foi localizado. Verifique se as ruas, cidades e UF estão corretas.');
         }
 
         const pointsForRoute = [
@@ -1508,7 +1538,8 @@
       els.orders.value = [
         '56933\tZUEHL INSTALACOES HIDRAULICAS LTDA ME\tAV 15 DE NOVEMBRO, 239\tCENTRO\tNOVA PETRÓPOLIS\tRS',
         '56874\tMADEIREIRA THOME EIRELI\tRUA BARAO DO ARROIO GRANDE, 127\tSANTO ANTONIO\tSANTA CRUZ DO SUL\tRS',
-        '56842\tMOVEIS REDER LTDA\tRUA THEOBALDO BUHLER, 83\tCENTRO\tPICADA CAFÉ\tRS'
+        '56842\tMOVEIS REDER LTDA\tRUA THEOBALDO BUHLER, 83\tCENTRO\tPICADA CAFÉ\tRS',
+        '56841\tHIDRAULICA RITTER LTDA ME\tAVENIDA 15 DE NOVEMBRO, 2892\tPOUSADA DA NEVE\tNOVA PETRÓPOLIS\tRS'
       ].join('\n');
       updatePrintInfo();
       setStatus('Exemplo carregado');
