@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projeto Kauan — Rota Inteligente por Cidades</title>
+  <title>Projeto Kauan — Rota Inteligente Híbrida</title>
   <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://router.project-osrm.org" />
   <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
@@ -575,10 +575,9 @@
   <div class="wrap">
     <section class="hero">
       <div class="hero-card">
-        <h1 class="title">Projeto Kauan — Rota Inteligente por Cidades</h1>
+        <h1 class="title">Projeto Kauan — Rota Inteligente Híbrida</h1>
         <p class="subtitle">
-          Cole vários pedidos de uma vez, deixe a ferramenta identificar as cidades automaticamente e gere uma sequência de entrega pensada para reduzir distância, tempo e melhor aproveitamento do diesel.
-          Agora o sistema também junta cidades repetidas em uma única parada, imprime a rota e lida melhor com falhas da API pública.
+          Cole pedidos com cidade ou com rua/endereço. Se houver rua, a ferramenta tenta localizar a parada pelo endereço. Se houver só cidade, usa a cidade normalmente.
         </p>
       </div>
       <div class="hero-card hero-side">
@@ -589,8 +588,8 @@
         </div>
         <div class="metric">
           <div class="k">Modo</div>
-          <div class="v" id="metricMode">Mais perto</div>
-          <div class="s">Otimização por proximidade da rota</div>
+          <div class="v" id="metricMode">Híbrido</div>
+          <div class="s">Cidade + endereço</div>
         </div>
         <div class="metric">
           <div class="k">Mapa</div>
@@ -598,9 +597,9 @@
           <div class="s">Visual das paradas e trajeto sugerido</div>
         </div>
         <div class="metric">
-          <div class="k">Agrupamento</div>
-          <div class="v" id="metricGrouped">0 cidades</div>
-          <div class="s">Cidades duplicadas viram uma parada só</div>
+          <div class="k">Paradas</div>
+          <div class="v" id="metricGrouped">0 paradas</div>
+          <div class="s">Cidades agrupadas, endereços separados</div>
         </div>
       </div>
     </section>
@@ -609,7 +608,10 @@
       <aside class="panel">
         <h2 class="section-title">Entrada dos pedidos</h2>
         <div class="mini">
-          Pode colar pedidos completos. Se houver vários pedidos para a mesma cidade, o sistema junta tudo em uma única parada e mostra quantos pedidos ficaram naquela cidade.
+          Você pode colar linhas como:
+          <br>• PEDIDO 01 RUA ALEXANDRIA AMPERE PR
+          <br>• PEDIDO 02 AV BRASIL 1200 CASCAVEL PR
+          <br>• PEDIDO 03 TOLEDO PR
         </div>
 
         <div class="field">
@@ -645,15 +647,12 @@
         </div>
 
         <div class="field">
-          <label for="orders">Pedidos / endereços / cidades</label>
+          <label for="orders">Pedidos / ruas / cidades</label>
           <textarea id="orders" class="textarea" placeholder="Exemplo:
-Pedido 101 - Cascavel PR
-Pedido 102 - Toledo PR
-Pedido 103 - Francisco Beltrão PR
-Pedido 104 - Cascavel PR
-Pedido 105 - Toledo PR
-Pedido 106 - Cascavel PR
-Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
+PEDIDO 01 RUA ALEXANDRIA AMPERE PR
+PEDIDO 02 AV BRASIL 1200 CASCAVEL PR
+PEDIDO 03 TOLEDO PR
+PEDIDO 04 RUA MARINGA 250 CENTRO AMPERE PR"></textarea>
         </div>
 
         <div class="btns">
@@ -673,7 +672,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         </div>
 
         <div class="note">
-          <strong>Dica:</strong> para maior precisão, use cidade + UF. Ex.: <em>Cascavel, PR</em>. Se houver muitas cidades, a API pública pode limitar; nesse caso o app usa fallback por proximidade.
+          <strong>Dica:</strong> se colocar rua + número + cidade + UF, a precisão tende a ficar melhor. Cidades repetidas são agrupadas; endereços ficam separados.
         </div>
       </aside>
 
@@ -722,7 +721,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
             <div class="box">
               <div class="label">Paradas</div>
               <div class="value" id="sumStops">0</div>
-              <div class="sub">Cidades únicas na rota</div>
+              <div class="sub">Paradas válidas na rota</div>
             </div>
             <div class="box">
               <div class="label">Distância</div>
@@ -754,17 +753,17 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
         <section class="table-card">
           <div class="head-row">
-            <h3>Cidades agrupadas</h3>
-            <span class="pill" id="cityCountPill">0 cidades</span>
+            <h3>Paradas localizadas</h3>
+            <span class="pill" id="cityCountPill">0 paradas</span>
           </div>
 
           <table>
             <thead>
               <tr>
                 <th>#</th>
-                <th>Cidade / parada</th>
+                <th>Parada</th>
                 <th>Qtd. pedidos</th>
-                <th>Pedidos agrupados</th>
+                <th>Linhas agrupadas</th>
                 <th>Coordenadas</th>
               </tr>
             </thead>
@@ -870,7 +869,6 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
     function updateCooldownDisplay() {
       const remaining = CONSULT_COOLDOWN_MS - (Date.now() - lastConsultTime);
-
       if (remaining > 0) {
         els.cooldownInfo.textContent = `Aguarde ${formatRemainingTime(remaining)} para uma nova consulta.`;
       } else {
@@ -938,6 +936,37 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         .replaceAll("'", '&#039;');
     }
 
+    function hasStreetHint(text) {
+      const t = normalizeText(text);
+      return (
+        /\brua\b/.test(t) ||
+        /\bav\b/.test(t) ||
+        /\bavenida\b/.test(t) ||
+        /\btravessa\b/.test(t) ||
+        /\balameda\b/.test(t) ||
+        /\bestrada\b/.test(t) ||
+        /\brodovia\b/.test(t) ||
+        /\bkm\b/.test(t)
+      );
+    }
+
+    function normalizeAddressQuery(text) {
+      return String(text || '')
+        .replace(/\bAV\b/gi, 'Avenida')
+        .replace(/\bAV.\b/gi, 'Avenida')
+        .replace(/\bRUA\b/gi, 'Rua')
+        .replace(/\bESTR\b/gi, 'Estrada')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function extractOrderLabel(line, index) {
+      const trimmed = String(line || '').trim();
+      const m = trimmed.match(/^(pedido\s*\d+|pedido\s*[-: ]*\d+|ped\s*\d+)/i);
+      if (m) return m[0].trim();
+      return `Pedido ${index + 1}`;
+    }
+
     function guessCityFromLine(line) {
       const clean = normalizeText(line);
 
@@ -946,6 +975,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       }
 
       const parts = line.split(/[-–—|;,]/).map(p => p.trim()).filter(Boolean);
+
       if (parts.length > 1) {
         const candidate = parts[parts.length - 1];
         if (candidate.length >= 3) return candidate;
@@ -955,15 +985,20 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
     }
 
     async function geocodePlace(query) {
-      const tries = [query];
+      const base = String(query || '').trim();
+      const normalized = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      const tries = [base];
 
-      if (!/,\s*[A-Z]{2}$/i.test(query) && !/brasil/i.test(query)) {
-        tries.push(`${query}, Brasil`);
+      if (normalized && normalized !== base) tries.push(normalized);
+
+      if (!/,\s*[A-Z]{2}$/i.test(base) && !/brasil/i.test(base)) {
+        tries.push(`${base}, Brasil`);
+        if (normalized && normalized !== base) tries.push(`${normalized}, Brasil`);
       }
 
       let lastError = null;
 
-      for (const attempt of tries) {
+      for (const attempt of [...new Set(tries)]) {
         const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&countrycodes=br&q=${encodeURIComponent(attempt)}`;
 
         for (let retry = 0; retry < 3; retry++) {
@@ -990,12 +1025,12 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
             const item = data[0];
             const addr = item.address || {};
-            const city = addr.city || addr.town || addr.village || addr.municipality || query;
+            const city = addr.city || addr.town || addr.village || addr.municipality || base;
             const stateCode = addr.state_code || '';
             const displayCity = stateCode ? `${city}, ${stateCode}` : city;
 
             return {
-              query,
+              query: base,
               label: item.display_name,
               lat: Number(item.lat),
               lon: Number(item.lon),
@@ -1008,8 +1043,63 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         }
       }
 
-      console.warn('Falha ao localizar:', query, lastError);
+      console.warn('Falha ao localizar:', base, lastError);
       return null;
+    }
+
+    async function geocodeFlexibleLine(line, index) {
+      const orderLabel = extractOrderLabel(line, index);
+      const addressLike = hasStreetHint(line);
+
+      if (addressLike) {
+        const normalizedLine = normalizeAddressQuery(line);
+
+        const addressAttempts = [
+          normalizedLine,
+          `${normalizedLine}, Brasil`,
+          normalizedLine.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+          `${normalizedLine.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}, Brasil`
+        ];
+
+        for (const query of [...new Set(addressAttempts)]) {
+          const geo = await geocodePlace(query);
+          if (geo) {
+            return {
+              original: line,
+              query,
+              displayCity: geo.displayCity || query,
+              stopType: 'address',
+              stopLabel: orderLabel,
+              orders: [line],
+              ...geo
+            };
+          }
+        }
+      }
+
+      const guessedCity = guessCityFromLine(line);
+      const geo = await geocodePlace(guessedCity);
+
+      if (!geo) {
+        return {
+          original: line,
+          query: guessedCity,
+          displayCity: guessedCity,
+          stopType: addressLike ? 'address' : 'city',
+          stopLabel: orderLabel,
+          error: true
+        };
+      }
+
+      return {
+        original: line,
+        query: guessedCity,
+        displayCity: geo.displayCity || guessedCity,
+        stopType: 'city',
+        stopLabel: orderLabel,
+        orders: [line],
+        ...geo
+      };
     }
 
     async function buildOptimizedRoute(points) {
@@ -1128,8 +1218,8 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
     function renderMarkers(orderedPoints) {
       orderedPoints.forEach((p, idx) => {
         const marker = L.marker([p.lat, p.lon]).addTo(map);
-        const pedidosTxt = p.orders ? `<br><small>${p.orders.length} pedido(s) nesta cidade</small>` : '';
-        marker.bindPopup(`<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${escapeHtml(p.displayCity || p.query)}${pedidosTxt}<br><small>${escapeHtml(p.label || '')}</small>`);
+        const pedidosTxt = p.orders ? `<br><small>${p.orders.length} linha(s) nesta parada</small>` : '';
+        marker.bindPopup(`<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${escapeHtml(p.stopType === 'address' ? (p.stopLabel || p.original) : (p.displayCity || p.query))}${pedidosTxt}<br><small>${escapeHtml(p.label || '')}</small>`);
         currentMarkers.push(marker);
       });
     }
@@ -1150,9 +1240,18 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
     function groupCities(rows) {
       const groupedMap = new Map();
+      const result = [];
 
       for (const row of rows) {
         if (row.error) continue;
+
+        if (row.stopType === 'address') {
+          result.push({
+            ...row,
+            orders: [row.original]
+          });
+          continue;
+        }
 
         const key = normalizeText(row.displayCity || row.query);
 
@@ -1164,6 +1263,8 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
             label: row.label,
             lat: row.lat,
             lon: row.lon,
+            stopType: 'city',
+            stopLabel: row.stopLabel || (row.displayCity || row.query),
             orders: [row.original]
           });
         } else {
@@ -1171,29 +1272,33 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         }
       }
 
-      return Array.from(groupedMap.values());
+      return [...groupedMap.values(), ...result];
     }
 
     function renderTable(rows) {
       if (!rows.length) {
         els.cityTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
-        els.cityCountPill.textContent = '0 cidades';
-        els.metricGrouped.textContent = '0 cidades';
+        els.cityCountPill.textContent = '0 paradas';
+        els.metricGrouped.textContent = '0 paradas';
         return;
       }
 
       els.cityTableBody.innerHTML = rows.map((r, i) => `
         <tr>
           <td>${i + 1}</td>
-          <td><strong>${escapeHtml(r.displayCity || r.query)}</strong></td>
-          <td>${r.orders.length}</td>
-          <td>${r.orders.map(item => `• ${escapeHtml(item)}`).join('<br>')}</td>
+          <td>
+            <strong>${escapeHtml(r.stopType === 'address' ? (r.stopLabel || r.original) : (r.displayCity || r.query))}</strong>
+            <br>
+            <small>${r.stopType === 'address' ? 'Endereço' : 'Cidade'}</small>
+          </td>
+          <td>${r.orders ? r.orders.length : 1}</td>
+          <td>${(r.orders || [r.original]).map(item => `• ${escapeHtml(item)}`).join('<br>')}</td>
           <td>${r.lat && r.lon ? `${r.lat.toFixed(4)}, ${r.lon.toFixed(4)}` : '-'}</td>
         </tr>
       `).join('');
 
-      els.cityCountPill.textContent = `${rows.length} cidades`;
-      els.metricGrouped.textContent = `${rows.length} cidades`;
+      els.cityCountPill.textContent = `${rows.length} paradas`;
+      els.metricGrouped.textContent = `${rows.length} paradas`;
     }
 
     function renderRouteSteps(ordered, legs, totalDistance, totalDuration, fuelCost, fallback = false) {
@@ -1202,7 +1307,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       els.sumTime.textContent = formatDuration(totalDuration);
       els.sumFuelCost.textContent = formatMoney(fuelCost);
       els.pillMode.textContent = fallback ? 'Estimativa por proximidade' : 'Sequência otimizada';
-      els.metricMode.textContent = fallback ? 'Fallback local' : 'Mais perto';
+      els.metricMode.textContent = fallback ? 'Fallback local' : 'Híbrido';
 
       let html = '';
       let copyLines = [];
@@ -1211,18 +1316,28 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         const p = ordered[i];
         const prevLeg = i === 0 ? null : legs[i - 1];
         const title = i === 0 ? 'Origem' : `Parada ${i}`;
-        const cityName = p.displayCity || p.query;
-        const qtdPedidos = p.orders ? p.orders.length : 1;
 
-        copyLines.push(`${i === 0 ? 'Origem' : i + 'ª parada'}: ${cityName}${i === 0 ? '' : ` (${qtdPedidos} pedido(s))`}`);
+        const mainName = i === 0
+          ? (p.displayCity || p.query)
+          : (p.stopType === 'address'
+              ? (p.stopLabel || p.original)
+              : (p.displayCity || p.query));
+
+        const metaText = i === 0
+          ? 'Ponto de saída'
+          : (p.stopType === 'address'
+              ? p.original
+              : `${(p.orders ? p.orders.length : 1)} pedido(s) nesta cidade`);
+
+        copyLines.push(`${i === 0 ? 'Origem' : i + 'ª parada'}: ${mainName}`);
 
         html += `
           <div class="step">
             <div class="badge">${i === 0 ? 'S' : i}</div>
             <div>
-              <div class="city">${title} — ${escapeHtml(cityName)}</div>
+              <div class="city">${title} — ${escapeHtml(mainName)}</div>
               <div class="meta">
-                ${i === 0 ? 'Ponto de saída' : `${qtdPedidos} pedido(s) nesta cidade`}
+                ${escapeHtml(metaText)}
                 ${fallback ? ' • estimativa por proximidade' : ''}
               </div>
             </div>
@@ -1272,7 +1387,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         }
 
         els.calcBtn.disabled = true;
-        setStatus('Localizando cidades, agrupando pedidos e calculando rota... isso pode levar alguns segundos');
+        setStatus('Localizando paradas e calculando rota... isso pode levar alguns segundos');
         clearMap();
 
         const geocodedRows = [];
@@ -1280,31 +1395,19 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
 
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
 
-        for (const line of lines) {
-          const guessedCity = guessCityFromLine(line);
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
 
           try {
-            const geo = await geocodePlace(guessedCity);
-            if (!geo) {
-              geocodedRows.push({
-                original: line,
-                query: guessedCity,
-                displayCity: guessedCity,
-                error: true
-              });
-            } else {
-              geocodedRows.push({
-                original: line,
-                query: guessedCity,
-                displayCity: geo.displayCity || guessedCity,
-                ...geo
-              });
-            }
+            const geoRow = await geocodeFlexibleLine(line, i);
+            geocodedRows.push(geoRow);
           } catch {
             geocodedRows.push({
               original: line,
-              query: guessedCity,
-              displayCity: guessedCity,
+              query: line,
+              displayCity: line,
+              stopType: 'city',
+              stopLabel: extractOrderLabel(line, i),
               error: true
             });
           }
@@ -1315,7 +1418,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         renderTable(groupedCities);
 
         if (!groupedCities.length) {
-          throw new Error('Nenhuma cidade válida foi localizada. Tente informar cidade + UF.');
+          throw new Error('Nenhuma parada válida foi localizada. Tente informar melhor a cidade ou a rua.');
         }
 
         const pointsForRoute = [
@@ -1323,6 +1426,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
             original: originText,
             query: originText,
             displayCity: originText,
+            stopType: 'origin',
             ...originGeo,
             orders: []
           },
@@ -1371,7 +1475,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         }
 
         if (!orderedPoints.length) {
-          throw new Error('Não foi possível ordenar as cidades da rota.');
+          throw new Error('Não foi possível ordenar as paradas da rota.');
         }
 
         clearMap();
@@ -1407,15 +1511,13 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       els.origin.value = 'Ampére, PR';
       els.driverName.value = 'Kauan';
       els.plate.value = 'ABC-1D23';
-      els.notes.value = 'Ligar para clientes de Cascavel antes da chegada. Toledo recebe até 17h.';
+      els.notes.value = 'Começar por Ampére e seguir a rota.';
       els.orders.value = [
-        'Pedido 101 - Cascavel PR',
-        'Pedido 102 - Toledo PR',
-        'Pedido 103 - Francisco Beltrão PR',
-        'Pedido 104 - Cascavel PR',
-        'Pedido 105 - Toledo PR',
-        'Pedido 106 - Cascavel PR',
-        'Pedido 107 - Santo Antônio do Sudoeste PR'
+        'PEDIDO 01 RUA ALEXANDRIA AMPERE PR',
+        'PEDIDO 02 AV BRASIL 1200 CASCAVEL PR',
+        'PEDIDO 03 TOLEDO PR',
+        'PEDIDO 04 RUA MARINGA 250 CENTRO AMPERE PR',
+        'PEDIDO 05 FRANCISCO BELTRAO PR'
       ].join('\n');
       updatePrintInfo();
       setStatus('Exemplo carregado');
@@ -1427,8 +1529,8 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       els.notes.value = '';
       els.orders.value = '';
       els.cityTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
-      els.cityCountPill.textContent = '0 cidades';
-      els.metricGrouped.textContent = '0 cidades';
+      els.cityCountPill.textContent = '0 paradas';
+      els.metricGrouped.textContent = '0 paradas';
       els.routeList.innerHTML = `
         <div class="step">
           <div class="badge">•</div>
@@ -1442,7 +1544,7 @@ Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
       els.sumTime.textContent = '0h';
       els.sumFuelCost.textContent = 'R$ 0,00';
       els.pillMode.textContent = 'Sequência otimizada';
-      els.metricMode.textContent = 'Mais perto';
+      els.metricMode.textContent = 'Híbrido';
       clearMap();
       map.setView([-26.05, -53.05], 7);
       setStatus('Tela limpa');
