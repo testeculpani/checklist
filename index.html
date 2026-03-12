@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projeto Kauan — Rota por Endereços</title>
+  <title>Projeto Kauan — Rota Inteligente por Cidades</title>
   <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://router.project-osrm.org" />
   <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
@@ -38,7 +38,7 @@
     body { min-height: 100vh; }
 
     .wrap {
-      max-width: 1500px;
+      max-width: 1450px;
       margin: 0 auto;
       padding: 22px;
     }
@@ -130,7 +130,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 500px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 18px;
     }
 
@@ -183,11 +183,9 @@
     }
 
     .textarea {
-      min-height: 290px;
+      min-height: 220px;
       resize: vertical;
       line-height: 1.45;
-      white-space: pre;
-      tab-size: 4;
     }
 
     .small-textarea { min-height: 90px; }
@@ -265,58 +263,6 @@
       border: 1px solid rgba(255,255,255,.05);
     }
 
-    .progress-wrap {
-      display: none;
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.035);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .progress-label {
-      font-size: 12px;
-      color: #d9e4ff;
-      font-weight: 800;
-    }
-
-    .progress-percent {
-      font-size: 12px;
-      color: #9db0d3;
-      font-weight: 700;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 12px;
-      background: rgba(255,255,255,.08);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(135deg, #4f8cff, #72c7ff);
-      transition: width .35s ease;
-    }
-
-    .progress-subtext {
-      margin-top: 7px;
-      font-size: 12px;
-      color: #9db0d3;
-      line-height: 1.45;
-    }
-
     .right {
       display: grid;
       gap: 18px;
@@ -350,7 +296,7 @@
 
     #map {
       width: 100%;
-      height: 520px;
+      height: 480px;
       border-radius: 18px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,.08);
@@ -492,20 +438,6 @@
       line-height: 1.5;
     }
 
-    .link-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      padding: 7px 10px;
-      border-radius: 10px;
-      background: rgba(79,140,255,.12);
-      color: #d7e5ff;
-      border: 1px solid rgba(79,140,255,.22);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
     .print-only { display: none; }
 
     @media (max-width: 1120px) {
@@ -518,7 +450,7 @@
       .wrap { padding: 14px; }
       .title { font-size: 28px; }
       .hero-side, .row, .btns, .btns-2, .summary { grid-template-columns: 1fr; }
-      #map { height: 380px; }
+      #map { height: 360px; }
       .step { grid-template-columns: 48px 1fr; }
       .leg { grid-column: 2; text-align: left; }
     }
@@ -607,8 +539,7 @@
       .pill,
       .summary .box,
       .step,
-      table,
-      .link-btn {
+      table {
         background: #fff !important;
         color: #111 !important;
         border: 1px solid #d9d9d9 !important;
@@ -644,31 +575,32 @@
   <div class="wrap">
     <section class="hero">
       <div class="hero-card">
-        <h1 class="title">Projeto Kauan — Rota por Endereços</h1>
+        <h1 class="title">Projeto Kauan — Rota Inteligente por Cidades</h1>
         <p class="subtitle">
-          Cole a lista em colunas separadas por TAB e o sistema monta a rota usando o endereço completo de cada cliente, com várias tentativas de busca para melhorar a localização.
+          Cole vários pedidos de uma vez, deixe a ferramenta identificar as cidades automaticamente e gere uma sequência de entrega pensada para reduzir distância, tempo e melhor aproveitamento do diesel.
+          Agora o sistema também junta cidades repetidas em uma única parada, imprime a rota e lida melhor com falhas da API pública.
         </p>
       </div>
       <div class="hero-card hero-side">
         <div class="metric">
+          <div class="k">Origem padrão</div>
+          <div class="v" id="metricOrigin">Ampére/PR</div>
+          <div class="s">Você pode alterar antes de calcular</div>
+        </div>
+        <div class="metric">
           <div class="k">Modo</div>
-          <div class="v" id="metricMode">Endereços</div>
-          <div class="s">Busca por endereço completo</div>
-        </div>
-        <div class="metric">
-          <div class="k">Origem</div>
-          <div class="v" id="metricOrigin">Ampére, PR</div>
-          <div class="s">Ponto de partida da rota</div>
-        </div>
-        <div class="metric">
-          <div class="k">Pedidos válidos</div>
-          <div class="v" id="metricOrders">0</div>
-          <div class="s">Endereços localizados</div>
+          <div class="v" id="metricMode">Mais perto</div>
+          <div class="s">Otimização por proximidade da rota</div>
         </div>
         <div class="metric">
           <div class="k">Mapa</div>
           <div class="v">Ao vivo</div>
-          <div class="s">Sequência detalhada da entrega</div>
+          <div class="s">Visual das paradas e trajeto sugerido</div>
+        </div>
+        <div class="metric">
+          <div class="k">Agrupamento</div>
+          <div class="v" id="metricGrouped">0 cidades</div>
+          <div class="s">Cidades duplicadas viram uma parada só</div>
         </div>
       </div>
     </section>
@@ -677,7 +609,7 @@
       <aside class="panel">
         <h2 class="section-title">Entrada dos pedidos</h2>
         <div class="mini">
-          Cole no formato: <strong>pedido TAB cliente TAB rua TAB bairro TAB cidade TAB UF</strong>.
+          Pode colar pedidos completos. Se houver vários pedidos para a mesma cidade, o sistema junta tudo em uma única parada e mostra quantos pedidos ficaram naquela cidade.
         </div>
 
         <div class="field">
@@ -709,18 +641,23 @@
 
         <div class="field">
           <label for="notes">Observações da rota</label>
-          <textarea id="notes" class="textarea small-textarea" placeholder="Ex.: ligar antes de chegar, começar pelo centro..."></textarea>
+          <textarea id="notes" class="textarea small-textarea" placeholder="Ex.: ligar antes de chegar, cliente recebe até 17h, descarregar nos fundos..."></textarea>
         </div>
 
         <div class="field">
-          <label for="orders">Pedidos em colunas</label>
+          <label for="orders">Pedidos / endereços / cidades</label>
           <textarea id="orders" class="textarea" placeholder="Exemplo:
-56933	ZUEHL INSTALACOES HIDRAULICAS LTDA ME	AV 15 DE NOVEMBRO, 239	CENTRO	NOVA PETRÓPOLIS	RS
-56874	MADEIREIRA THOME EIRELI	RUA BARAO DO ARROIO GRANDE, 127	SANTO ANTONIO	SANTA CRUZ DO SUL	RS"></textarea>
+Pedido 101 - Cascavel PR
+Pedido 102 - Toledo PR
+Pedido 103 - Francisco Beltrão PR
+Pedido 104 - Cascavel PR
+Pedido 105 - Toledo PR
+Pedido 106 - Cascavel PR
+Pedido 107 - Santo Antônio do Sudoeste PR"></textarea>
         </div>
 
         <div class="btns">
-          <button class="primary" id="calcBtn">Calcular rota por endereço</button>
+          <button class="primary" id="calcBtn">Calcular melhor rota</button>
           <button class="secondary" id="demoBtn">Carregar exemplo</button>
           <button class="secondary" id="clearBtn">Limpar</button>
           <button class="secondary" id="copyBtn">Copiar sequência</button>
@@ -735,25 +672,14 @@
           Nenhum bloqueio ativo.
         </div>
 
-        <div id="progressWrap" class="progress-wrap">
-          <div class="progress-top">
-            <span id="progressLabel" class="progress-label">Processando...</span>
-            <span id="progressPercent" class="progress-percent">0%</span>
-          </div>
-          <div class="progress-track">
-            <div id="progressBar" class="progress-bar"></div>
-          </div>
-          <div id="progressSubtext" class="progress-subtext">Preparando cálculo...</div>
-        </div>
-
         <div class="note">
-          <strong>Dica:</strong> agora o sistema tenta buscar em várias combinações: rua+bairro+cidade, rua+cidade, e até cidade/UF quando necessário.
+          <strong>Dica:</strong> para maior precisão, use cidade + UF. Ex.: <em>Cascavel, PR</em>. Se houver muitas cidades, a API pública pode limitar; nesse caso o app usa fallback por proximidade.
         </div>
       </aside>
 
       <div class="right">
         <div class="print-only print-header">
-          <div class="print-title">Rota por Endereços — Projeto Kauan</div>
+          <div class="print-title">Rota de Entregas — Projeto Kauan</div>
           <div class="print-subtitle">Resumo pronto para impressão</div>
           <div class="print-grid">
             <div class="print-box">
@@ -782,7 +708,7 @@
           </div>
           <div id="map"></div>
           <div class="footer-tip">
-            Quando a rota online falha, o sistema usa uma estimativa por proximidade para não travar.
+            A rota usa OpenStreetMap + OSRM. Quando a API online falha ou há muitos pontos, o sistema usa estimativa por proximidade para não travar.
           </div>
         </section>
 
@@ -796,7 +722,7 @@
             <div class="box">
               <div class="label">Paradas</div>
               <div class="value" id="sumStops">0</div>
-              <div class="sub">Endereços válidos na rota</div>
+              <div class="sub">Cidades únicas na rota</div>
             </div>
             <div class="box">
               <div class="label">Distância</div>
@@ -820,7 +746,7 @@
               <div class="badge">•</div>
               <div>
                 <div class="city">Nenhuma rota calculada ainda</div>
-                <div class="meta">Cole os pedidos e clique em “Calcular rota por endereço”.</div>
+                <div class="meta">Cole os pedidos e clique em “Calcular melhor rota”.</div>
               </div>
             </div>
           </div>
@@ -828,21 +754,21 @@
 
         <section class="table-card">
           <div class="head-row">
-            <h3>Endereços localizados</h3>
-            <span class="pill" id="addressCountPill">0 endereços</span>
+            <h3>Cidades agrupadas</h3>
+            <span class="pill" id="cityCountPill">0 cidades</span>
           </div>
 
           <table>
             <thead>
               <tr>
                 <th>#</th>
-                <th>Pedido / cliente</th>
-                <th>Endereço completo</th>
-                <th>Status</th>
-                <th>Ação</th>
+                <th>Cidade / parada</th>
+                <th>Qtd. pedidos</th>
+                <th>Pedidos agrupados</th>
+                <th>Coordenadas</th>
               </tr>
             </thead>
-            <tbody id="addressTableBody">
+            <tbody id="cityTableBody">
               <tr>
                 <td colspan="5">Nenhum dado por enquanto.</td>
               </tr>
@@ -878,7 +804,7 @@
       resetMapBtn: document.getElementById('resetMapBtn'),
       metricOrigin: document.getElementById('metricOrigin'),
       metricMode: document.getElementById('metricMode'),
-      metricOrders: document.getElementById('metricOrders'),
+      metricGrouped: document.getElementById('metricGrouped'),
       statusText: document.getElementById('statusText'),
       statusDot: document.getElementById('statusDot'),
       sumStops: document.getElementById('sumStops'),
@@ -886,30 +812,33 @@
       sumTime: document.getElementById('sumTime'),
       sumFuelCost: document.getElementById('sumFuelCost'),
       routeList: document.getElementById('routeList'),
-      addressTableBody: document.getElementById('addressTableBody'),
-      addressCountPill: document.getElementById('addressCountPill'),
+      cityTableBody: document.getElementById('cityTableBody'),
+      cityCountPill: document.getElementById('cityCountPill'),
       pillMode: document.getElementById('pillMode'),
       printOrigin: document.getElementById('printOrigin'),
       printDriver: document.getElementById('printDriver'),
       printPlate: document.getElementById('printPlate'),
       printNotes: document.getElementById('printNotes'),
-      cooldownInfo: document.getElementById('cooldownInfo'),
-      progressWrap: document.getElementById('progressWrap'),
-      progressBar: document.getElementById('progressBar'),
-      progressLabel: document.getElementById('progressLabel'),
-      progressPercent: document.getElementById('progressPercent'),
-      progressSubtext: document.getElementById('progressSubtext')
+      cooldownInfo: document.getElementById('cooldownInfo')
     };
 
     let currentMarkers = [];
     let currentRouteLayer = null;
     let lastRouteText = '';
-    let lastValidRows = [];
-    let progressHideTimer = null;
+    let lastGroupedCities = [];
 
     const CONSULT_COOLDOWN_MS = 3 * 60 * 1000;
     let lastConsultTime = 0;
     let cooldownTimer = null;
+
+    const BRAZIL_CITY_ALIASES = {
+      'santa izabel parana': 'Santa Izabel do Oeste, PR',
+      'santa izabel': 'Santa Izabel do Oeste, PR',
+      'santo antonio sudoeste': 'Santo Antônio do Sudoeste, PR',
+      'santo antonio do sudoeste': 'Santo Antônio do Sudoeste, PR',
+      'francisco beltrao': 'Francisco Beltrão, PR',
+      'ampere': 'Ampére, PR'
+    };
 
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -941,6 +870,7 @@
 
     function updateCooldownDisplay() {
       const remaining = CONSULT_COOLDOWN_MS - (Date.now() - lastConsultTime);
+
       if (remaining > 0) {
         els.cooldownInfo.textContent = `Aguarde ${formatRemainingTime(remaining)} para uma nova consulta.`;
       } else {
@@ -951,13 +881,16 @@
     function startCooldown() {
       lastConsultTime = Date.now();
 
-      if (cooldownTimer) clearInterval(cooldownTimer);
+      if (cooldownTimer) {
+        clearInterval(cooldownTimer);
+      }
 
       updateCooldownDisplay();
       els.calcBtn.disabled = true;
 
       cooldownTimer = setInterval(() => {
         updateCooldownDisplay();
+
         const remaining = CONSULT_COOLDOWN_MS - (Date.now() - lastConsultTime);
         if (remaining <= 0) {
           clearInterval(cooldownTimer);
@@ -972,11 +905,28 @@
       return (Date.now() - lastConsultTime) < CONSULT_COOLDOWN_MS;
     }
 
+    function normalizeText(text) {
+      return String(text || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9\s,-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
     function setStatus(text, type = 'loading') {
       els.statusText.textContent = text;
       els.statusDot.className = 'dot';
       if (type === 'ok') els.statusDot.classList.add('ok');
       if (type === 'err') els.statusDot.classList.add('err');
+    }
+
+    function extractLines(raw) {
+      return String(raw || '')
+        .split(/\n+/)
+        .map(line => line.trim())
+        .filter(Boolean);
     }
 
     function escapeHtml(str = '') {
@@ -988,105 +938,32 @@
         .replaceAll("'", '&#039;');
     }
 
-    function showProgress() {
-      if (progressHideTimer) {
-        clearTimeout(progressHideTimer);
-        progressHideTimer = null;
+    function guessCityFromLine(line) {
+      const clean = normalizeText(line);
+
+      for (const [key, value] of Object.entries(BRAZIL_CITY_ALIASES)) {
+        if (clean.includes(key)) return value;
       }
-      els.progressWrap.style.display = 'block';
-      updateProgress(0, 'Iniciando...', 'Preparando cálculo da rota');
-    }
 
-    function hideProgress() {
-      if (progressHideTimer) clearTimeout(progressHideTimer);
-      progressHideTimer = setTimeout(() => {
-        els.progressWrap.style.display = 'none';
-        els.progressBar.style.width = '0%';
-        els.progressPercent.textContent = '0%';
-        els.progressLabel.textContent = 'Processando...';
-        els.progressSubtext.textContent = 'Preparando cálculo...';
-      }, 700);
-    }
+      const parts = line.split(/[-–—|;,]/).map(p => p.trim()).filter(Boolean);
+      if (parts.length > 1) {
+        const candidate = parts[parts.length - 1];
+        if (candidate.length >= 3) return candidate;
+      }
 
-    function updateProgress(percent, label, subtext = '') {
-      const safePercent = Math.max(0, Math.min(100, percent));
-      els.progressBar.style.width = `${safePercent}%`;
-      els.progressPercent.textContent = `${Math.round(safePercent)}%`;
-      els.progressLabel.textContent = label || 'Processando...';
-      els.progressSubtext.textContent = subtext || '';
-    }
-
-    function updatePrintInfo() {
-      els.printOrigin.textContent = els.origin.value.trim() || '-';
-      els.printDriver.textContent = els.driverName.value.trim() || '-';
-      els.printPlate.textContent = els.plate.value.trim() || '-';
-      els.printNotes.textContent = els.notes.value.trim() || '-';
-    }
-
-    function parseTabLine(line) {
-      const cols = line
-        .split('\t')
-        .map(v => v.trim())
-        .filter(v => v !== '');
-
-      if (cols.length < 6) return null;
-
-      const pedido = cols[0] || '';
-      const cliente = cols[1] || '';
-      const rua = cols[2] || '';
-      const bairro = cols[3] || '';
-      const cidade = cols[4] || '';
-      const uf = cols[5] || '';
-
-      if (!rua || !cidade || !uf) return null;
-
-      return {
-        pedido,
-        cliente,
-        rua,
-        bairro,
-        cidade,
-        uf,
-        enderecoCompleto: `${rua}, ${bairro}, ${cidade}, ${uf}, Brasil`,
-        original: line
-      };
-    }
-
-    function parseOrders(raw) {
-      return String(raw || '')
-        .split(/\n+/)
-        .map(l => l.trim())
-        .filter(Boolean)
-        .map(parseTabLine)
-        .filter(Boolean);
-    }
-
-    function normalizeAddressText(text) {
-      return String(text || '')
-        .replace(/\bAV\b/gi, 'Avenida')
-        .replace(/\bAVENIDA\b/gi, 'Avenida')
-        .replace(/\bRUA\b/gi, 'Rua')
-        .replace(/\bESTRADA\b/gi, 'Estrada')
-        .replace(/\bROD\b/gi, 'Rodovia')
-        .replace(/\s+/g, ' ')
-        .trim();
+      return line;
     }
 
     async function geocodePlace(query) {
-      const base = String(query || '').trim();
-      const normalized = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-      const tries = [base];
+      const tries = [query];
 
-      if (normalized && normalized !== base) tries.push(normalized);
-
-      if (!/brasil/i.test(base)) {
-        tries.push(`${base}, Brasil`);
-        if (normalized && normalized !== base) tries.push(`${normalized}, Brasil`);
+      if (!/,\s*[A-Z]{2}$/i.test(query) && !/brasil/i.test(query)) {
+        tries.push(`${query}, Brasil`);
       }
 
       let lastError = null;
 
-      for (const attempt of [...new Set(tries)]) {
+      for (const attempt of tries) {
         const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&addressdetails=1&countrycodes=br&q=${encodeURIComponent(attempt)}`;
 
         for (let retry = 0; retry < 3; retry++) {
@@ -1094,7 +971,9 @@
             await sleep(350);
 
             const res = await fetchWithTimeout(url, {
-              headers: { 'Accept': 'application/json' }
+              headers: {
+                'Accept': 'application/json'
+              }
             }, 12000);
 
             if (!res.ok) {
@@ -1104,16 +983,19 @@
             }
 
             const data = await res.json();
-            if (!data.length) break;
+
+            if (!data.length) {
+              break;
+            }
 
             const item = data[0];
             const addr = item.address || {};
-            const city = addr.city || addr.town || addr.village || addr.municipality || base;
+            const city = addr.city || addr.town || addr.village || addr.municipality || query;
             const stateCode = addr.state_code || '';
             const displayCity = stateCode ? `${city}, ${stateCode}` : city;
 
             return {
-              query: base,
+              query,
               label: item.display_name,
               lat: Number(item.lat),
               lon: Number(item.lon),
@@ -1126,35 +1008,7 @@
         }
       }
 
-      console.warn('Falha ao localizar:', base, lastError);
-      return null;
-    }
-
-    async function geocodeRowAddress(row) {
-      const ruaBase = normalizeAddressText(row.rua);
-      const bairroBase = normalizeAddressText(row.bairro);
-      const cidadeBase = normalizeAddressText(row.cidade);
-      const ufBase = String(row.uf || '').trim().toUpperCase();
-
-      const variants = [
-        `${ruaBase}, ${bairroBase}, ${cidadeBase}, ${ufBase}, Brasil`,
-        `${ruaBase}, ${cidadeBase}, ${ufBase}, Brasil`,
-        `${ruaBase} - ${cidadeBase} - ${ufBase} - Brasil`,
-        `${cidadeBase}, ${ufBase}, Brasil`
-      ];
-
-      const uniqueVariants = [...new Set(variants.filter(Boolean))];
-
-      for (const query of uniqueVariants) {
-        const geo = await geocodePlace(query);
-        if (geo) {
-          return {
-            ...row,
-            ...geo
-          };
-        }
-      }
-
+      console.warn('Falha ao localizar:', query, lastError);
       return null;
     }
 
@@ -1221,26 +1075,28 @@
       for (let i = 1; i < ordered.length; i++) {
         const km = haversineKm(ordered[i - 1], ordered[i]) * 1.18;
         const meters = km * 1000;
-        const seconds = (km / 38) * 3600;
+        const seconds = (km / 62) * 3600;
 
         legs.push({ distance: meters, duration: seconds });
         totalDistance += meters;
         totalDuration += seconds;
       }
 
+      const geojson = {
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: ordered.map(p => [p.lon, p.lat])
+        },
+        properties: {}
+      };
+
       return {
         orderedPoints: ordered,
         legs,
         totalDistance,
         totalDuration,
-        geojson: {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: ordered.map(p => [p.lon, p.lat])
-          },
-          properties: {}
-        },
+        geojson,
         fallback: true
       };
     }
@@ -1269,23 +1125,22 @@
       }
     }
 
-    function googleMapsLink(point) {
-      return `https://www.google.com/maps/search/?api=1&query=${point.lat},${point.lon}`;
-    }
-
     function renderMarkers(orderedPoints) {
       orderedPoints.forEach((p, idx) => {
         const marker = L.marker([p.lat, p.lon]).addTo(map);
-        marker.bindPopup(
-          `<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${escapeHtml(p.cliente || p.displayCity || p.query)}<br><small>${escapeHtml(p.label || '')}</small>`
-        );
+        const pedidosTxt = p.orders ? `<br><small>${p.orders.length} pedido(s) nesta cidade</small>` : '';
+        marker.bindPopup(`<strong>${idx === 0 ? 'Origem' : 'Parada ' + idx}</strong><br>${escapeHtml(p.displayCity || p.query)}${pedidosTxt}<br><small>${escapeHtml(p.label || '')}</small>`);
         currentMarkers.push(marker);
       });
     }
 
     function renderRoute(geojson) {
       currentRouteLayer = L.geoJSON(geojson, {
-        style: { color: '#4f8cff', weight: 5, opacity: 0.95 }
+        style: {
+          color: '#4f8cff',
+          weight: 5,
+          opacity: 0.95
+        }
       }).addTo(map);
 
       try {
@@ -1293,26 +1148,52 @@
       } catch {}
     }
 
+    function groupCities(rows) {
+      const groupedMap = new Map();
+
+      for (const row of rows) {
+        if (row.error) continue;
+
+        const key = normalizeText(row.displayCity || row.query);
+
+        if (!groupedMap.has(key)) {
+          groupedMap.set(key, {
+            cityKey: key,
+            displayCity: row.displayCity || row.query,
+            query: row.query,
+            label: row.label,
+            lat: row.lat,
+            lon: row.lon,
+            orders: [row.original]
+          });
+        } else {
+          groupedMap.get(key).orders.push(row.original);
+        }
+      }
+
+      return Array.from(groupedMap.values());
+    }
+
     function renderTable(rows) {
       if (!rows.length) {
-        els.addressTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
-        els.addressCountPill.textContent = '0 endereços';
-        els.metricOrders.textContent = '0';
+        els.cityTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
+        els.cityCountPill.textContent = '0 cidades';
+        els.metricGrouped.textContent = '0 cidades';
         return;
       }
 
-      els.addressTableBody.innerHTML = rows.map((r, i) => `
+      els.cityTableBody.innerHTML = rows.map((r, i) => `
         <tr>
           <td>${i + 1}</td>
-          <td><strong>${escapeHtml(r.pedido)}</strong><br>${escapeHtml(r.cliente)}</td>
-          <td>${escapeHtml(`${r.rua} - ${r.bairro} - ${r.cidade}/${r.uf}`)}</td>
-          <td>${r.error ? 'Não localizado' : 'OK'}</td>
-          <td>${r.error ? '-' : `<a class="link-btn" href="${googleMapsLink(r)}" target="_blank" rel="noopener noreferrer">Abrir mapa</a>`}</td>
+          <td><strong>${escapeHtml(r.displayCity || r.query)}</strong></td>
+          <td>${r.orders.length}</td>
+          <td>${r.orders.map(item => `• ${escapeHtml(item)}`).join('<br>')}</td>
+          <td>${r.lat && r.lon ? `${r.lat.toFixed(4)}, ${r.lon.toFixed(4)}` : '-'}</td>
         </tr>
       `).join('');
 
-      els.addressCountPill.textContent = `${rows.length} endereços`;
-      els.metricOrders.textContent = String(rows.filter(r => !r.error).length);
+      els.cityCountPill.textContent = `${rows.length} cidades`;
+      els.metricGrouped.textContent = `${rows.length} cidades`;
     }
 
     function renderRouteSteps(ordered, legs, totalDistance, totalDuration, fuelCost, fallback = false) {
@@ -1321,7 +1202,7 @@
       els.sumTime.textContent = formatDuration(totalDuration);
       els.sumFuelCost.textContent = formatMoney(fuelCost);
       els.pillMode.textContent = fallback ? 'Estimativa por proximidade' : 'Sequência otimizada';
-      els.metricMode.textContent = fallback ? 'Fallback local' : 'Endereços';
+      els.metricMode.textContent = fallback ? 'Fallback local' : 'Mais perto';
 
       let html = '';
       let copyLines = [];
@@ -1330,17 +1211,20 @@
         const p = ordered[i];
         const prevLeg = i === 0 ? null : legs[i - 1];
         const title = i === 0 ? 'Origem' : `Parada ${i}`;
-        const name = i === 0 ? (p.displayCity || p.query) : `${p.pedido} - ${p.cliente}`;
-        const meta = i === 0 ? (p.displayCity || p.query) : `${p.rua} - ${p.bairro} - ${p.cidade}/${p.uf}`;
+        const cityName = p.displayCity || p.query;
+        const qtdPedidos = p.orders ? p.orders.length : 1;
 
-        copyLines.push(`${i === 0 ? 'Origem' : i + 'ª parada'}: ${name} - ${meta}`);
+        copyLines.push(`${i === 0 ? 'Origem' : i + 'ª parada'}: ${cityName}${i === 0 ? '' : ` (${qtdPedidos} pedido(s))`}`);
 
         html += `
           <div class="step">
             <div class="badge">${i === 0 ? 'S' : i}</div>
             <div>
-              <div class="city">${escapeHtml(title)} — ${escapeHtml(name)}</div>
-              <div class="meta">${escapeHtml(meta)}${fallback ? ' • estimativa por proximidade' : ''}</div>
+              <div class="city">${title} — ${escapeHtml(cityName)}</div>
+              <div class="meta">
+                ${i === 0 ? 'Ponto de saída' : `${qtdPedidos} pedido(s) nesta cidade`}
+                ${fallback ? ' • estimativa por proximidade' : ''}
+              </div>
             </div>
             <div class="leg">
               ${prevLeg ? `${formatKm(prevLeg.distance)}<br><span style="color:#9db0d3;font-weight:600">${formatDuration(prevLeg.duration)}</span>` : 'Início'}
@@ -1353,6 +1237,13 @@
       lastRouteText = copyLines.join('\n');
     }
 
+    function updatePrintInfo() {
+      els.printOrigin.textContent = els.origin.value.trim() || '-';
+      els.printDriver.textContent = els.driverName.value.trim() || '-';
+      els.printPlate.textContent = els.plate.value.trim() || '-';
+      els.printNotes.textContent = els.notes.value.trim() || '-';
+    }
+
     async function calculateRoute() {
       try {
         if (isCooldownActive()) {
@@ -1362,9 +1253,6 @@
           return;
         }
 
-        showProgress();
-        updateProgress(5, 'Iniciando', 'Preparando dados para cálculo');
-
         const originText = els.origin.value.trim();
         const rawOrders = els.orders.value.trim();
         els.metricOrigin.textContent = originText || '—';
@@ -1372,78 +1260,73 @@
 
         if (!originText) {
           setStatus('Informe a cidade de partida', 'err');
-          throw new Error('Informe a cidade de partida.');
+          alert('Informe a cidade de partida.');
+          return;
         }
 
-        const rows = parseOrders(rawOrders);
-
-        if (!rows.length) {
-          setStatus('Cole ao menos 1 linha válida', 'err');
-          throw new Error('Cole ao menos 1 linha válida no formato pedido TAB cliente TAB rua TAB bairro TAB cidade TAB UF.');
+        const lines = extractLines(rawOrders);
+        if (!lines.length) {
+          setStatus('Cole ao menos 1 pedido ou cidade', 'err');
+          alert('Cole ao menos 1 pedido ou cidade.');
+          return;
         }
 
         els.calcBtn.disabled = true;
-        setStatus('Localizando endereços e calculando rota...');
+        setStatus('Localizando cidades, agrupando pedidos e calculando rota... isso pode levar alguns segundos');
         clearMap();
 
-        updateProgress(12, 'Localizando origem', `Buscando origem: ${originText}`);
+        const geocodedRows = [];
         const originGeo = await geocodePlace(originText);
+
         if (!originGeo) throw new Error('Não foi possível localizar a origem.');
 
-        const geocodedRows = [];
-
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          const start = 15;
-          const end = 72;
-          const percent = start + ((i + 1) / rows.length) * (end - start);
-
-          updateProgress(
-            percent,
-            `Localizando endereços (${i + 1}/${rows.length})`,
-            `Buscando: ${row.cliente} - ${row.cidade}/${row.uf}`
-          );
+        for (const line of lines) {
+          const guessedCity = guessCityFromLine(line);
 
           try {
-            const geoRow = await geocodeRowAddress(row);
-
-            if (!geoRow) {
+            const geo = await geocodePlace(guessedCity);
+            if (!geo) {
               geocodedRows.push({
-                ...row,
+                original: line,
+                query: guessedCity,
+                displayCity: guessedCity,
                 error: true
               });
             } else {
-              geocodedRows.push(geoRow);
+              geocodedRows.push({
+                original: line,
+                query: guessedCity,
+                displayCity: geo.displayCity || guessedCity,
+                ...geo
+              });
             }
           } catch {
             geocodedRows.push({
-              ...row,
+              original: line,
+              query: guessedCity,
+              displayCity: guessedCity,
               error: true
             });
           }
         }
 
-        const validRows = geocodedRows.filter(r => !r.error);
-        lastValidRows = validRows;
+        const groupedCities = groupCities(geocodedRows);
+        lastGroupedCities = groupedCities;
+        renderTable(groupedCities);
 
-        updateProgress(76, 'Montando tabela', 'Separando endereços válidos');
-        renderTable(geocodedRows);
-
-        if (!validRows.length) {
-          throw new Error('Nenhum endereço válido foi localizado. Verifique se as ruas, cidades e UF estão corretas.');
+        if (!groupedCities.length) {
+          throw new Error('Nenhuma cidade válida foi localizada. Tente informar cidade + UF.');
         }
 
         const pointsForRoute = [
           {
-            pedido: 'ORIGEM',
-            cliente: 'Ponto de saída',
-            rua: originText,
-            bairro: '',
-            cidade: originText,
-            uf: '',
-            ...originGeo
+            original: originText,
+            query: originText,
+            displayCity: originText,
+            ...originGeo,
+            orders: []
           },
-          ...validRows
+          ...groupedCities
         ];
 
         let orderedPoints = [];
@@ -1452,8 +1335,6 @@
         let totalDuration = 0;
         let routeGeometry = null;
         let fallback = false;
-
-        updateProgress(84, 'Calculando rota', 'Montando sequência ideal das entregas');
 
         try {
           const routeData = await buildOptimizedRoute(pointsForRoute);
@@ -1480,22 +1361,18 @@
         } catch (onlineError) {
           console.warn('Falha na rota online, usando fallback local:', onlineError);
 
-          fallback = true;
-          updateProgress(90, 'Rota online indisponível', 'Usando estimativa por proximidade');
-
           const fallbackData = buildFallbackRoute(pointsForRoute);
           orderedPoints = fallbackData.orderedPoints;
           legs = fallbackData.legs;
           totalDistance = fallbackData.totalDistance;
           totalDuration = fallbackData.totalDuration;
           routeGeometry = fallbackData.geojson;
+          fallback = true;
         }
 
         if (!orderedPoints.length) {
-          throw new Error('Não foi possível ordenar os endereços da rota.');
+          throw new Error('Não foi possível ordenar as cidades da rota.');
         }
-
-        updateProgress(96, 'Finalizando', 'Montando mapa e resumo da rota');
 
         clearMap();
         renderMarkers(orderedPoints);
@@ -1510,13 +1387,9 @@
         setStatus(fallback ? 'Rota estimada por proximidade (fallback)' : 'Rota calculada com sucesso', 'ok');
 
         startCooldown();
-        updateProgress(100, 'Concluído', 'Rota pronta para uso');
-        hideProgress();
       } catch (error) {
         console.error(error);
         setStatus(error.message || 'Erro ao calcular rota', 'err');
-        updateProgress(100, 'Erro no processamento', error.message || 'Não foi possível concluir a rota');
-        hideProgress();
         alert(error.message || 'Erro ao calcular rota.');
         if (!isCooldownActive()) {
           els.calcBtn.disabled = false;
@@ -1534,12 +1407,15 @@
       els.origin.value = 'Ampére, PR';
       els.driverName.value = 'Kauan';
       els.plate.value = 'ABC-1D23';
-      els.notes.value = 'Começar por Nova Petrópolis e seguir a rota.';
+      els.notes.value = 'Ligar para clientes de Cascavel antes da chegada. Toledo recebe até 17h.';
       els.orders.value = [
-        '56933\tZUEHL INSTALACOES HIDRAULICAS LTDA ME\tAV 15 DE NOVEMBRO, 239\tCENTRO\tNOVA PETRÓPOLIS\tRS',
-        '56874\tMADEIREIRA THOME EIRELI\tRUA BARAO DO ARROIO GRANDE, 127\tSANTO ANTONIO\tSANTA CRUZ DO SUL\tRS',
-        '56842\tMOVEIS REDER LTDA\tRUA THEOBALDO BUHLER, 83\tCENTRO\tPICADA CAFÉ\tRS',
-        '56841\tHIDRAULICA RITTER LTDA ME\tAVENIDA 15 DE NOVEMBRO, 2892\tPOUSADA DA NEVE\tNOVA PETRÓPOLIS\tRS'
+        'Pedido 101 - Cascavel PR',
+        'Pedido 102 - Toledo PR',
+        'Pedido 103 - Francisco Beltrão PR',
+        'Pedido 104 - Cascavel PR',
+        'Pedido 105 - Toledo PR',
+        'Pedido 106 - Cascavel PR',
+        'Pedido 107 - Santo Antônio do Sudoeste PR'
       ].join('\n');
       updatePrintInfo();
       setStatus('Exemplo carregado');
@@ -1550,15 +1426,15 @@
       els.plate.value = '';
       els.notes.value = '';
       els.orders.value = '';
-      els.addressTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
-      els.addressCountPill.textContent = '0 endereços';
-      els.metricOrders.textContent = '0';
+      els.cityTableBody.innerHTML = '<tr><td colspan="5">Nenhum dado por enquanto.</td></tr>';
+      els.cityCountPill.textContent = '0 cidades';
+      els.metricGrouped.textContent = '0 cidades';
       els.routeList.innerHTML = `
         <div class="step">
           <div class="badge">•</div>
           <div>
             <div class="city">Nenhuma rota calculada ainda</div>
-            <div class="meta">Cole os pedidos e clique em “Calcular rota por endereço”.</div>
+            <div class="meta">Cole os pedidos e clique em “Calcular melhor rota”.</div>
           </div>
         </div>`;
       els.sumStops.textContent = '0';
@@ -1566,13 +1442,12 @@
       els.sumTime.textContent = '0h';
       els.sumFuelCost.textContent = 'R$ 0,00';
       els.pillMode.textContent = 'Sequência otimizada';
-      els.metricMode.textContent = 'Endereços';
+      els.metricMode.textContent = 'Mais perto';
       clearMap();
       map.setView([-26.05, -53.05], 7);
       setStatus('Tela limpa');
       lastRouteText = '';
-      lastValidRows = [];
-      hideProgress();
+      lastGroupedCities = [];
       updatePrintInfo();
     });
 
@@ -1618,10 +1493,7 @@
     els.driverName.addEventListener('input', updatePrintInfo);
     els.plate.addEventListener('input', updatePrintInfo);
     els.notes.addEventListener('input', updatePrintInfo);
-    els.origin.addEventListener('input', () => {
-      els.metricOrigin.textContent = els.origin.value.trim() || '-';
-      updatePrintInfo();
-    });
+    els.origin.addEventListener('input', updatePrintInfo);
 
     updatePrintInfo();
     updateCooldownDisplay();
