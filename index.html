@@ -3,65 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checklist Mensal — Obrigações (6 Módulos)</title>
+  <title>Checklist Mensal — 6 Módulos</title>
 
   <style>
     :root{
-      --bg0:#070A12;
-      --bg1:#0B1220;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.08);
-      --line: rgba(255,255,255,.10);
-      --text:#EAF0FF;
-      --muted:#A7B2D6;
-      --muted2:#7C88B3;
+      --bg:#F6F7FB;
+      --bg2:#EEF1F8;
+      --card:#FFFFFF;
+      --line:#E3E7F2;
+      --line2:#D8DFF0;
+      --text:#0F172A;
+      --muted:#64748B;
+      --muted2:#94A3B8;
 
-      --good:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
+      --primary:#2563EB;
+      --primary2:#1D4ED8;
+      --ok:#16A34A;
+      --warn:#F59E0B;
+      --bad:#EF4444;
 
-      --accent:#7c3aed;
-      --accent2:#22d3ee;
+      --shadow: 0 12px 30px rgba(15,23,42,.10);
+      --shadow2: 0 8px 18px rgba(15,23,42,.08);
 
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
-      --shadow2: 0 10px 30px rgba(0,0,0,.35);
-
-      --r: 18px;
-      --r2: 14px;
-
-      --pad: 18px;
-      --pad2: 14px;
+      --r:16px;
+      --r2:14px;
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: var(--sans);
+      font-family:var(--sans);
       color:var(--text);
       background:
-        radial-gradient(1200px 800px at 15% 10%, rgba(124,58,237,.22), transparent 55%),
-        radial-gradient(900px 700px at 85% 20%, rgba(34,211,238,.18), transparent 55%),
-        radial-gradient(700px 600px at 50% 100%, rgba(34,197,94,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+        radial-gradient(900px 600px at 15% 10%, rgba(37,99,235,.12), transparent 55%),
+        radial-gradient(900px 600px at 85% 20%, rgba(16,185,129,.08), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
     }
 
     .wrap{
-      max-width:1100px;
+      max-width:1180px;
       margin:0 auto;
-      padding:24px 16px 42px;
+      padding:22px 16px 38px;
     }
 
-    /* Top bar */
+    /* Header */
     .top{
       display:flex;
-      gap:14px;
       align-items:flex-start;
       justify-content:space-between;
+      gap:14px;
       flex-wrap:wrap;
       margin-bottom:14px;
     }
@@ -72,41 +66,25 @@
       align-items:center;
       min-width:260px;
     }
-
     .logo{
-      width:44px;
-      height:44px;
-      border-radius:14px;
-      background:
-        linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,211,238,.9));
-      box-shadow: 0 10px 30px rgba(124,58,237,.25), 0 10px 30px rgba(34,211,238,.14);
-      display:grid;
-      place-items:center;
-      position:relative;
-      overflow:hidden;
+      width:46px;height:46px;border-radius:16px;
+      background: linear-gradient(135deg, rgba(37,99,235,1), rgba(29,78,216,.85));
+      box-shadow: 0 12px 28px rgba(37,99,235,.22);
+      display:grid;place-items:center;
     }
-    .logo::after{
-      content:"";
-      position:absolute;
-      inset:-60%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 50%);
-      transform: rotate(20deg);
-      opacity:.6;
-    }
-    .logo svg{position:relative; z-index:1}
-
+    .logo svg{filter: drop-shadow(0 6px 12px rgba(0,0,0,.12));}
     .titles h1{
       margin:0;
       font-size:18px;
       letter-spacing:.2px;
-      font-weight:800;
+      font-weight:900;
       line-height:1.15;
     }
     .titles p{
-      margin:3px 0 0;
+      margin:4px 0 0;
       color:var(--muted);
       font-size:13px;
-      line-height:1.25;
+      font-weight:650;
     }
 
     .actions{
@@ -119,53 +97,47 @@
 
     .pill{
       display:flex;
-      gap:8px;
       align-items:center;
+      gap:10px;
       padding:10px 12px;
       border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.85);
+      border:1px solid var(--line);
       box-shadow: var(--shadow2);
       backdrop-filter: blur(10px);
     }
-    .pill b{
-      font-family: var(--mono);
-      font-size:12px;
-      letter-spacing:.4px;
-    }
-    .pill span{
-      color:var(--muted);
-      font-size:12px;
-    }
+    .pill .k{ color:var(--muted); font-size:12px; font-weight:800; }
+    .pill .v{ font-family:var(--mono); font-size:12px; font-weight:900; }
+    .pill .sep{ color:var(--line2); }
 
     .btn{
       cursor:pointer;
-      user-select:none;
       border:none;
-      color:var(--text);
       padding:10px 12px;
-      border-radius:12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background: #fff;
+      border:1px solid var(--line);
       box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
-      transition:.18s transform ease, .18s background ease, .18s border-color ease, .18s opacity ease;
+      transition:.15s ease;
       display:flex;
-      gap:8px;
       align-items:center;
-      font-weight:700;
+      gap:8px;
+      font-weight:900;
       font-size:13px;
       letter-spacing:.2px;
+      color:var(--text);
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); }
-    .btn:active{ transform: translateY(0px) scale(.99); opacity:.95; }
+    .btn:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,211,238,.75));
-      border-color: rgba(255,255,255,.16);
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#fff;
+      border-color: rgba(37,99,235,.25);
     }
     .btn.danger{
-      background: rgba(239,68,68,.12);
+      background: rgba(239,68,68,.08);
       border-color: rgba(239,68,68,.22);
+      color:#991B1B;
     }
 
     /* Tabs */
@@ -174,50 +146,47 @@
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
-      margin:14px 0 14px;
+      margin:12px 0 14px;
     }
-
     .tab{
       cursor:pointer;
       padding:10px 12px;
       border-radius:999px;
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.10);
-      color: var(--muted);
-      font-weight:800;
-      font-size:13px;
-      letter-spacing:.2px;
-      transition:.18s ease;
-      display:flex;
-      gap:10px;
-      align-items:center;
+      background:#fff;
+      border:1px solid var(--line);
       box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      color:var(--muted);
+      font-size:13px;
+      transition:.15s ease;
     }
-    .tab .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,.18);
-      box-shadow: 0 0 0 3px rgba(255,255,255,.05);
-    }
+    .tab:hover{ transform: translateY(-1px); }
     .tab.active{
       color: var(--text);
-      border-color: rgba(255,255,255,.18);
-      background: rgba(255,255,255,.08);
+      border-color: rgba(37,99,235,.35);
+      box-shadow: 0 12px 26px rgba(37,99,235,.12);
+    }
+    .tab .dot{
+      width:10px;height:10px;border-radius:999px;
+      background: rgba(100,116,139,.25);
     }
     .tab.active .dot{
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+      background: linear-gradient(135deg, var(--primary), rgba(16,185,129,.75));
+      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
     }
 
     /* Layout */
     .grid{
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
+      grid-template-columns: 1.12fr .88fr;
       gap:14px;
       align-items:start;
     }
     @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns:1fr; }
     }
 
     .card{
@@ -225,144 +194,168 @@
       border:1px solid var(--line);
       border-radius: var(--r);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
       overflow:hidden;
     }
     .cardHead{
       padding: 16px 16px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      border-bottom:1px solid var(--line);
       display:flex;
-      gap:12px;
       align-items:flex-start;
       justify-content:space-between;
+      gap:12px;
       flex-wrap:wrap;
     }
     .cardHead h2{
       margin:0;
       font-size:15px;
-      font-weight:900;
+      font-weight:1000;
       letter-spacing:.2px;
     }
     .cardHead p{
-      margin:4px 0 0;
-      color: var(--muted);
+      margin:6px 0 0;
+      color:var(--muted);
       font-size:12px;
-      line-height:1.25;
+      font-weight:650;
+      line-height:1.3;
+      max-width:740px;
+    }
+    .badge{
+      font-family:var(--mono);
+      font-size:11px;
+      font-weight:1000;
+      letter-spacing:.35px;
+      padding:7px 10px;
+      border-radius:999px;
+      background: rgba(37,99,235,.08);
+      border:1px solid rgba(37,99,235,.18);
+      color:#1E3A8A;
+      white-space:nowrap;
     }
 
-    /* Filters */
+    /* Controls */
     .controls{
       padding: 14px 16px 16px;
       display:grid;
       grid-template-columns: 1fr 170px 170px;
       gap:10px;
-      align-items:center;
     }
     @media (max-width: 760px){
-      .controls{ grid-template-columns: 1fr; }
+      .controls{ grid-template-columns:1fr; }
     }
 
+    label{
+      font-size:11px;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      font-weight:1000;
+      color: var(--muted2);
+    }
     .field{
       display:flex;
       flex-direction:column;
       gap:6px;
     }
-    label{
-      font-size:11px;
-      color: var(--muted2);
-      letter-spacing:.35px;
-      font-weight:800;
-      text-transform:uppercase;
-    }
     input, select{
       width:100%;
       padding:12px 12px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
       outline:none;
-      font-weight:700;
+      box-shadow: inset 0 1px 0 rgba(15,23,42,.03);
+      font-weight:800;
       letter-spacing:.2px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
     }
-    input::placeholder{ color: rgba(167,178,214,.65); font-weight:600; }
+    input::placeholder{ color: rgba(100,116,139,.6); font-weight:700; }
 
-    .miniRow{
-      display:flex;
+    /* Add Task */
+    .addBox{
+      margin: 0 16px 14px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(37,99,235,.35);
+      background: rgba(37,99,235,.04);
+      display:grid;
+      grid-template-columns: 1.3fr 160px 160px 150px;
       gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
+      align-items:end;
+    }
+    @media (max-width: 860px){
+      .addBox{ grid-template-columns: 1fr; }
+    }
+    .btnAdd{
+      justify-content:center;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#fff;
+      border-color: rgba(37,99,235,.25);
     }
 
     /* List */
-    .list{
-      padding: 6px 10px 14px;
-    }
+    .list{ padding: 6px 10px 14px; }
+
     .item{
       display:grid;
-      grid-template-columns: 56px 1fr 110px;
+      grid-template-columns: 84px 1fr 230px;
       gap:10px;
       align-items:center;
       padding: 10px 10px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: #fff;
       margin: 8px 6px;
-      transition:.16s ease;
+      transition:.14s ease;
     }
-    .item:hover{
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-    }
-    @media (max-width: 620px){
-      .item{ grid-template-columns: 56px 1fr; }
-      .right{ grid-column: 1 / -1; justify-content:space-between; }
+    .item:hover{ transform: translateY(-1px); box-shadow: var(--shadow2); }
+
+    @media (max-width: 720px){
+      .item{ grid-template-columns: 84px 1fr; }
+      .right{ grid-column:1 / -1; justify-content:space-between; }
     }
 
-    .day{
-      width:56px;height:44px;
-      border-radius: 14px;
-      display:grid;
-      place-items:center;
-      font-family: var(--mono);
-      font-weight:900;
+    .dateBox{
+      width:84px;
+      border-radius: 16px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, #F8FAFF, #FFFFFF);
+      padding:10px 8px;
+      text-align:center;
+    }
+    .dateBox .d{
+      font-family:var(--mono);
+      font-weight:1000;
+      font-size:16px;
       letter-spacing:.6px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      position:relative;
-      overflow:hidden;
+      color:#0B2A6D;
+      line-height:1.1;
     }
-    .day::after{
-      content:"";
-      position:absolute;
-      inset:-60%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.20), transparent 50%);
-      transform: rotate(18deg);
-      opacity:.8;
+    .dateBox .m{
+      margin-top:2px;
+      font-size:11px;
+      font-weight:1000;
+      letter-spacing:.35px;
+      color:var(--muted);
+      text-transform:uppercase;
     }
-    .day span{ position:relative; z-index:1; }
 
     .title{
+      min-width:0;
       display:flex;
       flex-direction:column;
-      gap:2px;
-      min-width:0;
+      gap:4px;
     }
     .title b{
       font-size:13px;
+      font-weight:1000;
       letter-spacing:.2px;
-      font-weight:900;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
     .title small{
-      color: var(--muted);
+      color:var(--muted);
       font-size:12px;
-      font-weight:700;
+      font-weight:750;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -370,52 +363,55 @@
 
     .right{
       display:flex;
-      gap:8px;
       align-items:center;
       justify-content:flex-end;
+      gap:8px;
+      flex-wrap:wrap;
     }
 
-    .check{
+    .toggle{
       cursor:pointer;
       display:flex;
       align-items:center;
-      gap:10px;
-      padding:10px 10px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      transition:.16s ease;
-      min-width: 110px;
       justify-content:center;
-      font-weight:900;
-      letter-spacing:.2px;
-      user-select:none;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background:#fff;
+      transition:.14s ease;
+      min-width: 130px;
+      font-weight:1000;
     }
-    .check:hover{ background: rgba(0,0,0,.24); border-color: rgba(255,255,255,.16); }
-    .check.done{
-      background: rgba(34,197,94,.14);
-      border-color: rgba(34,197,94,.26);
-    }
-    .check .ico{
-      width:18px;height:18px; display:inline-block;
-    }
-
-    .badge{
-      font-family: var(--mono);
-      font-size:11px;
-      padding:6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
-      font-weight:900;
-      letter-spacing:.35px;
+    .toggle:hover{ box-shadow: var(--shadow2); transform: translateY(-1px); }
+    .toggle.done{
+      background: rgba(22,163,74,.10);
+      border-color: rgba(22,163,74,.22);
+      color:#14532D;
     }
 
-    /* Side panel */
-    .side{
-      padding: 16px;
+    .miniBtn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      padding:10px 10px;
+      border-radius: 14px;
+      font-weight:1000;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      transition:.14s ease;
     }
+    .miniBtn:hover{ transform: translateY(-1px); box-shadow: var(--shadow2); }
+    .miniBtn.delete{
+      border-color: rgba(239,68,68,.22);
+      background: rgba(239,68,68,.06);
+      color:#991B1B;
+    }
+
+    /* Side */
+    .side{ padding:16px; }
 
     .kpis{
       display:grid;
@@ -423,80 +419,59 @@
       gap:10px;
       margin-bottom:12px;
     }
-    @media (max-width: 980px){
-      .kpis{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
     @media (max-width: 420px){
-      .kpis{ grid-template-columns: 1fr; }
+      .kpis{ grid-template-columns:1fr; }
     }
 
     .kpi{
+      border:1px solid var(--line);
       border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
       padding:12px 12px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-      overflow:hidden;
-      position:relative;
-    }
-    .kpi::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at 25% 25%, rgba(124,58,237,.20), transparent 55%);
-      transform: rotate(12deg);
-      opacity:.75;
+      background: linear-gradient(180deg, #FFFFFF, #FAFBFF);
+      box-shadow: inset 0 1px 0 rgba(15,23,42,.03);
     }
     .kpi h3{
-      position:relative;
-      z-index:1;
       margin:0;
       font-size:11px;
       text-transform:uppercase;
       letter-spacing:.45px;
-      color: var(--muted2);
-      font-weight:900;
+      color:var(--muted2);
+      font-weight:1000;
     }
     .kpi b{
-      position:relative;
-      z-index:1;
       display:block;
       margin-top:6px;
-      font-family: var(--mono);
+      font-family:var(--mono);
       font-size:18px;
-      letter-spacing:.6px;
-      font-weight:900;
+      font-weight:1000;
     }
     .kpi small{
-      position:relative;
-      z-index:1;
       display:block;
       margin-top:4px;
-      color: var(--muted);
+      color:var(--muted);
       font-size:12px;
       font-weight:700;
     }
 
     .progressBox{
-      margin-top:10px;
+      border:1px solid var(--line);
       border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
       padding:12px 12px;
+      background:#fff;
     }
     .bar{
       height:10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      background:#EEF2FF;
+      border:1px solid rgba(37,99,235,.18);
       overflow:hidden;
     }
-    .bar > i{
+    .bar i{
       display:block;
       height:100%;
       width:0%;
-      background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(34,211,238,.75));
-      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), rgba(16,185,129,.8));
+      border-radius:999px;
       transition: width .35s ease;
     }
     .row{
@@ -508,43 +483,43 @@
       flex-wrap:wrap;
     }
     .row .hint{
-      color: var(--muted);
+      color:var(--muted);
       font-size:12px;
-      font-weight:700;
+      font-weight:800;
     }
 
     .note{
       margin-top:12px;
+      border:1px solid var(--line);
       border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
       padding:12px 12px;
+      background: linear-gradient(180deg, #FFFFFF, #FAFBFF);
     }
     .note h4{
       margin:0;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.35px;
+      font-size:11px;
       text-transform:uppercase;
-      color: var(--muted2);
+      letter-spacing:.45px;
+      color:var(--muted2);
+      font-weight:1000;
     }
     .note p{
       margin:8px 0 0;
-      color: var(--muted);
+      color:var(--muted);
       font-size:12px;
       line-height:1.35;
-      font-weight:650;
+      font-weight:750;
     }
 
     .footer{
-      margin-top:14px;
-      color: rgba(167,178,214,.70);
+      margin-top:12px;
+      color: var(--muted);
       font-size:12px;
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
       align-items:center;
       justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
     .toast{
@@ -552,35 +527,29 @@
       bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 999px;
-      padding: 10px 12px;
-      color: var(--text);
-      font-weight:800;
+      background: rgba(15,23,42,.92);
+      color:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      font-weight:900;
       letter-spacing:.2px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
       opacity:0;
       pointer-events:none;
-      transition:.22s ease;
+      transition:.2s ease;
       display:flex;
       align-items:center;
       gap:8px;
       z-index:999;
     }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(-2px); }
-    .toast .tDot{ width:8px;height:8px;border-radius:999px;background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+    .toast .dot{ width:8px;height:8px;border-radius:999px;background: linear-gradient(135deg, #60A5FA, #34D399); }
 
-    /* Print */
     @media print{
-      body{ background:#fff; color:#111; }
-      .logo,.actions,.tabs,.controls,.btn,.toast{ display:none !important; }
-      .card{ box-shadow:none; border:1px solid #ddd; background:#fff; }
-      .item{ background:#fff; border:1px solid #e6e6e6; }
-      .day{ background:#f6f6f6; border:1px solid #ddd; color:#111; }
-      .title b, .title small{ color:#111 !important; }
-      .badge{ color:#111; border:1px solid #ddd; background:#f6f6f6; }
+      .actions,.tabs,.controls,.addBox,.toast,.miniBtn.delete,#btnReset{ display:none !important; }
+      body{ background:#fff; }
+      .card{ box-shadow:none; }
+      .item:hover{ transform:none; box-shadow:none; }
     }
   </style>
 </head>
@@ -591,21 +560,21 @@
       <div class="brand">
         <div class="logo" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2.5l7.6 4.3v10.4L12 21.5 4.4 17.2V6.8L12 2.5z" stroke="white" stroke-width="1.6" opacity=".95"/>
-            <path d="M8 12.2l2.2 2.2L16.4 8.2" stroke="white" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 2.5l7.6 4.3v10.4L12 21.5 4.4 17.2V6.8L12 2.5z" stroke="white" stroke-width="1.8"/>
+            <path d="M8 12.2l2.2 2.2L16.4 8.2" stroke="white" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="titles">
           <h1>Checklist Mensal — Obrigações</h1>
-          <p>6 módulos por abas • salva automaticamente no navegador (por módulo)</p>
+          <p>Por módulo (abas) • você pode criar e apagar tarefas • salva automaticamente no navegador</p>
         </div>
       </div>
 
       <div class="actions">
         <div class="pill" title="Módulo atual e progresso">
-          <span>Módulo:</span> <b id="pillModule">—</b>
-          <span>•</span>
-          <span>Concluídas:</span> <b id="pillDone">0/0</b>
+          <span class="k">Módulo</span><span class="v" id="pillModule">—</span>
+          <span class="sep">•</span>
+          <span class="k">Concluídas</span><span class="v" id="pillDone">0/0</span>
         </div>
 
         <button class="btn primary" id="btnMarkAll">
@@ -617,18 +586,18 @@
 
         <button class="btn danger" id="btnReset">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M3 6h18" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8 6V4h8v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M7 6l1 16h8l1-16" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 6l1 16h8l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
           </svg>
           Zerar módulo
         </button>
 
         <button class="btn" id="btnPrint">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 9V3h12v6" stroke="white" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="white" stroke-width="2"/>
-            <path d="M6 14h12v7H6v-7z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M6 9V3h12v6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="currentColor" stroke-width="2"/>
+            <path d="M6 14h12v7H6v-7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
           </svg>
           Imprimir
         </button>
@@ -643,14 +612,17 @@
         <div class="cardHead">
           <div>
             <h2 id="titleModule">—</h2>
-            <p>Checklist baseado no seu papel (dias do mês). Você pode filtrar por pendentes/concluídos e buscar.</p>
+            <p>
+              Agora cada tarefa tem <b>data (dia do mês)</b> e você pode <b>criar/apagar</b> tarefas em cada módulo
+              sem afetar os outros. Use busca + filtros para enxergar rápido.
+            </p>
           </div>
           <span class="badge" id="badgeMonth">MÊS ATUAL</span>
         </div>
 
         <div class="controls">
           <div class="field">
-            <label for="q">Buscar obrigação</label>
+            <label for="q">Buscar</label>
             <input id="q" type="text" placeholder="Ex.: ICMS, FGTS, SPED, DIFAL..." autocomplete="off" />
           </div>
 
@@ -666,11 +638,36 @@
           <div class="field">
             <label for="sort">Ordenar</label>
             <select id="sort">
-              <option value="day">Dia (crescente)</option>
+              <option value="date">Data (crescente)</option>
               <option value="name">Nome (A–Z)</option>
               <option value="status">Status (pendente primeiro)</option>
             </select>
           </div>
+        </div>
+
+        <!-- Add Task -->
+        <div class="addBox">
+          <div class="field">
+            <label for="newName">Nova tarefa</label>
+            <input id="newName" type="text" placeholder="Ex.: Conferência de impostos, planilha, etc." />
+          </div>
+
+          <div class="field">
+            <label for="newDay">Dia do mês</label>
+            <input id="newDay" type="number" min="1" max="31" placeholder="Ex.: 12" />
+          </div>
+
+          <div class="field">
+            <label for="newTag">Categoria (opcional)</label>
+            <input id="newTag" type="text" placeholder="Ex.: Fiscal / Folha / Energia" />
+          </div>
+
+          <button class="btn btnAdd" id="btnAddTask">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+            Criar tarefa
+          </button>
         </div>
 
         <div class="list" id="list"></div>
@@ -681,7 +678,7 @@
         <div class="cardHead">
           <div>
             <h2>Resumo do módulo</h2>
-            <p>Visão rápida do que falta e o progresso total.</p>
+            <p>Progresso, pendências e exportação rápida do checklist do módulo atual.</p>
           </div>
         </div>
 
@@ -690,17 +687,17 @@
             <div class="kpi">
               <h3>Pendentes</h3>
               <b id="kpiOpen">0</b>
-              <small>itens a fazer</small>
+              <small>a fazer</small>
             </div>
             <div class="kpi">
               <h3>Concluídas</h3>
               <b id="kpiDone">0</b>
-              <small>itens feitos</small>
+              <small>feitas</small>
             </div>
             <div class="kpi">
               <h3>Total</h3>
               <b id="kpiTotal">0</b>
-              <small>obrigação(ões)</small>
+              <small>tarefas</small>
             </div>
             <div class="kpi">
               <h3>Progresso</h3>
@@ -713,42 +710,40 @@
             <div class="bar"><i id="barFill"></i></div>
             <div class="row">
               <div class="hint" id="hintText">—</div>
-              <div class="miniRow">
-                <button class="btn" id="btnExport">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M12 3v12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                    <path d="M7 10l5 5 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M4 20h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                  </svg>
-                  Exportar (TXT)
-                </button>
-              </div>
+              <button class="btn" id="btnExport">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Exportar (TXT)
+              </button>
             </div>
           </div>
 
           <div class="note">
-            <h4>Dica rápida</h4>
+            <h4>Como funciona</h4>
             <p>
-              Cada aba salva o checklist separadamente. Ex.: você pode usar <b>Grilazer</b> para o fiscal interno,
-              e <b>Contábil</b> para conferência geral, sem misturar os “concluídos”.
+              Cada módulo guarda <b>suas tarefas e seus concluídos</b> separadamente.
+              Os dados ficam no seu navegador (não precisa login).
             </p>
           </div>
 
           <div class="footer">
-            <span id="footSave">Salvando…</span>
-            <span style="font-family:var(--mono)">v1.0</span>
+            <span id="footSave">Salvo ✔</span>
+            <span style="font-family:var(--mono)">v2.0</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="toast" id="toast"><span class="tDot"></span><span id="toastTxt">Ok</span></div>
+  <div class="toast" id="toast"><span class="dot"></span><span id="toastTxt">Ok</span></div>
 
   <script>
-    // ====== Base de tarefas (vinda do seu papel) ======
-    // Obs: "GUIAS DIFAL" aparece como item sem dia no papel; mantive dentro do dia 9 para ficar lógico.
-    const TASKS = [
+    // ================== Base (do seu papel) ==================
+    // Agora com datas (dia do mês). Mantive "GUIAS DIFAL" junto do dia 9.
+    const DEFAULT_TASKS = [
       { day: 1,  name: "NOTAS ENTRADA" },
       { day: 1,  name: "PROVISÕES" },
       { day: 1,  name: "TABELA IBPT" },
@@ -785,15 +780,15 @@
       { day: 25, name: "COFINS" },
 
       { day: 27, name: "IR/CS" },
-
       { day: 30, name: "DCTF-WEB" },
-    ].map((t, idx) => ({ ...t, id: `t${idx}_${t.day}_${slug(t.name)}` }));
+    ];
 
     const MODULES = ["Grilazer","Gaam","Aize","Graan","Contábil","T.I"];
 
-    // ====== DOM ======
+    // ================== DOM ==================
     const elTabs = document.getElementById("tabs");
     const elList = document.getElementById("list");
+
     const elQ = document.getElementById("q");
     const elF = document.getElementById("f");
     const elSort = document.getElementById("sort");
@@ -817,21 +812,26 @@
     const btnPrint = document.getElementById("btnPrint");
     const btnExport = document.getElementById("btnExport");
 
+    const newName = document.getElementById("newName");
+    const newDay = document.getElementById("newDay");
+    const newTag = document.getElementById("newTag");
+    const btnAddTask = document.getElementById("btnAddTask");
+
     const toast = document.getElementById("toast");
     const toastTxt = document.getElementById("toastTxt");
 
-    // ====== Estado ======
+    // ================== Estado ==================
     const now = new Date();
     const monthLabel = now.toLocaleDateString("pt-BR", { month:"long", year:"numeric" }).toUpperCase();
     elBadgeMonth.textContent = monthLabel;
 
-    let activeModule = localStorage.getItem("ck_active_module") || MODULES[0];
+    let activeModule = localStorage.getItem("ck2_active_module") || MODULES[0];
     if (!MODULES.includes(activeModule)) activeModule = MODULES[0];
 
-    // statusMap: { [taskId]: true/false }
-    let statusMap = loadModule(activeModule);
+    // moduleData = { tasks: Task[], status: { [id]: true } }
+    let moduleData = loadModule(activeModule);
 
-    // ====== Tabs ======
+    // ================== Tabs ==================
     function renderTabs(){
       elTabs.innerHTML = "";
       MODULES.forEach(m => {
@@ -842,8 +842,8 @@
         b.addEventListener("click", () => {
           if (m === activeModule) return;
           activeModule = m;
-          localStorage.setItem("ck_active_module", activeModule);
-          statusMap = loadModule(activeModule);
+          localStorage.setItem("ck2_active_module", activeModule);
+          moduleData = loadModule(activeModule);
           renderTabs();
           renderAll();
           ping(`Aba: ${activeModule}`);
@@ -852,20 +852,20 @@
       });
     }
 
-    // ====== Render ======
+    // ================== Render ==================
     function renderAll(){
       elTitleModule.textContent = `Módulo: ${activeModule}`;
       elPillModule.textContent = activeModule;
 
-      const filtered = applyFiltersAndSort(TASKS);
+      const filtered = applyFiltersAndSort(moduleData.tasks);
       elList.innerHTML = "";
 
       if (filtered.length === 0){
         const empty = document.createElement("div");
         empty.style.padding = "18px 16px 10px";
-        empty.style.color = "rgba(167,178,214,.85)";
-        empty.style.fontWeight = "800";
-        empty.textContent = "Nenhum item encontrado com esse filtro/busca.";
+        empty.style.color = "rgba(100,116,139,.95)";
+        empty.style.fontWeight = "900";
+        empty.textContent = "Nenhuma tarefa encontrada com essa busca/filtro.";
         elList.appendChild(empty);
       } else {
         filtered.forEach(t => elList.appendChild(renderItem(t)));
@@ -876,59 +876,57 @@
     }
 
     function renderItem(t){
-      const done = !!statusMap[t.id];
+      const done = !!moduleData.status[t.id];
+
       const row = document.createElement("div");
       row.className = "item";
 
-      const day = document.createElement("div");
-      day.className = "day";
-      day.innerHTML = `<span>${String(t.day).padStart(2,"0")}</span>`;
+      const dateBox = document.createElement("div");
+      dateBox.className = "dateBox";
+      dateBox.innerHTML = `
+        <div class="d">${String(t.day).padStart(2,"0")}</div>
+        <div class="m">${monthShort()}</div>
+      `;
 
       const title = document.createElement("div");
       title.className = "title";
       title.innerHTML = `
         <b title="${escapeAttr(t.name)}">${escapeHtml(t.name)}</b>
-        <small>Dia ${t.day}</small>
+        <small>${t.tag ? escapeHtml(t.tag) + " • " : ""}Vence dia ${t.day}</small>
       `;
 
       const right = document.createElement("div");
       right.className = "right";
 
-      const btn = document.createElement("div");
-      btn.className = "check" + (done ? " done" : "");
-      btn.setAttribute("role","button");
-      btn.setAttribute("tabindex","0");
-      btn.innerHTML = `
-        <span class="ico" aria-hidden="true">
-          ${done ? iconCheck() : iconCircle()}
-        </span>
-        <span>${done ? "Feito" : "Pendente"}</span>
-      `;
+      const toggle = document.createElement("button");
+      toggle.className = "toggle" + (done ? " done" : "");
+      toggle.type = "button";
+      toggle.innerHTML = done ? iconCheck() + "Feito" : iconCircle() + "Pendente";
 
-      const toggle = () => {
-        statusMap[t.id] = !statusMap[t.id];
-        saveModule(activeModule, statusMap);
-        // update this button only
-        const isDone = !!statusMap[t.id];
-        btn.className = "check" + (isDone ? " done" : "");
-        btn.innerHTML = `
-          <span class="ico" aria-hidden="true">
-            ${isDone ? iconCheck() : iconCircle()}
-          </span>
-          <span>${isDone ? "Feito" : "Pendente"}</span>
-        `;
-        updateStats();
-        markSaved();
-      };
-
-      btn.addEventListener("click", toggle);
-      btn.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      toggle.addEventListener("click", () => {
+        moduleData.status[t.id] = !moduleData.status[t.id];
+        saveModule(activeModule, moduleData);
+        renderAll(); // simples e confiável
       });
 
-      right.appendChild(btn);
+      const del = document.createElement("button");
+      del.className = "miniBtn delete";
+      del.type = "button";
+      del.innerHTML = iconTrash() + "Apagar";
+      del.addEventListener("click", () => {
+        const ok = confirm(`Apagar a tarefa:\n\n"${t.name}"\n\ndo módulo "${activeModule}"?`);
+        if (!ok) return;
+        moduleData.tasks = moduleData.tasks.filter(x => x.id !== t.id);
+        delete moduleData.status[t.id];
+        saveModule(activeModule, moduleData);
+        renderAll();
+        ping("Tarefa apagada 🗑️");
+      });
 
-      row.appendChild(day);
+      right.appendChild(toggle);
+      right.appendChild(del);
+
+      row.appendChild(dateBox);
       row.appendChild(title);
       row.appendChild(right);
 
@@ -941,8 +939,12 @@
       const s = elSort.value;
 
       let out = list.filter(t => {
-        const done = !!statusMap[t.id];
-        const matchText = !q || (t.name.toLowerCase().includes(q) || String(t.day).includes(q));
+        const done = !!moduleData.status[t.id];
+        const matchText =
+          !q ||
+          t.name.toLowerCase().includes(q) ||
+          (t.tag || "").toLowerCase().includes(q) ||
+          String(t.day).includes(q);
         const matchFilter =
           (f === "all") ||
           (f === "open" && !done) ||
@@ -950,19 +952,19 @@
         return matchText && matchFilter;
       });
 
-      if (s === "day"){
+      if (s === "date"){
         out.sort((a,b) => a.day - b.day || a.name.localeCompare(b.name, "pt-BR"));
       } else if (s === "name"){
         out.sort((a,b) => a.name.localeCompare(b.name, "pt-BR") || a.day - b.day);
       } else if (s === "status"){
-        out.sort((a,b) => (Number(!!statusMap[a.id]) - Number(!!statusMap[b.id])) || (a.day - b.day));
+        out.sort((a,b) => (Number(!!moduleData.status[a.id]) - Number(!!moduleData.status[b.id])) || (a.day - b.day));
       }
       return out;
     }
 
     function updateStats(){
-      const total = TASKS.length;
-      const done = TASKS.reduce((acc,t) => acc + (statusMap[t.id] ? 1 : 0), 0);
+      const total = moduleData.tasks.length;
+      const done = moduleData.tasks.reduce((acc,t) => acc + (moduleData.status[t.id] ? 1 : 0), 0);
       const open = total - done;
       const pct = total ? Math.round((done/total)*100) : 0;
 
@@ -977,36 +979,54 @@
       elPillDone.textContent = `${done}/${total}`;
     }
 
-    // ====== Storage ======
-    function storageKey(module){
-      return "ck_obrigacoes_" + slug(module);
-    }
+    // ================== Create Task ==================
+    btnAddTask.addEventListener("click", () => {
+      const name = (newName.value || "").trim();
+      const tag  = (newTag.value || "").trim();
+      const day  = parseInt(newDay.value, 10);
 
-    function loadModule(module){
-      try{
-        const raw = localStorage.getItem(storageKey(module));
-        if (!raw) return {};
-        const obj = JSON.parse(raw);
-        return obj && typeof obj === "object" ? obj : {};
-      }catch(e){
-        return {};
+      if (!name){
+        ping("Digite o nome da tarefa");
+        newName.focus();
+        return;
       }
-    }
-
-    function saveModule(module, map){
-      try{
-        localStorage.setItem(storageKey(module), JSON.stringify(map || {}));
-      }catch(e){
-        // ignore
+      if (!Number.isFinite(day) || day < 1 || day > 31){
+        ping("Dia inválido (1 a 31)");
+        newDay.focus();
+        return;
       }
-    }
 
-    // ====== Buttons ======
+      const t = {
+        id: uid(),
+        name: name.toUpperCase(),
+        day,
+        tag: tag ? tag.toUpperCase() : ""
+      };
+
+      moduleData.tasks.push(t);
+      saveModule(activeModule, moduleData);
+
+      newName.value = "";
+      newDay.value = "";
+      newTag.value = "";
+
+      renderAll();
+      ping("Tarefa criada ✅");
+    });
+
+    // Enter para criar
+    [newName, newDay, newTag].forEach(el => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") btnAddTask.click();
+      });
+    });
+
+    // ================== Ações ==================
     btnReset.addEventListener("click", () => {
-      const ok = confirm(`Zerar os concluídos do módulo "${activeModule}"?`);
+      const ok = confirm(`Zerar (desmarcar) todas as tarefas do módulo "${activeModule}"?`);
       if (!ok) return;
-      statusMap = {};
-      saveModule(activeModule, statusMap);
+      moduleData.status = {};
+      saveModule(activeModule, moduleData);
       renderAll();
       ping("Módulo zerado ✅");
     });
@@ -1015,9 +1035,9 @@
       const ok = confirm(`Marcar TODAS como feitas no módulo "${activeModule}"?`);
       if (!ok) return;
       const next = {};
-      TASKS.forEach(t => next[t.id] = true);
-      statusMap = next;
-      saveModule(activeModule, statusMap);
+      moduleData.tasks.forEach(t => next[t.id] = true);
+      moduleData.status = next;
+      saveModule(activeModule, moduleData);
       renderAll();
       ping("Tudo marcado ✅");
     });
@@ -1025,19 +1045,20 @@
     btnPrint.addEventListener("click", () => window.print());
 
     btnExport.addEventListener("click", () => {
-      const total = TASKS.length;
-      const done = TASKS.filter(t => statusMap[t.id]).length;
+      const total = moduleData.tasks.length;
+      const done = moduleData.tasks.filter(t => moduleData.status[t.id]).length;
 
       const lines = [];
-      lines.push(`CHECKLIST MENSAL — ${activeModule}` );
-      lines.push(`Mês: ${monthLabel}` );
-      lines.push(`Progresso: ${done}/${total} (${total ? Math.round(done/total*100) : 0}%)` );
+      lines.push(`CHECKLIST — ${activeModule}`);
+      lines.push(`Mês: ${monthLabel}`);
+      lines.push(`Progresso: ${done}/${total} (${total ? Math.round(done/total*100) : 0}%)`);
       lines.push("--------------------------------------------------");
 
-      const sorted = [...TASKS].sort((a,b)=>a.day-b.day || a.name.localeCompare(b.name, "pt-BR"));
+      const sorted = [...moduleData.tasks].sort((a,b)=>a.day-b.day || a.name.localeCompare(b.name, "pt-BR"));
       sorted.forEach(t => {
-        const mark = statusMap[t.id] ? "✅" : "⬜";
-        lines.push(`${mark} Dia ${String(t.day).padStart(2,"0")} — ${t.name}`);
+        const mark = moduleData.status[t.id] ? "✅" : "⬜";
+        const cat = t.tag ? ` (${t.tag})` : "";
+        lines.push(`${mark} ${String(t.day).padStart(2,"0")}/${monthShort()} — ${t.name}${cat}`);
       });
 
       const content = lines.join("\n");
@@ -1055,39 +1076,99 @@
       ping("Exportado ✅");
     });
 
-    // ====== Inputs ======
+    // ================== Storage ==================
+    function storageKey(module){ return "ck2_module_" + slug(module); }
+
+    function loadModule(module){
+      // Se não existir ainda, cria com as tarefas padrão
+      try{
+        const raw = localStorage.getItem(storageKey(module));
+        if (!raw){
+          const fresh = {
+            tasks: DEFAULT_TASKS.map(t => ({
+              id: uid(),
+              name: String(t.name || "").toUpperCase(),
+              day: clamp(parseInt(t.day,10), 1, 31),
+              tag: ""
+            })),
+            status: {}
+          };
+          localStorage.setItem(storageKey(module), JSON.stringify(fresh));
+          return fresh;
+        }
+        const obj = JSON.parse(raw);
+        if (!obj || typeof obj !== "object") throw new Error("bad");
+        obj.tasks = Array.isArray(obj.tasks) ? obj.tasks : [];
+        obj.status = (obj.status && typeof obj.status === "object") ? obj.status : {};
+        // Normaliza
+        obj.tasks = obj.tasks.map(t => ({
+          id: t.id || uid(),
+          name: String(t.name || "").toUpperCase(),
+          day: clamp(parseInt(t.day,10) || 1, 1, 31),
+          tag: String(t.tag || "").toUpperCase()
+        }));
+        return obj;
+      }catch(e){
+        // fallback
+        return {
+          tasks: DEFAULT_TASKS.map(t => ({ id: uid(), name: t.name.toUpperCase(), day: t.day, tag:"" })),
+          status: {}
+        };
+      }
+    }
+
+    function saveModule(module, data){
+      try{
+        localStorage.setItem(storageKey(module), JSON.stringify(data));
+      }catch(e){}
+    }
+
+    // ================== Inputs (filtros) ==================
     [elQ, elF, elSort].forEach(el => el.addEventListener("input", renderAll));
     elF.addEventListener("change", renderAll);
     elSort.addEventListener("change", renderAll);
 
-    // ====== Helpers ======
+    // ================== Helpers ==================
+    function uid(){
+      return "t_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,10);
+    }
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
     function slug(s){
       return String(s || "")
         .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g,"_")
+        .toLowerCase().replace(/[^a-z0-9]+/g,"_")
         .replace(/^_+|_+$/g,"");
     }
-
     function escapeHtml(str){
       return String(str).replace(/[&<>"']/g, (m) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
       }[m]));
     }
-    function escapeAttr(str){
-      return String(str).replace(/"/g, "&quot;");
+    function escapeAttr(str){ return String(str).replace(/"/g, "&quot;"); }
+
+    function monthShort(){
+      const m = now.toLocaleDateString("pt-BR", { month:"short" });
+      return m.replace(".", "").toUpperCase();
     }
 
     function iconCheck(){
       return `
-        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-          <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="margin-right:8px">
+          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>`;
     }
     function iconCircle(){
       return `
-        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-          <circle cx="12" cy="12" r="8" stroke="rgba(255,255,255,.65)" stroke-width="2.2"/>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="margin-right:8px">
+          <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.2" opacity=".55"/>
+        </svg>`;
+    }
+    function iconTrash(){
+      return `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 6l1 16h8l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
         </svg>`;
     }
 
@@ -1095,9 +1176,7 @@
     function markSaved(){
       elFootSave.textContent = "Salvando…";
       if (saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => {
-        elFootSave.textContent = "Salvo ✔";
-      }, 240);
+      saveTimer = setTimeout(() => { elFootSave.textContent = "Salvo ✔"; }, 250);
     }
 
     let toastTimer = null;
@@ -1105,10 +1184,10 @@
       toastTxt.textContent = msg;
       toast.classList.add("show");
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1600);
+      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1500);
     }
 
-    // ====== Init ======
+    // ================== Init ==================
     renderTabs();
     renderAll();
     ping("Pronto ✅");
