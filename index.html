@@ -1,1357 +1,1593 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checklist Mensal — 6 Módulos</title>
+  <title>Carregamento Expedição Grilazer • V2</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b5fff">
+  <link rel="icon" type="image/png" href="logocaminhao.png">
+  <link rel="apple-touch-icon" href="logocaminhao.png">
 
   <style>
     :root{
-      --bg:#F6F7FB;
-      --bg2:#EEF1F8;
-      --card:#FFFFFF;
-      --line:#E3E7F2;
-      --line2:#D8DFF0;
-      --text:#0F172A;
-      --muted:#64748B;
-      --muted2:#94A3B8;
-
-      --primary:#2563EB;
-      --primary2:#1D4ED8;
-      --ok:#16A34A;
-      --warn:#F59E0B;
-      --bad:#EF4444;
-
-      --shadow: 0 14px 34px rgba(15,23,42,.10);
-      --shadow2: 0 8px 18px rgba(15,23,42,.07);
-
-      --r:18px;
-      --r2:14px;
-
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --bg-1:#071428;
+      --bg-2:#0b5fff;
+      --bg-3:#0ea5e9;
+      --card:#ffffff;
+      --card-soft:rgba(255,255,255,.10);
+      --line:#e2e8f0;
+      --line-2:#dbe5f1;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary-2:#1d4ed8;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --dark:#0b1220;
+      --pending:#eff8ff;
+      --pending-line:#bfdbfe;
+      --shadow:0 18px 50px rgba(2,6,23,.16);
+      --shadow-soft:0 8px 22px rgba(15,23,42,.08);
+      --radius:18px;
+      --radius-sm:12px;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
+
+    html,body{
       margin:0;
-      font-family:var(--sans);
+      padding:0;
+      min-height:100%;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
       color:var(--text);
       background:
-        radial-gradient(900px 600px at 15% 10%, rgba(37,99,235,.12), transparent 55%),
-        radial-gradient(900px 600px at 85% 20%, rgba(16,185,129,.08), transparent 55%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
+        radial-gradient(circle at top right, rgba(56,189,248,.18), transparent 28%),
+        radial-gradient(circle at top left, rgba(59,130,246,.22), transparent 28%),
+        linear-gradient(145deg, var(--bg-1), #0d2341 46%, #0f3f8f 100%);
     }
 
-    .wrap{
-      max-width:1220px;
+    body{
+      padding:18px;
+    }
+
+    .app{
+      max-width:1180px;
       margin:0 auto;
-      padding:22px 16px 40px;
     }
 
-    /* Header */
-    .top{
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:28px;
+      padding:20px;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      backdrop-filter:blur(10px);
+      box-shadow:0 24px 60px rgba(0,0,0,.22);
+      margin-bottom:18px;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:auto -80px -80px auto;
+      width:240px;
+      height:240px;
+      background:radial-gradient(circle, rgba(14,165,233,.35), transparent 70%);
+      pointer-events:none;
+    }
+
+    .topbar{
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
-      gap:14px;
-      flex-wrap:wrap;
-      margin-bottom:14px;
+      gap:16px;
+      position:relative;
+      z-index:1;
     }
 
     .brand{
       display:flex;
-      gap:12px;
       align-items:center;
-      min-width:260px;
-    }
-    .logo{
-      width:48px;height:48px;border-radius:18px;
-      background: linear-gradient(135deg, rgba(37,99,235,1), rgba(29,78,216,.85));
-      box-shadow: 0 14px 34px rgba(37,99,235,.20);
-      display:grid;place-items:center;
-      position:relative;
-      overflow:hidden;
-    }
-    .logo::after{
-      content:"";
-      position:absolute;
-      inset:-60%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), transparent 55%);
-      transform: rotate(18deg);
-      opacity:.7;
-    }
-    .logo svg{position:relative; z-index:1; filter: drop-shadow(0 6px 12px rgba(0,0,0,.12));}
-    .titles h1{
-      margin:0;
-      font-size:19px;
-      letter-spacing:.2px;
-      font-weight:1000;
-      line-height:1.15;
-    }
-    .titles p{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:13px;
-      font-weight:700;
-      line-height:1.25;
+      gap:14px;
+      min-width:0;
     }
 
-    .actions{
+    .logo{
+      width:58px;
+      height:58px;
+      border-radius:16px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      box-shadow:0 8px 18px rgba(0,0,0,.18);
+      flex:0 0 auto;
+    }
+
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .brandText h1{
+      margin:0;
+      color:#fff;
+      font-size:clamp(22px,3vw,31px);
+      line-height:1.05;
+      letter-spacing:.2px;
+    }
+
+    .brandText p{
+      margin:7px 0 0;
+      color:rgba(255,255,255,.78);
+      font-size:14px;
+    }
+
+    .rightTools{
       display:flex;
-      gap:10px;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:12px;
+      min-width:245px;
+    }
+
+    .quickRow{
+      display:flex;
       align-items:center;
+      gap:10px;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
 
-    .pill{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      background: rgba(255,255,255,.92);
-      border:1px solid var(--line);
-      box-shadow: var(--shadow2);
-      backdrop-filter: blur(10px);
-    }
-    .pill .k{ color:var(--muted); font-size:12px; font-weight:900; letter-spacing:.2px; }
-    .pill .v{ font-family:var(--mono); font-size:12px; font-weight:1000; }
-    .pill .sep{ color:var(--line2); }
-
-    .btn{
-      cursor:pointer;
+    .quickBtn{
+      appearance:none;
       border:none;
-      padding:10px 12px;
-      border-radius:14px;
-      background: #fff;
-      border:1px solid var(--line);
-      box-shadow: var(--shadow2);
-      transition:.15s ease;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-weight:1000;
+      border-radius:12px;
+      padding:11px 15px;
+      font-weight:800;
       font-size:13px;
-      letter-spacing:.2px;
-      color:var(--text);
-    }
-    .btn:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
-    .btn:active{ transform: translateY(0px) scale(.99); }
-    .btn.primary{
-      background: linear-gradient(135deg, var(--primary), var(--primary2));
-      color:#fff;
-      border-color: rgba(37,99,235,.25);
-    }
-    .btn.danger{
-      background: rgba(239,68,68,.08);
-      border-color: rgba(239,68,68,.22);
-      color:#991B1B;
-    }
-
-    /* Tabs */
-    .tabs{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin:12px 0 14px;
-    }
-    .tab{
       cursor:pointer;
-      padding:10px 12px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid var(--line);
-      box-shadow: var(--shadow2);
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:1000;
-      color:var(--muted);
-      font-size:13px;
-      transition:.15s ease;
-    }
-    .tab:hover{ transform: translateY(-1px); }
-    .tab.active{
-      color: var(--text);
-      border-color: rgba(37,99,235,.35);
-      box-shadow: 0 14px 30px rgba(37,99,235,.12);
-    }
-    .tab .dot{
-      width:10px;height:10px;border-radius:999px;
-      background: rgba(100,116,139,.25);
-    }
-    .tab.active .dot{
-      background: linear-gradient(135deg, var(--primary), rgba(16,185,129,.75));
-      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+      transition:.2s;
+      box-shadow:0 10px 20px rgba(15,23,42,.18);
     }
 
-    /* Layout */
-    .grid{
+    .quickBtn:hover{ transform:translateY(-1px); }
+    .quickBtn:active{ transform:translateY(0); }
+
+    .btnPallet{
+      background:linear-gradient(135deg, #22c55e, #16a34a);
+      color:#fff;
+    }
+
+    .statusWrap{
+      min-width:245px;
+      width:100%;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:16px;
+      padding:12px;
+      color:#fff;
+      box-shadow:0 10px 26px rgba(0,0,0,.18);
+    }
+
+    .statusLabel{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      opacity:.82;
+      font-weight:700;
+      margin-bottom:7px;
+    }
+
+    .status{
+      font-size:13px;
+      background:#fff;
+      color:#111827;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      white-space:pre-wrap;
+      font-weight:700;
+    }
+
+    .status.ok{ background:#dcfce7; border-color:#86efac; color:#14532d; }
+    .status.warn{ background:#fef9c3; border-color:#fde047; color:#713f12; }
+    .status.err{ background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
+
+    .heroStats{
+      position:relative;
+      z-index:1;
+      margin-top:18px;
       display:grid;
-      grid-template-columns: 1.12fr .88fr;
-      gap:14px;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+
+    .heroStat{
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 10px 24px rgba(0,0,0,.16);
+    }
+
+    .heroStat span{
+      display:block;
+      color:rgba(255,255,255,.78);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .heroStat strong{
+      color:#fff;
+      font-size:26px;
+      line-height:1;
+      font-weight:900;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:1.35fr .9fr;
+      gap:18px;
       align-items:start;
     }
-    @media (max-width: 980px){
-      .grid{ grid-template-columns:1fr; }
-    }
 
-    .card{
-      background: var(--card);
+    .panel{
+      background:var(--card);
       border:1px solid var(--line);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
+      border-radius:24px;
+      box-shadow:var(--shadow);
       overflow:hidden;
     }
-    .cardHead{
-      padding: 16px 16px 12px;
-      border-bottom:1px solid var(--line);
+
+    .panelHeader{
+      padding:18px 20px 0;
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:12px;
-      flex-wrap:wrap;
     }
-    .cardHead h2{
+
+    .panelTitle{
       margin:0;
-      font-size:15px;
-      font-weight:1100;
-      letter-spacing:.2px;
-    }
-    .cardHead p{
-      margin:6px 0 0;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:750;
-      line-height:1.3;
-      max-width:760px;
-    }
-    .badge{
-      font-family:var(--mono);
-      font-size:11px;
-      font-weight:1100;
-      letter-spacing:.35px;
-      padding:7px 10px;
-      border-radius:999px;
-      background: rgba(37,99,235,.08);
-      border:1px solid rgba(37,99,235,.18);
-      color:#1E3A8A;
-      white-space:nowrap;
-    }
-
-    /* Controls */
-    .controls{
-      padding: 14px 16px 16px;
-      display:grid;
-      grid-template-columns: 1fr 170px 170px;
-      gap:10px;
-    }
-    @media (max-width: 760px){
-      .controls{ grid-template-columns:1fr; }
-    }
-
-    label{
-      font-size:11px;
-      letter-spacing:.35px;
-      text-transform:uppercase;
-      font-weight:1100;
-      color: var(--muted2);
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    input, select{
-      width:100%;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--text);
-      outline:none;
-      box-shadow: inset 0 1px 0 rgba(15,23,42,.03);
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    input::placeholder{ color: rgba(100,116,139,.6); font-weight:800; }
-
-    /* Add Task */
-    .addBox{
-      margin: 0 16px 14px;
-      padding: 12px;
-      border-radius: 18px;
-      border: 1px dashed rgba(37,99,235,.35);
-      background: rgba(37,99,235,.04);
-      display:grid;
-      grid-template-columns: 1.25fr 220px 180px 150px;
-      gap:10px;
-      align-items:end;
-    }
-    @media (max-width: 920px){
-      .addBox{ grid-template-columns: 1fr; }
-    }
-    .btnAdd{
-      justify-content:center;
-      background: linear-gradient(135deg, var(--primary), var(--primary2));
-      color:#fff;
-      border-color: rgba(37,99,235,.25);
-    }
-    .help{
-      margin: -4px 16px 12px;
-      color: var(--muted);
-      font-size:12px;
-      font-weight:750;
-    }
-    .help b{ color: var(--text); }
-
-    /* List */
-    .list{ padding: 6px 10px 16px; }
-
-    .item{
-      display:grid;
-      grid-template-columns: 132px 1fr 250px;
-      gap:10px;
-      align-items:center;
-      padding: 10px 10px;
-      border-radius: 18px;
-      border:1px solid var(--line);
-      background: #fff;
-      margin: 8px 6px;
-      transition:.14s ease;
-    }
-    .item:hover{ transform: translateY(-1px); box-shadow: var(--shadow2); }
-
-    @media (max-width: 820px){
-      .item{ grid-template-columns: 132px 1fr; }
-      .right{ grid-column:1 / -1; justify-content:space-between; }
-    }
-
-    .dateBox{
-      width:132px;
-      border-radius: 18px;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, #F8FAFF, #FFFFFF);
-      padding:10px 10px;
-      text-align:left;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    .dateBox .date{
-      font-family:var(--mono);
-      font-weight:1100;
-      font-size:13px;
-      letter-spacing:.6px;
-      color:#0B2A6D;
+      font-size:20px;
       line-height:1.1;
     }
-    .dateBox .meta{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      color: var(--muted);
-      font-weight:850;
-      font-size:11px;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: #fff;
-      font-family:var(--mono);
-      font-size:11px;
-      font-weight:1100;
-      color: var(--muted);
-    }
-    .chip .p{
-      width:7px;height:7px;border-radius:999px;background: rgba(37,99,235,.35);
-    }
-    .chip.ok .p{ background: rgba(22,163,74,.55); }
-    .chip.bad .p{ background: rgba(239,68,68,.55); }
 
-    .title{
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .title b{
-      font-size:13px;
-      font-weight:1100;
-      letter-spacing:.2px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .title small{
+    .panelSub{
+      margin:6px 0 0;
       color:var(--muted);
-      font-size:12px;
-      font-weight:850;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      font-size:13px;
     }
 
-    .right{
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:8px;
-      flex-wrap:wrap;
+    .panelBody{
+      padding:20px;
+    }
+
+    .scannerCard{
+      background:linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    }
+
+    .fieldLabel{
+      display:block;
+      font-weight:800;
+      margin:0 0 8px;
+      color:#0f172a;
+      font-size:14px;
+    }
+
+    .inputWrap{
+      position:relative;
+    }
+
+    .inputWrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:16px;
+      padding:1px;
+      background:linear-gradient(135deg, rgba(37,99,235,.35), rgba(14,165,233,.28));
+      -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      pointer-events:none;
+    }
+
+    input{
+      width:100%;
+      padding:15px 16px;
+      border-radius:16px;
+      border:1px solid var(--line-2);
+      font-size:17px;
+      outline:none;
+      background:#fff;
+      color:#0f172a;
+      transition:.15s;
+    }
+
+    input:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.10);
+    }
+
+    input::placeholder{ color:#94a3b8; }
+
+    .hint{
+      font-size:12px;
+      color:#64748b;
+      margin-top:8px;
+      line-height:1.45;
+    }
+
+    .manualGrid{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+    }
+
+    .resultCard{
+      margin-top:18px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.06);
+      padding:16px;
+      font-family:Consolas,Menlo,monospace;
+      box-shadow:0 16px 30px rgba(15,23,42,.20);
+    }
+
+    .resultCard .k{
+      color:#94a3b8;
+      font-size:13px;
+    }
+
+    .resultCard .v{
+      font-size:22px;
+      font-weight:900;
+      word-break:break-word;
+    }
+
+    .actionGrid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:16px;
+    }
+
+    button{
+      appearance:none;
+      border:0;
+      border-radius:14px;
+      padding:13px 14px;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .04s ease, box-shadow .18s ease, filter .18s ease;
+      font-size:14px;
+    }
+
+    button:active{ transform:translateY(1px); }
+    button:hover{ filter:brightness(.98); }
+
+    .ghost{
+      background:#fff;
+      border:1px solid var(--line);
+      color:#0f172a;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .danger{
+      background:linear-gradient(135deg, #ef4444, #dc2626);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(239,68,68,.25);
+    }
+
+    .primary{
+      background:linear-gradient(135deg, var(--primary), var(--primary-2));
+      color:#fff;
+      box-shadow:0 10px 22px rgba(37,99,235,.25);
     }
 
     .toggle{
-      cursor:pointer;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      color:#0f172a;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background:#fff;
-      transition:.14s ease;
-      min-width: 140px;
-      font-weight:1100;
-    }
-    .toggle:hover{ box-shadow: var(--shadow2); transform: translateY(-1px); }
-    .toggle.done{
-      background: rgba(22,163,74,.10);
-      border-color: rgba(22,163,74,.22);
-      color:#14532D;
+      gap:8px;
+      box-shadow:var(--shadow-soft);
     }
 
-    .miniBtn{
-      cursor:pointer;
+    .toggle.on{
+      background:#dcfce7;
+      border-color:#86efac;
+      color:#14532d;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 11px;
+      border-radius:999px;
+      background:#f8fafc;
       border:1px solid var(--line);
-      background:#fff;
-      color:var(--text);
-      padding:10px 10px;
-      border-radius: 14px;
-      font-weight:1100;
+      font-weight:800;
+      font-size:12px;
+      color:#0f172a;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .pendingBox{
+      margin-top:16px;
+      background:var(--pending);
+      border:1px solid var(--pending-line);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .pendingHead{
       display:flex;
       align-items:center;
-      gap:8px;
-      transition:.14s ease;
-    }
-    .miniBtn:hover{ transform: translateY(-1px); box-shadow: var(--shadow2); }
-    .miniBtn.delete{
-      border-color: rgba(239,68,68,.22);
-      background: rgba(239,68,68,.06);
-      color:#991B1B;
-    }
-
-    /* Side */
-    .side{ padding:16px; }
-
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
       gap:10px;
-      margin-bottom:12px;
-    }
-    @media (max-width: 420px){
-      .kpis{ grid-template-columns:1fr; }
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:10px;
     }
 
-    .kpi{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      padding:12px 12px;
-      background: linear-gradient(180deg, #FFFFFF, #FAFBFF);
-      box-shadow: inset 0 1px 0 rgba(15,23,42,.03);
-    }
-    .kpi h3{
+    .pendingHead h4{
       margin:0;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.45px;
-      color:var(--muted2);
-      font-weight:1100;
-    }
-    .kpi b{
-      display:block;
-      margin-top:6px;
-      font-family:var(--mono);
-      font-size:18px;
-      font-weight:1100;
-    }
-    .kpi small{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font-size:12px;
-      font-weight:800;
+      font-size:15px;
     }
 
-    .progressBox{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      padding:12px 12px;
+    .pend-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .tag{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 11px;
+      border-radius:999px;
       background:#fff;
+      border:1px solid var(--line);
+      font-weight:800;
+      font-size:13px;
+      box-shadow:var(--shadow-soft);
     }
-    .bar{
-      height:10px;
-      border-radius:999px;
-      background:#EEF2FF;
-      border:1px solid rgba(37,99,235,.18);
-      overflow:hidden;
+
+    .tag button{
+      padding:0 7px;
+      min-height:auto;
+      border-radius:8px;
+      background:#fee2e2;
+      border:1px solid #fecaca;
+      color:#7f1d1d;
+      font-size:12px;
+      line-height:1.7;
+      box-shadow:none;
     }
-    .bar i{
-      display:block;
-      height:100%;
-      width:0%;
-      background: linear-gradient(135deg, var(--primary), rgba(16,185,129,.8));
-      border-radius:999px;
-      transition: width .35s ease;
+
+    .transportCard{
+      margin-top:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:#f8fbff;
     }
-    .row{
+
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
+      gap:10px;
+    }
+
+    .chip{
+      border:1px solid var(--line);
+      padding:12px 10px;
+      border-radius:14px;
+      font-weight:800;
+      text-align:center;
+      cursor:pointer;
+      font-size:13px;
+      line-height:1.2;
+      box-shadow:var(--shadow-soft);
+      transition:all .2s ease;
+      color:#0f172a;
+    }
+
+    .chip:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 20px rgba(15,23,42,.10);
+    }
+
+    .chip.selected{
+      outline:2px solid #93c5fd;
+      outline-offset:1px;
+    }
+
+    .success{
+      margin-top:10px;
+      color:#16a34a;
+      font-weight:800;
+      display:none
+    }
+
+    .searchCard,
+    .summaryCard,
+    .tableCard{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      box-shadow:var(--shadow-soft);
+      padding:16px;
+      margin-bottom:14px;
+    }
+
+    .searchRow{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+    }
+
+    .summary{
+      display:grid;
+      gap:10px;
+    }
+
+    .summaryItem{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      margin-top:10px;
-      flex-wrap:wrap;
+      padding:14px;
+      border-radius:16px;
+      background:linear-gradient(180deg,#f8fbff,#ffffff);
+      border:1px solid var(--line);
     }
-    .row .hint{
+
+    .summaryItem span{
       color:var(--muted);
-      font-size:12px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .summaryItem strong{
+      font-size:28px;
+      line-height:1;
+      color:#0f172a;
       font-weight:900;
     }
 
-    .note{
+    .warnBox{
       margin-top:12px;
-      border:1px solid var(--line);
-      border-radius: 18px;
-      padding:12px 12px;
-      background: linear-gradient(180deg, #FFFFFF, #FAFBFF);
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#7c2d12;
+      padding:11px 12px;
+      border-radius:14px;
+      font-size:13px;
+      line-height:1.5;
+      white-space:pre-wrap;
     }
-    .note h4{
-      margin:0;
-      font-size:11px;
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      overflow:hidden;
+    }
+
+    th,td{
+      border-bottom:1px solid var(--line);
+      padding:14px 12px;
+      font-size:18px;
+      text-align:left;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#f8fafc;
+      color:#334155;
+      font-size:13px;
       text-transform:uppercase;
-      letter-spacing:.45px;
-      color:var(--muted2);
-      font-weight:1100;
+      letter-spacing:.4px;
+      font-weight:900;
+      white-space:nowrap;
     }
-    .note p{
-      margin:8px 0 0;
-      color:var(--muted);
+
+    tbody tr:hover{
+      background:#f8fbff;
+    }
+
+    .empty{
+      font-size:14px;
+      color:#6b7280;
+      text-align:center;
+      padding:18px;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:#fafcff;
+    }
+
+    .hl{
+      background:#dcfce7 !important;
+      transition: background .6s ease;
+    }
+
+    .delbtn{
+      background:#fee2e2;
+      border:1px solid #fecaca;
+      color:#7f1d1d;
+      font-weight:900;
+      padding:7px 10px;
+      border-radius:10px;
+      cursor:pointer;
       font-size:12px;
-      line-height:1.35;
-      font-weight:850;
+      line-height:1;
+      white-space:nowrap;
+      box-shadow:none;
     }
 
     .footer{
-      margin-top:12px;
-      color: var(--muted);
+      margin-top:14px;
+      color:#dbeafe;
       font-size:12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
+      text-align:center;
+      opacity:.9;
     }
 
-    .toast{
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15,23,42,.92);
-      color:#fff;
-      border-radius:999px;
-      padding:10px 12px;
-      font-weight:1000;
-      letter-spacing:.2px;
-      box-shadow: var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition:.2s ease;
-      display:flex;
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.58);
+      display:none;
       align-items:center;
-      gap:8px;
-      z-index:999;
+      justify-content:center;
+      z-index:50;
+      padding:18px;
+      backdrop-filter:blur(6px);
     }
-    .toast.show{ opacity:1; transform: translateX(-50%) translateY(-2px); }
-    .toast .dot{ width:8px;height:8px;border-radius:999px;background: linear-gradient(135deg, #60A5FA, #34D399); }
 
-    @media print{
-      .actions,.tabs,.controls,.addBox,.help,.toast,.miniBtn.delete,#btnReset{ display:none !important; }
-      body{ background:#fff; }
-      .card{ box-shadow:none; }
-      .item:hover{ transform:none; box-shadow:none; }
+    .modal{
+      background:#ffffff;
+      border-radius:24px;
+      padding:22px;
+      max-width:460px;
+      width:100%;
+      box-shadow:0 28px 60px rgba(15,23,42,.34);
+      border:1px solid var(--line);
+    }
+
+    .modal h2{
+      margin:0 0 10px 0;
+      font-size:22px;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .modal p{
+      margin:0 0 12px 0;
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.55;
+    }
+
+    .modal button{
+      margin-top:8px;
+      width:100%;
+    }
+
+    @media (max-width: 1020px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 760px){
+      body{
+        padding:12px;
+      }
+
+      .hero{
+        border-radius:22px;
+        padding:16px;
+      }
+
+      .topbar{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .rightTools{
+        align-items:stretch;
+        min-width:auto;
+      }
+
+      .quickRow{
+        justify-content:stretch;
+      }
+
+      .quickBtn{
+        width:100%;
+      }
+
+      .heroStats{
+        grid-template-columns:1fr;
+      }
+
+      .actionGrid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .manualGrid,
+      .searchRow{
+        grid-template-columns:1fr;
+      }
+
+      th,td{
+        font-size:16px;
+        padding:12px 10px;
+      }
+
+      .panel,
+      .searchCard,
+      .summaryCard,
+      .tableCard{
+        border-radius:18px;
+      }
+    }
+
+    @media (max-width: 480px){
+      .actionGrid{
+        grid-template-columns:1fr;
+      }
+
+      th,td{
+        font-size:15px;
+      }
+
+      .brandText p{
+        font-size:13px;
+      }
     }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2.5l7.6 4.3v10.4L12 21.5 4.4 17.2V6.8L12 2.5z" stroke="white" stroke-width="1.8"/>
-            <path d="M8 12.2l2.2 2.2L16.4 8.2" stroke="white" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+  <div class="app">
+    <section class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">
+            <img src="logo_grilazer.jpg" alt="Grilazer">
+          </div>
+          <div class="brandText">
+            <h1>Carregamento Expedição Grilazer</h1>
+            <p>Painel operacional de leitura, lote, rastreio e controle de embarques</p>
+          </div>
         </div>
-        <div class="titles">
-          <h1>Checklist Mensal — Obrigações</h1>
-          <p>6 módulos (abas) • criar/apagar tarefas • data completa no formato <b>dd/mm/aaaa</b> • salva no navegador</p>
+
+        <div class="rightTools">
+          <div class="quickRow">
+            <button class="quickBtn btnPallet" id="btnPallet">📦 Pallet</button>
+          </div>
+
+          <div class="statusWrap">
+            <div class="statusLabel">Status do sistema</div>
+            <div class="status mono warn" id="status">iniciando…</div>
+          </div>
         </div>
       </div>
 
-      <div class="actions">
-        <div class="pill" title="Módulo atual e progresso">
-          <span class="k">Módulo</span><span class="v" id="pillModule">—</span>
-          <span class="sep">•</span>
-          <span class="k">Concluídas</span><span class="v" id="pillDone">0/0</span>
+      <div class="heroStats">
+        <div class="heroStat">
+          <span>Hoje</span>
+          <strong id="countHoje">0</strong>
         </div>
-
-        <button class="btn primary" id="btnMarkAll">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M20 6L9 17l-5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Marcar tudo
-        </button>
-
-        <button class="btn danger" id="btnReset">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M7 6l1 16h8l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          </svg>
-          Zerar módulo
-        </button>
-
-        <button class="btn" id="btnPrint">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 9V3h12v6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="currentColor" stroke-width="2"/>
-            <path d="M6 14h12v7H6v-7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          </svg>
-          Imprimir
-        </button>
+        <div class="heroStat">
+          <span>Semana</span>
+          <strong id="sumSemanaHero">0</strong>
+        </div>
+        <div class="heroStat">
+          <span>Mês</span>
+          <strong id="sumMesHero">0</strong>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="tabs" id="tabs"></div>
-
-    <div class="grid">
-      <!-- Main -->
-      <div class="card">
-        <div class="cardHead">
+    <section class="layout">
+      <div class="panel scannerCard">
+        <div class="panelHeader">
           <div>
-            <h2 id="titleModule">—</h2>
-            <p>
-              Agora cada tarefa tem <b>data completa</b> (dd/mm/aaaa). Você pode criar tarefas com qualquer data, e apagar quando quiser.
-              Também tem indicador de <b>atraso</b> (se passou da data e ainda está pendente).
-            </p>
+            <h2 class="panelTitle">Leitura e Conferência</h2>
+            <p class="panelSub">Área principal para leitor, nota manual, lote e seleção de transportadora</p>
           </div>
-          <span class="badge" id="badgeMonth">MÊS ATUAL</span>
+          <span class="pill" id="badgePend" hidden>📦 Pendentes: 0</span>
         </div>
 
-        <div class="controls">
-          <div class="field">
-            <label for="q">Buscar</label>
-            <input id="q" type="text" placeholder="Ex.: ICMS, FGTS, SPED, DIFAL..." autocomplete="off" />
+        <div class="panelBody">
+          <label class="fieldLabel" for="codigo">Cole ou leia o código da NF-e</label>
+          <div class="inputWrap">
+            <input id="codigo" maxlength="44" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 44 dígitos da chave da NF-e" autofocus />
           </div>
+          <div class="hint">Ao atingir 34+ dígitos, a leitura ocorre automaticamente.</div>
 
-          <div class="field">
-            <label for="f">Filtro</label>
-            <select id="f">
-              <option value="all">Todas</option>
-              <option value="open">Pendentes</option>
-              <option value="done">Concluídas</option>
-              <option value="late">Atrasadas</option>
-              <option value="today">Vence hoje</option>
-              <option value="week">Vence em 7 dias</option>
-            </select>
+          <div style="height:16px"></div>
+
+          <label class="fieldLabel" for="manualSeq">Ou digite a nota manual (5 dígitos)</label>
+          <div class="manualGrid" id="manualArea">
+            <input id="manualSeq" maxlength="5" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12345" />
+            <button class="ghost" id="btnManual">Adicionar manual</button>
           </div>
+          <div class="hint">Use esta opção para notas emitidas manualmente, sem chave de 44 dígitos.</div>
 
-          <div class="field">
-            <label for="sort">Ordenar</label>
-            <select id="sort">
-              <option value="date">Data (crescente)</option>
-              <option value="name">Nome (A–Z)</option>
-              <option value="status">Status (pendente primeiro)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="help">
-          Criar tarefa: informe <b>nome</b> + <b>data</b>. Ex.: <b>12/04/2026</b>.
-        </div>
-
-        <!-- Add Task -->
-        <div class="addBox">
-          <div class="field">
-            <label for="newName">Nova tarefa</label>
-            <input id="newName" type="text" placeholder="Ex.: Conferência contábil, importação folha..." />
-          </div>
-
-          <div class="field">
-            <label for="newDate">Data (dd/mm/aaaa)</label>
-            <input id="newDate" inputmode="numeric" placeholder="12/04/2026" />
-          </div>
-
-          <div class="field">
-            <label for="newTag">Categoria (opcional)</label>
-            <input id="newTag" type="text" placeholder="Ex.: Fiscal / Folha / Energia" />
-          </div>
-
-          <button class="btn btnAdd" id="btnAddTask">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
-            Criar tarefa
-          </button>
-        </div>
-
-        <div class="list" id="list"></div>
-      </div>
-
-      <!-- Side -->
-      <div class="card">
-        <div class="cardHead">
-          <div>
-            <h2>Resumo do módulo</h2>
-            <p>Progresso, pendências e exportação rápida do checklist do módulo atual.</p>
-          </div>
-        </div>
-
-        <div class="side">
-          <div class="kpis">
-            <div class="kpi">
-              <h3>Pendentes</h3>
-              <b id="kpiOpen">0</b>
-              <small>a fazer</small>
+          <div class="resultCard" id="resultado" hidden>
+            <div style="margin-bottom:10px;">
+              <span class="k">Nota (30º–34º)</span><br>
+              <span class="v" id="concat"></span>
             </div>
-            <div class="kpi">
-              <h3>Concluídas</h3>
-              <b id="kpiDone">0</b>
-              <small>feitas</small>
+            <div style="margin-bottom:8px;">
+              <span class="k">Lido em</span><br>
+              <span class="v" id="timestamp" style="font-size:16px;"></span>
             </div>
-            <div class="kpi">
-              <h3>Atrasadas</h3>
-              <b id="kpiLate">0</b>
-              <small>pendências vencidas</small>
-            </div>
-            <div class="kpi">
-              <h3>Progresso</h3>
-              <b id="kpiPct">0%</b>
-              <small>do módulo</small>
+            <div>
+              <span class="k">UID</span><br>
+              <span class="v" id="who" style="font-size:14px;">—</span>
             </div>
           </div>
 
-          <div class="progressBox">
-            <div class="bar"><i id="barFill"></i></div>
-            <div class="row">
-              <div class="hint" id="hintText">—</div>
-              <button class="btn" id="btnExport">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                  <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                Exportar (TXT)
-              </button>
+          <div class="actionGrid">
+            <button class="ghost" id="btnSync">Sincronizar (listar)</button>
+            <button class="danger" id="btnLimpar">Limpar tela</button>
+            <button class="toggle" id="btnLote" title="Ativa/desativa o modo de notas em lote">🔘 Modo Lote: DESATIVADO</button>
+            <button class="primary" id="btnAbrirTransp" hidden>Transportadoras</button>
+          </div>
+
+          <div id="pendentesBox" class="pendingBox" hidden>
+            <div class="pendingHead">
+              <h4>📦 Notas pendentes <small id="qtdPend">(0)</small></h4>
+              <button class="ghost" id="btnLimparPend" title="Limpar todas as pendentes">Limpar lista</button>
             </div>
+            <div class="pend-list" id="pendList"></div>
+            <div class="hint">Dica: com o <b>Modo Lote ATIVADO</b>, bipadas entram aqui. Clique em <b>Transportadoras</b> e escolha uma para aplicar a todas.</div>
           </div>
 
-          <div class="note">
-            <h4>Como funciona</h4>
-            <p>
-              Cada módulo guarda <b>tarefas</b> e <b>concluídos</b> separadamente no seu navegador.
-              Se trocar de celular/PC, não transfere automaticamente.
-            </p>
-          </div>
-
-          <div class="footer">
-            <span id="footSave">Salvo ✔</span>
-            <span style="font-family:var(--mono)">v3.0</span>
+          <div id="transportadorasWrap" class="transportCard" hidden>
+            <div class="fieldLabel" style="margin-bottom:0">Selecione a transportadora</div>
+            <div class="grid" id="gridTransportadoras"></div>
+            <div class="success" id="okMsg">Transportadora selecionada!</div>
           </div>
         </div>
       </div>
+
+      <div>
+        <div class="searchCard">
+          <div class="panelTitle" style="font-size:18px;">Rastrear por Nota</div>
+          <p class="panelSub" style="margin-bottom:14px;">Busca direta sem precisar listar tudo</p>
+          <div class="searchRow" id="searchArea">
+            <input id="buscaSeq" placeholder="Buscar pela nota (5 dígitos)" maxlength="5" />
+            <button class="ghost" id="btnBuscar" title="Buscar por 5 dígitos">Buscar</button>
+          </div>
+        </div>
+
+        <div class="summaryCard">
+          <div class="panelTitle" style="font-size:18px; margin-bottom:12px;">Resumo Operacional</div>
+          <div class="summary" id="resumo">
+            <div class="summaryItem">
+              <span>📅 Hoje</span>
+              <strong id="sumHoje">0</strong>
+            </div>
+            <div class="summaryItem">
+              <span>📆 Semana</span>
+              <strong id="sumSemana">0</strong>
+            </div>
+            <div class="summaryItem">
+              <span>🗓️ Mês</span>
+              <strong id="sumMes">0</strong>
+            </div>
+          </div>
+          <div class="warnBox" id="tips" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel tableCard" style="margin-top:18px;">
+      <div class="panelHeader">
+        <div>
+          <h2 class="panelTitle">Registros Recentes</h2>
+          <p class="panelSub">Últimas leituras sincronizadas no Firebase</p>
+        </div>
+      </div>
+      <div class="panelBody" style="padding-top:16px;">
+        <div id="registros"></div>
+      </div>
+    </section>
+
+    <div class="footer">Grilazer • Painel V2 de Expedição</div>
+  </div>
+
+  <div class="modal-overlay" id="popupInfo">
+    <div class="modal">
+      <h2>📌 Atenção</h2>
+      <p>
+        Se você apenas vai <strong>rastrear uma nota</strong>,
+        não precisa mais clicar em <strong>“Sincronizar (listar)”</strong>.
+      </p>
+      <p>
+        Apenas digite o número da nota no campo
+        <strong>“Buscar pela nota”</strong>.
+      </p>
+      <p>
+        <strong>Lembre-se:</strong> o site precisa estar com o
+        <strong>Status Conectado</strong> antes de buscar.
+      </p>
+      <button class="primary" id="popupFechar">Entendi</button>
     </div>
   </div>
 
-  <div class="toast" id="toast"><span class="dot"></span><span id="toastTxt">Ok</span></div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
   <script>
-    // ================== Base (do seu papel) ==================
-    // Agora vira data completa usando o MÊS/ANO atual automaticamente.
-    const DEFAULT_TEMPLATE = [
-      { day: 1,  name: "NOTAS ENTRADA" },
-      { day: 1,  name: "PROVISÕES" },
-      { day: 1,  name: "TABELA IBPT" },
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzCRqVlM2DkxI4vemxWcogkOTJc8DGkvg",
+      authDomain: "carregamento-bed8d.firebaseapp.com",
+      databaseURL: "https://carregamento-bed8d-default-rtdb.firebaseio.com",
+      projectId: "carregamento-bed8d",
+      storageBucket: "carregamento-bed8d.firebasestorage.app",
+      messagingSenderId: "1078318711627",
+      appId: "1:1078318711627:web:391ceb1afc50315030dece",
+      measurementId: "G-11T29VHSEB"
+    };
 
-      { day: 3,  name: "JUROS DE CAPITAL PRÓPRIO" },
-      { day: 4,  name: "EU EVOLUO SEMPRE" },
-      { day: 7,  name: "IMPORTAR FOLHA" },
+    const statusBox = document.getElementById('status');
+    const tipsBox = document.getElementById('tips');
 
-      { day: 9,  name: "GIAS - DIFAL" },
-      { day: 9,  name: "GUIAS DIFAL" },
+    function setTips(html){
+      tipsBox.innerHTML = html;
+      tipsBox.style.display = 'block';
+    }
 
-      { day: 11, name: "LEITURA COPEL" },
+    function setStatus(msg, cls){
+      statusBox.textContent = msg;
+      statusBox.classList.remove('ok','warn','err');
+      if(cls) statusBox.classList.add(cls);
+    }
 
-      { day: 12, name: "ICMS" },
-      { day: 12, name: "SPED FISCAL" },
-      { day: 12, name: "DEVEC" },
+    let app = null, auth = null, db = null, lastSavedKey = null, allowAutoFocus = true, autoFocusArmed = true;
+    let modoLote = false;
+    const DUP_GUARD_MS = 600;
+    let lastSeq = '', lastSeqAt = 0;
+    const pendentes = [];
 
-      { day: 14, name: "REINF" },
-      { day: 14, name: "DRE" },
+    const codigo = document.getElementById('codigo');
+    const manualSeq = document.getElementById('manualSeq');
+    const btnManual = document.getElementById('btnManual');
+    const resultado = document.getElementById('resultado');
+    const concatSpan = document.getElementById('concat');
+    const timestampSpan = document.getElementById('timestamp');
+    const transportadorasWrap = document.getElementById('transportadorasWrap');
+    const gridTransportadoras = document.getElementById('gridTransportadoras');
+    const okMsg = document.getElementById('okMsg');
+    const registrosDiv = document.getElementById('registros');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const btnSync = document.getElementById('btnSync');
+    const buscaSeq = document.getElementById('buscaSeq');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const searchArea = document.getElementById('searchArea');
+    const btnLote = document.getElementById('btnLote');
+    const btnAbrirTransp = document.getElementById('btnAbrirTransp');
+    const badgePend = document.getElementById('badgePend');
+    const pendentesBox = document.getElementById('pendentesBox');
+    const pendList = document.getElementById('pendList');
+    const btnLimparPend = document.getElementById('btnLimparPend');
+    const popupInfo = document.getElementById('popupInfo');
+    const popupFechar = document.getElementById('popupFechar');
+    const btnPallet = document.getElementById('btnPallet');
+    const sumSemanaHero = document.getElementById('sumSemanaHero');
+    const sumMesHero = document.getElementById('sumMesHero');
 
-      { day: 15, name: "SPED CONTRIBUIÇÕES" },
-      { day: 15, name: "DIRB" },
+    function abrirPopup(){
+      if(popupInfo) popupInfo.style.display = 'flex';
+    }
 
-      { day: 16, name: "LANÇAMENTOS" },
+    function fecharPopup(){
+      if(popupInfo) popupInfo.style.display = 'none';
+    }
 
-      { day: 20, name: "FGTS" },
-      { day: 20, name: "INSS" },
-      { day: 20, name: "MIT" },
+    async function iniciar(){
+      try{
+        if(!window.firebase || !firebase.initializeApp){
+          setTips('⚠️ Não foi possível carregar o SDK do Firebase. Prefira abrir em http://localhost (Live Server/servidor local).');
+          return setStatus('SDK não carregado', 'err');
+        }
 
-      { day: 24, name: "CONFERÊNCIA CONTÁBIL" },
+        setStatus('conectando…', 'warn');
+        app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.database();
 
-      { day: 25, name: "IPI" },
-      { day: 25, name: "PIS" },
-      { day: 25, name: "COFINS" },
+        await auth.signInAnonymously();
+        const user = auth.currentUser;
 
-      { day: 27, name: "IR/CS" },
-      { day: 30, name: "DCTF-WEB" },
+        if(!user){
+          setTips('⚠️ Ative Authentication → Método de login → Anônimo (Anonymous).');
+          return setStatus('falha no login anônimo', 'err');
+        }
+
+        document.getElementById('who').textContent = user.uid;
+        setStatus('conectado ✔', 'ok');
+      }catch(e){
+        const msg = (e && e.message) || String(e);
+        setTips('⚠️ Erro ao iniciar: ' + msg);
+        setStatus('erro ao iniciar', 'err');
+      }
+    }
+
+    const LISTA = ['SUDOESTE/ REUNIDAS','EUCATUR/BAUER /TRANSGOSS','SIM / MOBILI / TW','EXPRESSO SÃO MIGUEL','RODONAVES','INTRACARGO','ENTREGA GRILAZER','COLETA PRÓPRIA','TNT','ALFA TRANSPORTES','GAAM','CORREIOS'];
+
+    const PASTEL = [
+      {bg:'#E0F2FE', br:'#BAE6FD'},
+      {bg:'#DCFCE7', br:'#BBF7D0'},
+      {bg:'#FAF5FF', br:'#E9D5FF'},
+      {bg:'#FEF9C3', br:'#FDE68A'},
+      {bg:'#FFEDD5', br:'#FED7AA'},
+      {bg:'#FDE68A', br:'#FCD34D'},
+      {bg:'#E9F8F0', br:'#C7F0DE'},
+      {bg:'#F3E8FF', br:'#E9D5FF'},
+      {bg:'#FFE4E6', br:'#FECDD3'},
+      {bg:'#E7E5E4', br:'#D6D3D1'},
+      {bg:'#E0E7FF', br:'#C7D2FE'},
+      {bg:'#F1F5F9', br:'#E2E8F0'}
     ];
 
-    const MODULES = ["Grilazer","Gaam","Aize","Graan","Contábil","T.I"];
+    function somenteDigitos(v){
+      return (v || '').toString().replace(/\D+/g,'');
+    }
 
-    // ================== DOM ==================
-    const elTabs = document.getElementById("tabs");
-    const elList = document.getElementById("list");
-
-    const elQ = document.getElementById("q");
-    const elF = document.getElementById("f");
-    const elSort = document.getElementById("sort");
-
-    const elTitleModule = document.getElementById("titleModule");
-    const elPillModule = document.getElementById("pillModule");
-    const elPillDone = document.getElementById("pillDone");
-
-    const elKpiOpen = document.getElementById("kpiOpen");
-    const elKpiDone = document.getElementById("kpiDone");
-    const elKpiLate = document.getElementById("kpiLate");
-    const elKpiPct  = document.getElementById("kpiPct");
-    const elBarFill = document.getElementById("barFill");
-    const elHintText = document.getElementById("hintText");
-
-    const elFootSave = document.getElementById("footSave");
-    const elBadgeMonth = document.getElementById("badgeMonth");
-
-    const btnReset = document.getElementById("btnReset");
-    const btnMarkAll = document.getElementById("btnMarkAll");
-    const btnPrint = document.getElementById("btnPrint");
-    const btnExport = document.getElementById("btnExport");
-
-    const newName = document.getElementById("newName");
-    const newDate = document.getElementById("newDate");
-    const newTag = document.getElementById("newTag");
-    const btnAddTask = document.getElementById("btnAddTask");
-
-    const toast = document.getElementById("toast");
-    const toastTxt = document.getElementById("toastTxt");
-
-    // ================== Datas ==================
-    const now = new Date();
-    const monthLabel = now.toLocaleDateString("pt-BR", { month:"long", year:"numeric" }).toUpperCase();
-    elBadgeMonth.textContent = monthLabel;
-
-    // início do dia (pra comparar atraso)
-    const today0 = startOfDay(now);
-
-    // ================== Estado ==================
-    let activeModule = localStorage.getItem("ck3_active_module") || MODULES[0];
-    if (!MODULES.includes(activeModule)) activeModule = MODULES[0];
-
-    // moduleData = { tasks: Task[], status: { [id]: true } }
-    let moduleData = loadModule(activeModule);
-
-    // ================== Tabs ==================
-    function renderTabs(){
-      elTabs.innerHTML = "";
-      MODULES.forEach(m => {
-        const b = document.createElement("button");
-        b.className = "tab" + (m === activeModule ? " active" : "");
-        b.type = "button";
-        b.innerHTML = `<span class="dot"></span><span>${escapeHtml(m)}</span>`;
-        b.addEventListener("click", () => {
-          if (m === activeModule) return;
-          activeModule = m;
-          localStorage.setItem("ck3_active_module", activeModule);
-          moduleData = loadModule(activeModule);
-          renderTabs();
-          renderAll();
-          ping(`Aba: ${activeModule}`);
-        });
-        elTabs.appendChild(b);
+    function construirBotoes(){
+      gridTransportadoras.innerHTML = '';
+      LISTA.forEach((nome, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = nome;
+        b.setAttribute('data-nome', nome);
+        const c = PASTEL[idx % PASTEL.length];
+        b.style.background = c.bg;
+        b.style.borderColor = c.br;
+        b.addEventListener('click', () => selecionarTransportadora(nome));
+        gridTransportadoras.appendChild(b);
       });
     }
 
-    // ================== Render ==================
-    function renderAll(){
-      elTitleModule.textContent = `Módulo: ${activeModule}`;
-      elPillModule.textContent = activeModule;
+    function atualizarPendentesUI(){
+      const n = pendentes.length;
+      badgePend.hidden = (n === 0);
+      badgePend.textContent = `📦 Pendentes: ${n}`;
+      document.getElementById('qtdPend').textContent = `(${n})`;
+      pendentesBox.hidden = (n === 0);
+      btnAbrirTransp.hidden = !(modoLote && n > 0);
 
-      const filtered = applyFiltersAndSort(moduleData.tasks);
-      elList.innerHTML = "";
-
-      if (filtered.length === 0){
-        const empty = document.createElement("div");
-        empty.style.padding = "18px 16px 10px";
-        empty.style.color = "rgba(100,116,139,.95)";
-        empty.style.fontWeight = "1000";
-        empty.textContent = "Nenhuma tarefa encontrada com essa busca/filtro.";
-        elList.appendChild(empty);
-      } else {
-        filtered.forEach(t => elList.appendChild(renderItem(t)));
+      pendList.innerHTML = '';
+      for(let i = 0; i < pendentes.length; i++){
+        const p = pendentes[i];
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.innerHTML = `<span>${p.seq}</span> <button data-i="${i}" title="remover">×</button>`;
+        pendList.appendChild(tag);
       }
-
-      updateStats();
-      markSaved();
     }
 
-    function renderItem(t){
-      const done = !!moduleData.status[t.id];
-      const due = parseISODate(t.dateISO); // Date
-      const isLate = (!done && due && startOfDay(due).getTime() < today0.getTime());
-      const isToday = due && startOfDay(due).getTime() === today0.getTime();
-
-      const row = document.createElement("div");
-      row.className = "item";
-
-      const dateBox = document.createElement("div");
-      dateBox.className = "dateBox";
-      dateBox.innerHTML = `
-        <div class="date">${formatBR(due)}</div>
-        <div class="meta">
-          <span class="chip ${done ? "ok" : (isLate ? "bad" : "")}">
-            <span class="p"></span>
-            ${done ? "OK" : (isLate ? "ATRASO" : (isToday ? "HOJE" : "PEND"))}
-          </span>
-          <span class="chip"><span class="p" style="background: rgba(100,116,139,.35)"></span>${activeModule}</span>
-        </div>
-      `;
-
-      const title = document.createElement("div");
-      title.className = "title";
-      title.innerHTML = `
-        <b title="${escapeAttr(t.name)}">${escapeHtml(t.name)}</b>
-        <small>${t.tag ? escapeHtml(t.tag) + " • " : ""}Vencimento: ${formatBR(due)}</small>
-      `;
-
-      const right = document.createElement("div");
-      right.className = "right";
-
-      const toggle = document.createElement("button");
-      toggle.className = "toggle" + (done ? " done" : "");
-      toggle.type = "button";
-      toggle.innerHTML = done ? iconCheck() + "Concluída" : iconCircle() + "Pendente";
-
-      toggle.addEventListener("click", () => {
-        moduleData.status[t.id] = !moduleData.status[t.id];
-        saveModule(activeModule, moduleData);
-        renderAll();
-      });
-
-      const del = document.createElement("button");
-      del.className = "miniBtn delete";
-      del.type = "button";
-      del.innerHTML = iconTrash() + "Apagar";
-      del.addEventListener("click", () => {
-        const ok = confirm(`Apagar a tarefa:\n\n"${t.name}"\n\nData: ${formatBR(due)}\nMódulo: ${activeModule}`);
-        if (!ok) return;
-        moduleData.tasks = moduleData.tasks.filter(x => x.id !== t.id);
-        delete moduleData.status[t.id];
-        saveModule(activeModule, moduleData);
-        renderAll();
-        ping("Tarefa apagada 🗑️");
-      });
-
-      right.appendChild(toggle);
-      right.appendChild(del);
-
-      row.appendChild(dateBox);
-      row.appendChild(title);
-      row.appendChild(right);
-
-      return row;
-    }
-
-    function applyFiltersAndSort(list){
-      const q = (elQ.value || "").trim().toLowerCase();
-      const f = elF.value;
-      const s = elSort.value;
-
-      let out = list.filter(t => {
-        const done = !!moduleData.status[t.id];
-        const due = parseISODate(t.dateISO);
-        const due0 = due ? startOfDay(due).getTime() : 0;
-
-        const isLate = (!done && due && due0 < today0.getTime());
-        const isToday = (due && due0 === today0.getTime());
-        const isWeek = (due && !done && due0 >= today0.getTime() && due0 <= addDays(today0, 7).getTime());
-
-        const matchText =
-          !q ||
-          t.name.toLowerCase().includes(q) ||
-          (t.tag || "").toLowerCase().includes(q) ||
-          (formatBR(due) || "").toLowerCase().includes(q);
-
-        const matchFilter =
-          (f === "all") ||
-          (f === "open" && !done) ||
-          (f === "done" && done) ||
-          (f === "late" && isLate) ||
-          (f === "today" && isToday) ||
-          (f === "week" && isWeek);
-
-        return matchText && matchFilter;
-      });
-
-      if (s === "date"){
-        out.sort((a,b) => (a.dateISO || "").localeCompare(b.dateISO || "") || a.name.localeCompare(b.name, "pt-BR"));
-      } else if (s === "name"){
-        out.sort((a,b) => a.name.localeCompare(b.name, "pt-BR") || (a.dateISO || "").localeCompare(b.dateISO || ""));
-      } else if (s === "status"){
-        out.sort((a,b) => (Number(!!moduleData.status[a.id]) - Number(!!moduleData.status[b.id])) || (a.dateISO || "").localeCompare(b.dateISO || ""));
-      }
-      return out;
-    }
-
-    function updateStats(){
-      const total = moduleData.tasks.length;
-      const done = moduleData.tasks.reduce((acc,t) => acc + (moduleData.status[t.id] ? 1 : 0), 0);
-      const open = total - done;
-
-      const late = moduleData.tasks.reduce((acc,t) => {
-        const isDone = !!moduleData.status[t.id];
-        const due = parseISODate(t.dateISO);
-        if (!due || isDone) return acc;
-        return acc + (startOfDay(due).getTime() < today0.getTime() ? 1 : 0);
-      }, 0);
-
-      const pct = total ? Math.round((done/total)*100) : 0;
-
-      elKpiOpen.textContent = open;
-      elKpiDone.textContent = done;
-      elKpiLate.textContent = late;
-      elKpiPct.textContent = pct + "%";
-
-      elBarFill.style.width = pct + "%";
-      elHintText.textContent = `${done} concluída(s) • ${open} pendente(s) • ${late} atrasada(s) • ${pct}%`;
-
-      elPillDone.textContent = `${done}/${total}`;
-    }
-
-    // ================== Create Task ==================
-    btnAddTask.addEventListener("click", () => {
-      const name = (newName.value || "").trim();
-      const tag  = (newTag.value || "").trim();
-      const br = (newDate.value || "").trim();
-
-      if (!name){
-        ping("Digite o nome da tarefa");
-        newName.focus();
-        return;
-      }
-
-      const iso = brToISO(br);
-      if (!iso){
-        ping("Data inválida (use dd/mm/aaaa)");
-        newDate.focus();
-        return;
-      }
-
-      const t = {
-        id: uid(),
-        name: name.toUpperCase(),
-        dateISO: iso,
-        tag: tag ? tag.toUpperCase() : ""
-      };
-
-      moduleData.tasks.push(t);
-      saveModule(activeModule, moduleData);
-
-      newName.value = "";
-      newDate.value = "";
-      newTag.value = "";
-
-      renderAll();
-      ping("Tarefa criada ✅");
-    });
-
-    // auto-format dd/mm/aaaa (digitando)
-    newDate.addEventListener("input", () => {
-      const raw = newDate.value.replace(/\D/g, "").slice(0, 8);
-      const a = raw.slice(0,2);
-      const b = raw.slice(2,4);
-      const c = raw.slice(4,8);
-      let out = a;
-      if (raw.length > 2) out += "/" + b;
-      if (raw.length > 4) out += "/" + c;
-      newDate.value = out;
-    });
-
-    // Enter para criar
-    [newName, newDate, newTag].forEach(el => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") btnAddTask.click();
-      });
-    });
-
-    // ================== Ações ==================
-    btnReset.addEventListener("click", () => {
-      const ok = confirm(`Zerar (desmarcar) todas as tarefas do módulo "${activeModule}"?`);
-      if (!ok) return;
-      moduleData.status = {};
-      saveModule(activeModule, moduleData);
-      renderAll();
-      ping("Módulo zerado ✅");
-    });
-
-    btnMarkAll.addEventListener("click", () => {
-      const ok = confirm(`Marcar TODAS como concluídas no módulo "${activeModule}"?`);
-      if (!ok) return;
-      const next = {};
-      moduleData.tasks.forEach(t => next[t.id] = true);
-      moduleData.status = next;
-      saveModule(activeModule, moduleData);
-      renderAll();
-      ping("Tudo marcado ✅");
-    });
-
-    btnPrint.addEventListener("click", () => window.print());
-
-    btnExport.addEventListener("click", () => {
-      const total = moduleData.tasks.length;
-      const done = moduleData.tasks.filter(t => moduleData.status[t.id]).length;
-
-      const lines = [];
-      lines.push(`CHECKLIST — ${activeModule}`);
-      lines.push(`Mês: ${monthLabel}`);
-      lines.push(`Progresso: ${done}/${total} (${total ? Math.round(done/total*100) : 0}%)`);
-      lines.push("--------------------------------------------------");
-
-      const sorted = [...moduleData.tasks].sort((a,b)=> (a.dateISO||"").localeCompare(b.dateISO||"") || a.name.localeCompare(b.name, "pt-BR"));
-      sorted.forEach(t => {
-        const mark = moduleData.status[t.id] ? "✅" : "⬜";
-        const cat = t.tag ? ` (${t.tag})` : "";
-        const due = parseISODate(t.dateISO);
-        lines.push(`${mark} ${formatBR(due)} — ${t.name}${cat}`);
-      });
-
-      const content = lines.join("\n");
-      const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Checklist_${slug(activeModule)}_${slug(monthLabel)}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-
-      ping("Exportado ✅");
-    });
-
-    // ================== Storage ==================
-    function storageKey(module){ return "ck3_module_" + slug(module); }
-
-    function loadModule(module){
-      try{
-        const raw = localStorage.getItem(storageKey(module));
-        if (!raw){
-          const fresh = buildFreshModule();
-          localStorage.setItem(storageKey(module), JSON.stringify(fresh));
-          return fresh;
+    pendList?.addEventListener('click', (e) => {
+      const t = e.target;
+      if(t.tagName === 'BUTTON' && t.hasAttribute('data-i')){
+        const i = parseInt(t.getAttribute('data-i'),10);
+        if(!isNaN(i)){
+          pendentes.splice(i,1);
+          atualizarPendentesUI();
         }
-        const obj = JSON.parse(raw);
-        if (!obj || typeof obj !== "object") throw new Error("bad");
-        obj.tasks = Array.isArray(obj.tasks) ? obj.tasks : [];
-        obj.status = (obj.status && typeof obj.status === "object") ? obj.status : {};
+      }
+    });
 
-        obj.tasks = obj.tasks.map(t => ({
-          id: t.id || uid(),
-          name: String(t.name || "").toUpperCase(),
-          dateISO: normalizeISO(String(t.dateISO || "")) || guessISOFromDay(t.day),
-          tag: String(t.tag || "").toUpperCase()
-        })).filter(t => !!t.dateISO);
+    btnLimparPend?.addEventListener('click', () => {
+      pendentes.splice(0, pendentes.length);
+      atualizarPendentesUI();
+    });
 
-        return obj;
-      }catch(e){
-        return buildFreshModule();
+    btnAbrirTransp.addEventListener('click', () => {
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Selecione a transportadora para aplicar ao lote';
+      setTimeout(() => okMsg.style.display = 'none', 1400);
+    });
+
+    function extrair(){
+      const digits = somenteDigitos(codigo.value);
+      if(digits.length < 34){
+        if(!modoLote){
+          resultado.hidden = true;
+          transportadorasWrap.hidden = true;
+        }
+        return;
+      }
+
+      const seq = digits.slice(29,34);
+      const agora = new Date();
+      const dataHora = agora.toLocaleString('pt-BR');
+      const now = Date.now();
+
+      if(modoLote){
+        if(seq === lastSeq && (now - lastSeqAt) < DUP_GUARD_MS){
+          codigo.value = '';
+          autoFocusArmed = true;
+          allowAutoFocus = true;
+          focusLeitor();
+          return;
+        }
+        lastSeq = seq;
+        lastSeqAt = now;
+      }
+
+      concatSpan.textContent = seq;
+      timestampSpan.textContent = dataHora;
+
+      if(modoLote){
+        pendentes.push({ seq, dataHora, uid: (firebase.auth().currentUser?.uid || null), tsLocal: now });
+        atualizarPendentesUI();
+        codigo.value = '';
+        autoFocusArmed = true;
+        allowAutoFocus = true;
+        focusLeitor();
+        transportadorasWrap.hidden = true;
+        return seq;
+      }else{
+        resultado.hidden = false;
+        construirBotoes();
+        transportadorasWrap.hidden = false;
+        allowAutoFocus = false;
+        autoFocusArmed = false;
+        return seq;
       }
     }
 
-    function buildFreshModule(){
-      // cria tarefas padrão para o mês/ano atuais
-      const mm = String(now.getMonth()+1).padStart(2,"0");
-      const yyyy = String(now.getFullYear());
-      const tasks = DEFAULT_TEMPLATE.map(t => {
-        const dd = String(clamp(parseInt(t.day,10), 1, 31)).padStart(2,"0");
-        return {
-          id: uid(),
-          name: String(t.name || "").toUpperCase(),
-          dateISO: `${yyyy}-${mm}-${dd}`, // ISO interno
-          tag: ""
-        };
+    function usarManual(){
+      if(!manualSeq) return;
+      const seq = somenteDigitos(manualSeq.value);
+      if(seq.length !== 5){
+        alert('Informe exatamente 5 dígitos para a nota manual.');
+        return;
+      }
+
+      const agora = new Date();
+      const dataHora = agora.toLocaleString('pt-BR');
+      concatSpan.textContent = seq;
+      timestampSpan.textContent = dataHora;
+      resultado.hidden = false;
+      construirBotoes();
+      transportadorasWrap.hidden = false;
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+      codigo.value = '';
+    }
+
+    function resetForNext(){
+      codigo.value = '';
+      if(manualSeq) manualSeq.value = '';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
+      document.querySelectorAll('.chip.selected').forEach(el => el.classList.remove('selected'));
+      setTimeout(() => {
+        autoFocusArmed = true;
+        allowAutoFocus = true;
+        focusLeitor();
+      }, 10);
+    }
+
+    async function salvarUmRegistro(seq, dataHora, nome){
+      const ref = db.ref('leituras').push();
+      await ref.set({
+        seq,
+        dataHora,
+        transportadora: nome,
+        uid: firebase.auth().currentUser?.uid || null,
+        ts: firebase.database.ServerValue.TIMESTAMP
       });
-      return { tasks, status: {} };
+      lastSavedKey = ref.key;
     }
 
-    function saveModule(module, data){
-      try{ localStorage.setItem(storageKey(module), JSON.stringify(data)); }catch(e){}
+    async function selecionarTransportadora(nome){
+      if(!db || !firebase.auth().currentUser){
+        setTips('⚠️ Firebase não iniciado. Recarregue a página.');
+        return;
+      }
+
+      if(modoLote && pendentes.length){
+        try{
+          for(const p of pendentes){
+            await salvarUmRegistro(p.seq, p.dataHora, nome);
+          }
+          setStatus(`registradas ${pendentes.length} notas em ${nome}`, 'ok');
+          pendentes.splice(0, pendentes.length);
+          atualizarPendentesUI();
+          resetForNext();
+        }catch(e){
+          setTips('⚠️ Erro ao salvar em lote: ' + e);
+        }
+        return;
+      }
+
+      document.querySelectorAll('.chip.selected').forEach(el => el.classList.remove('selected'));
+      const btn = Array.from(document.querySelectorAll('.chip')).find(b => b.dataset.nome === nome);
+      if(btn) btn.classList.add('selected');
+
+      okMsg.style.display = 'block';
+      okMsg.textContent = 'Transportadora selecionada: ' + nome;
+      setTimeout(() => okMsg.style.display = 'none', 1200);
+
+      const seq = concatSpan.textContent.trim();
+      const dataHora = timestampSpan.textContent.trim();
+      try{
+        await salvarUmRegistro(seq, dataHora, nome);
+        setStatus('conectado ✔', 'ok');
+        resetForNext();
+      }catch(e){
+        setTips('⚠️ Erro ao salvar no Firebase: ' + e);
+      }
     }
 
-    // ================== Inputs (filtros) ==================
-    [elQ, elF, elSort].forEach(el => el.addEventListener("input", renderAll));
-    elF.addEventListener("change", renderAll);
-    elSort.addEventListener("change", renderAll);
-
-    // ================== Helpers ==================
-    function uid(){
-      return "t_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,10);
-    }
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-
-    function slug(s){
-      return String(s || "")
-        .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
-        .toLowerCase().replace(/[^a-z0-9]+/g,"_")
-        .replace(/^_+|_+$/g,"");
+    function inicioDoDiaTS(){
+      const d = new Date();
+      d.setHours(0,0,0,0);
+      return d.getTime();
     }
 
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-    function escapeAttr(str){ return String(str).replace(/"/g, "&quot;"); }
-
-    function startOfDay(d){
-      const x = new Date(d);
-      x.setHours(0,0,0,0);
-      return x;
-    }
-    function addDays(d, n){
-      const x = new Date(d);
-      x.setDate(x.getDate() + n);
-      return x;
+    function fimDoDiaTS(){
+      const d = new Date();
+      d.setHours(23,59,59,999);
+      return d.getTime();
     }
 
-    // BR date helpers
-    function brToISO(br){
-      // dd/mm/aaaa => yyyy-mm-dd (valida de verdade)
-      const m = String(br || "").trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-      if (!m) return "";
-      const dd = parseInt(m[1],10);
-      const mm = parseInt(m[2],10);
-      const yyyy = parseInt(m[3],10);
-      if (yyyy < 1900 || yyyy > 2100) return "";
-      if (mm < 1 || mm > 12) return "";
-      if (dd < 1 || dd > 31) return "";
-
-      const iso = `${String(yyyy).padStart(4,"0")}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
-      const d = parseISODate(iso);
-      // Confere se bate (ex.: 31/02 não passa)
-      if (!d) return "";
-      const ok = d.getFullYear() === yyyy && (d.getMonth()+1) === mm && d.getDate() === dd;
-      return ok ? iso : "";
+    function inicioDaSemanaTS(){
+      const d = new Date();
+      const day = d.getDay();
+      const diff = (day === 0 ? 6 : day - 1);
+      d.setHours(0,0,0,0);
+      d.setDate(d.getDate() - diff);
+      return d.getTime();
     }
 
-    function normalizeISO(iso){
-      const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (!m) return "";
-      const d = parseISODate(iso);
-      if (!d) return "";
-      return iso;
+    function fimDaSemanaTS(){
+      const d = new Date(inicioDaSemanaTS());
+      d.setDate(d.getDate() + 6);
+      d.setHours(23,59,59,999);
+      return d.getTime();
     }
 
-    function parseISODate(iso){
-      const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (!m) return null;
-      const yyyy = parseInt(m[1],10);
-      const mm = parseInt(m[2],10);
-      const dd = parseInt(m[3],10);
-      const d = new Date(yyyy, mm-1, dd);
-      if (Number.isNaN(d.getTime())) return null;
-      // garante coerência
-      if (d.getFullYear() !== yyyy || (d.getMonth()+1) !== mm || d.getDate() !== dd) return null;
-      return d;
+    function inicioDoMesTS(){
+      const d = new Date();
+      const d2 = new Date(d.getFullYear(), d.getMonth(), 1);
+      d2.setHours(0,0,0,0);
+      return d2.getTime();
     }
 
-    function formatBR(d){
-      if (!d) return "--/--/----";
-      const dd = String(d.getDate()).padStart(2,"0");
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const yyyy = String(d.getFullYear());
-      return `${dd}/${mm}/${yyyy}`;
+    function fimDoMesTS(){
+      const d = new Date();
+      const d2 = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      d2.setHours(23,59,59,999);
+      return d2.getTime();
     }
 
-    function guessISOFromDay(day){
-      const dd = String(clamp(parseInt(day,10) || 1, 1, 31)).padStart(2,"0");
-      const mm = String(now.getMonth()+1).padStart(2,"0");
-      const yyyy = String(now.getFullYear());
-      return `${yyyy}-${mm}-${dd}`;
+    function atualizarResumo(rows){
+      const tHojeI = inicioDoDiaTS(), tHojeF = fimDoDiaTS();
+      const tSemI = inicioDaSemanaTS(), tSemF = fimDaSemanaTS();
+      const tMesI = inicioDoMesTS(), tMesF = fimDoMesTS();
+      const inRange = (ts,i,f) => typeof ts === 'number' && ts >= i && ts <= f;
+
+      const hoje = rows.filter(r => inRange(r.ts, tHojeI, tHojeF)).length;
+      const sem = rows.filter(r => inRange(r.ts, tSemI, tSemF)).length;
+      const mes = rows.filter(r => inRange(r.ts, tMesI, tMesF)).length;
+
+      document.getElementById('sumHoje').textContent = String(hoje);
+      document.getElementById('sumSemana').textContent = String(sem);
+      document.getElementById('sumMes').textContent = String(mes);
+      document.getElementById('countHoje').textContent = String(hoje);
+      if(sumSemanaHero) sumSemanaHero.textContent = String(sem);
+      if(sumMesHero) sumMesHero.textContent = String(mes);
     }
 
-    function iconCheck(){
-      return `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="margin-right:8px">
-          <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>`;
-    }
-    function iconCircle(){
-      return `
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="margin-right:8px">
-          <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.2" opacity=".55"/>
-        </svg>`;
-    }
-    function iconTrash(){
-      return `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M7 6l1 16h8l1-16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        </svg>`;
+    function renderTable(rows, highlightKey){
+      atualizarResumo(rows);
+      rows.sort((a,b) => (b.ts || 0) - (a.ts || 0));
+
+      if(!rows.length){
+        registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
+        return;
+      }
+
+      let html = '<table><thead><tr><th>Nota (5 dígitos)</th><th>Data/Hora</th><th>Transportadora</th><th>Ações</th></tr></thead><tbody>';
+      for(const r of rows){
+        const cls = (highlightKey && r._key === highlightKey) ? ' class="hl"' : '';
+        html += `<tr${cls}><td>${r.seq || ''}</td><td>${r.dataHora || ''}</td><td>${r.transportadora || ''}</td><td><button class="delbtn" data-key="${r._key}">×</button></td></tr>`;
+      }
+      html += '</tbody></table>';
+      registrosDiv.innerHTML = html;
+
+      if(highlightKey){
+        setTimeout(() => {
+          document.querySelectorAll('tr.hl').forEach(tr => tr.classList.remove('hl'));
+        }, 2000);
+      }
     }
 
-    let saveTimer = null;
-    function markSaved(){
-      elFootSave.textContent = "Salvando…";
-      if (saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => { elFootSave.textContent = "Salvo ✔"; }, 250);
+    async function listar(){
+      try{
+        if(!db){
+          setTips('⚠️ Firebase não iniciado.');
+          return;
+        }
+
+        const snap = await db.ref('leituras').limitToLast(1000).get();
+        const val = snap.val();
+
+        if(!val){
+          atualizarResumo([]);
+          registrosDiv.innerHTML = '<div class="empty">Sem registros ainda.</div>';
+          return;
+        }
+
+        const linhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
+        renderTable(linhas, lastSavedKey);
+      }catch(e){
+        setTips('⚠️ Erro ao listar: ' + e);
+      }
     }
 
-    let toastTimer = null;
-    function ping(msg){
-      toastTxt.textContent = msg;
-      toast.classList.add("show");
-      if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1500);
+    async function buscar(){
+      if(!db){
+        setTips('⚠️ Firebase não iniciado.');
+        return;
+      }
+
+      const seq = (buscaSeq.value || '').trim();
+      if(!seq || seq.length !== 5){
+        alert('Informe exatamente 5 dígitos.');
+        return;
+      }
+
+      try{
+        const snap = await db.ref('leituras').orderByChild('seq').equalTo(seq).get();
+        const val = snap.val();
+
+        if(!val){
+          registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado para a nota ' + seq + '.</div>';
+          return;
+        }
+
+        const linhas = Object.entries(val).map(([k,v]) => ({...v, _key:k}));
+        renderTable(linhas, null);
+      }catch(e){
+        const msg = (e && e.message) ? e.message : String(e || '');
+        if(msg.includes('indexOn')){
+          setTips('⚠️ Adicione o índice nas Regras do Realtime Database:\n\n{\n  "rules": {\n    "leituras": {\n      ".read": "auth != null",\n      ".write": "auth != null",\n      ".indexOn": ["seq", "ts"]\n    }\n  }\n}');
+          try{
+            const snapAll = await db.ref('leituras').limitToLast(2000).get();
+            const valAll = snapAll.val();
+            if(!valAll){
+              registrosDiv.innerHTML = '<div class="empty">Sem registros para varrer.</div>';
+              return;
+            }
+            const todos = Object.entries(valAll).map(([k,v]) => ({...v, _key:k}));
+            const filtrados = todos.filter(r => (r && r.seq) === seq);
+            if(!filtrados.length){
+              registrosDiv.innerHTML = '<div class="empty">Nenhum registro encontrado (fallback).</div>';
+              return;
+            }
+            renderTable(filtrados, null);
+          }catch(e2){
+            setTips('⚠️ Erro na busca (fallback): ' + e2);
+          }
+        }else{
+          setTips('⚠️ Erro na busca: ' + msg);
+        }
+      }
     }
 
-    // ================== Init ==================
-    renderTabs();
-    renderAll();
-    ping("Pronto ✅");
+    async function excluirRegistro(key){
+      if(!db){
+        setTips('⚠️ Firebase não iniciado.');
+        return;
+      }
+      if(!key) return;
+
+      const ok = confirm('Excluir este registro?');
+      if(!ok) return;
+
+      try{
+        await db.ref('leituras/' + key).remove();
+        await listar();
+      }catch(e){
+        setTips('⚠️ Erro ao excluir: ' + e);
+      }
+    }
+
+    registrosDiv.addEventListener('click', (ev) => {
+      const t = ev.target;
+      if(t && t.classList.contains('delbtn')){
+        const key = t.getAttribute('data-key');
+        excluirRegistro(key);
+      }
+    });
+
+    function focusLeitor(){
+      if(!allowAutoFocus || !autoFocusArmed) return;
+      if(document.activeElement === codigo) return;
+      try{
+        codigo.focus();
+        autoFocusArmed = false;
+      }catch(_){}
+    }
+
+    window.addEventListener('focus', () => focusLeitor());
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') focusLeitor();
+    });
+
+    codigo.addEventListener('blur', () => setTimeout(() => {
+      if(document.activeElement !== codigo) focusLeitor();
+    }, 50));
+
+    codigo.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === 'Tab'){
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, true);
+
+    document.addEventListener('focusin', (e) => {
+      if(modoLote && e.target !== codigo){
+        e.stopPropagation();
+        setTimeout(() => {
+          if(document.activeElement !== codigo){
+            codigo.focus();
+          }
+        }, 0);
+      }
+    }, true);
+
+    function aplicarTravamentoFoco(){
+      const campos = [manualSeq, buscaSeq];
+      campos.forEach(c => {
+        if(!c) return;
+        if(modoLote){
+          c.disabled = true;
+          c.setAttribute('tabIndex','-1');
+        }else{
+          c.disabled = false;
+          c.removeAttribute('tabIndex');
+        }
+      });
+    }
+
+    searchArea.addEventListener('pointerdown', () => {
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+    });
+
+    buscaSeq.addEventListener('focus', () => {
+      allowAutoFocus = false;
+      autoFocusArmed = false;
+    });
+
+    let _scanTimer = null;
+    codigo.addEventListener('input', () => {
+      if(_scanTimer) clearTimeout(_scanTimer);
+      _scanTimer = setTimeout(() => {
+        const digits = somenteDigitos(codigo.value);
+        if(digits.length >= 34){
+          extrair();
+        }
+      }, 60);
+    });
+
+    function atualizarBotaoLote(){
+      btnLote.classList.toggle('on', modoLote);
+      btnLote.textContent = modoLote ? '🟢 Modo Lote: ATIVADO' : '🔘 Modo Lote: DESATIVADO';
+      atualizarPendentesUI();
+      aplicarTravamentoFoco();
+    }
+
+    btnLote.addEventListener('click', () => {
+      modoLote = !modoLote;
+      atualizarBotaoLote();
+      if(!modoLote){
+        resultado.hidden = true;
+        transportadorasWrap.hidden = true;
+      }else{
+        atualizarPendentesUI();
+      }
+      autoFocusArmed = true;
+      focusLeitor();
+    });
+
+    atualizarBotaoLote();
+
+    btnSync.addEventListener('click', listar);
+
+    btnLimpar.addEventListener('click', () => {
+      codigo.value = '';
+      if(manualSeq) manualSeq.value = '';
+      resultado.hidden = true;
+      transportadorasWrap.hidden = true;
+      registrosDiv.innerHTML = '';
+      allowAutoFocus = true;
+      autoFocusArmed = true;
+      focusLeitor();
+    });
+
+    btnBuscar.addEventListener('click', buscar);
+    buscaSeq.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        buscar();
+      }
+    });
+
+    if(btnManual){
+      btnManual.addEventListener('click', usarManual);
+    }
+
+    if(manualSeq){
+      manualSeq.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          usarManual();
+        }
+      });
+    }
+
+    if(popupFechar){
+      popupFechar.addEventListener('click', fecharPopup);
+    }
+
+    if(popupInfo){
+      popupInfo.addEventListener('click', (e) => {
+        if(e.target === popupInfo){
+          fecharPopup();
+        }
+      });
+    }
+
+    if(btnPallet){
+      btnPallet.addEventListener('click', () => {
+        window.location.href = 'https://testeculpani.github.io/expedicao/';
+      });
+    }
+
+    window.addEventListener('load', () => {
+      iniciar();
+      autoFocusArmed = true;
+      focusLeitor();
+      abrirPopup();
+      atualizarResumo([]);
+    });
   </script>
 </body>
 </html>
