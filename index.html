@@ -957,15 +957,24 @@ input,select,textarea{
 <div class="field"><label>Horário</label><select id="bTime"></select></div>
 <div class="field"><label>Serviço</label><select id="bService"></select></div>
 <div class="field"><label>Valor</label><input id="bPrice" type="number"></div>
-<div class="field"><label>Duração</label><select id="bDuration"><option value="30">30 min</option><option value="60">1 hora</option><option value="90">1h30</option><option value="120">2 horas</option></select></div>
+<div class="field"><label>Duração</label><select id="bDuration">
+  <option value="30">30 min</option><option value="60">1 hora</option><option value="90">1h30</option>
+  <option value="120">2 horas</option><option value="150">2h30</option><option value="180">3 horas</option>
+  <option value="210">3h30</option><option value="240">4 horas</option>
+</select></div>
 <div class="field"><label>Comissão %</label><input id="bCommission" type="number"></div>
+<div class="field" style="grid-column:1/-1">
+  <button type="button" class="command-add-btn" onclick="addDraftBookingItem()">＋ Adicionar este serviço à comanda</button>
+  <div class="pin-field-note">Use este botão quando a mesma cliente fizer mais de um serviço, com a mesma profissional ou com outra.</div>
+  <div id="bookingDraftList"></div>
+</div>
 <div class="field booking-note-field">
   <label>Observação do agendamento</label>
   <textarea id="bObservation" placeholder="Ex.: cliente prefere atendimento mais rápido, alergia a determinado produto, encaixe, recado para a profissional..."></textarea>
   <div id="observationHint" class="booking-note-hint">A observação ficará visível nos detalhes do agendamento.</div>
 </div>
 </div>
-<div class="actions"><button class="btn btn-light" onclick="closeBooking()">Cancelar</button><button class="btn btn-pink" onclick="saveBooking()">Agendar</button></div></div></div>
+<div class="actions"><button class="btn btn-light" onclick="closeBooking()">Cancelar</button><button id="saveBookingBtn" class="btn btn-pink" onclick="saveBooking()">Agendar</button></div></div></div>
 
 <div id="commandItemModal" class="modal"><div class="sheet">
 <div class="sheet-head"><h2>Adicionar serviço à comanda</h2><button class="close" onclick="closeCommandItemModal()">✕</button></div>
@@ -1229,6 +1238,7 @@ let reportCustomStart='';
 let reportCustomEnd='';
 let selectedBookingClientId=null;
 let currentEditingClientId=null;
+let bookingDraftItems=[];
 
 let salonSettings={
   id:'geral',
@@ -1450,15 +1460,24 @@ function professionalItemsInBooking(b,professionalId){
   return bookingItems(b).filter(item=>item.professionalId===professionalId);
 }
 
-function commandItemConflict(date,professionalId,time,duration,ignoreBookingId=null){
+function commandItemConflict(date,professionalId,time,duration){
   const a1=timeToMin(time),a2=a1+Number(duration||30);
   return bookings.some(booking=>{
-    if(booking.id===ignoreBookingId||booking.date!==date||['cancelado','nao_compareceu'].includes(booking.status))return false;
+    if(booking.date!==date||['cancelado','nao_compareceu'].includes(booking.status))return false;
     return bookingItems(booking).some(item=>{
       if(item.professionalId!==professionalId)return false;
       const b1=timeToMin(item.time),b2=b1+Number(item.duration||30);
       return a1<b2&&a2>b1;
     });
+  });
+}
+
+function draftItemConflict(candidate,ignoreIndex=-1){
+  const a1=timeToMin(candidate.time),a2=a1+Number(candidate.duration||30);
+  return bookingDraftItems.some((item,index)=>{
+    if(index===ignoreIndex||item.professionalId!==candidate.professionalId)return false;
+    const b1=timeToMin(item.time),b2=b1+Number(item.duration||30);
+    return a1<b2&&a2>b1;
   });
 }
 
@@ -1860,9 +1879,7 @@ function goScreen(name,btn){
 }
 
 function fillSelects(){
-  const allowed=currentUser.role==='admin'
-    ? professionals.filter(p=>p.role==='admin'||p.active!==false)
-    : professionals.filter(p=>p.id===currentUser.id);
+  const allowed=professionals.filter(p=>p.active!==false);
   $('bProfessional').innerHTML=allowed.map(p=>`<option value="${p.id}">${safe(p.name)}</option>`).join('');
   $('bTime').innerHTML=times.map(t=>`<option value="${t}">${t}</option>`).join('');
   const activeServices=services.filter(s=>s.active!==false);
@@ -2174,6 +2191,131 @@ function closeClientSuggestions(){
   if(el)el.classList.remove('show');
 }
 
+
+function buildBookingFormItem(){
+  const professionalId=$('bProfessional').value;
+  const professional=professionals.find(p=>p.id===professionalId);
+  const service=services.find(s=>s.id===$('bService').value);
+  const time=$('bTime').value;
+  const duration=Number($('bDuration').value||30);
+  const price=Number($('bPrice').value||0);
+  const commission=Number($('bCommission').value||0);
+
+  if(!professional||!service){
+    alert('Selecione a profissional e o serviço.');
+    return null;
+  }
+  if(!time){
+    alert('Selecione o horário.');
+    return null;
+  }
+  if(!Number.isFinite(price)||price<0){
+    alert('Informe um valor válido.');
+    return null;
+  }
+  if(!Number.isFinite(commission)||commission<0||commission>100){
+    alert('Confira a comissão.');
+    return null;
+  }
+
+  return {
+    id:'item_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    professionalId,
+    professionalName:professional.name,
+    serviceId:service.id,
+    serviceName:service.name,
+    time,
+    duration,
+    price,
+    scheduledPrice:price,
+    commission,
+    commissionPaid:false,
+    commissionPaymentId:null,
+    createdAt:new Date().toISOString(),
+    addedBy:currentUser?.name||'',
+    addedById:currentUser?.id||''
+  };
+}
+
+function renderBookingDraftItems(){
+  const box=$('bookingDraftList');
+  const btn=$('saveBookingBtn');
+  if(!box)return;
+
+  if(!bookingDraftItems.length){
+    box.innerHTML='';
+    if(btn)btn.textContent='Agendar';
+    return;
+  }
+
+  const total=bookingDraftItems.reduce((s,item)=>s+Number(item.price||0),0);
+
+  box.innerHTML=`<div class="command-summary" style="margin-top:10px">
+    <div class="command-summary-top">
+      <div><small>SERVIÇOS JÁ ADICIONADOS</small><strong>${brl(total)}</strong></div>
+      <span class="command-badge">🧾 ${bookingDraftItems.length} serviço${bookingDraftItems.length===1?'':'s'}</span>
+    </div>
+    <div class="command-items">
+      ${bookingDraftItems.map((item,index)=>`
+        <div class="command-item">
+          <div class="command-item-head">
+            <div>
+              <div class="command-item-title">${safe(item.serviceName)}</div>
+              <div class="command-item-sub">${safe(item.professionalName)} • ${item.time} • ${item.duration} min</div>
+            </div>
+            <div class="command-item-price">${brl(item.price)}</div>
+          </div>
+          <div class="command-item-footer">
+            <span>Comissão ${item.commission}%</span>
+            <button type="button" class="command-remove" onclick="removeDraftBookingItem(${index})">Remover</button>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+
+  if(btn)btn.textContent=`Agendar comanda (${bookingDraftItems.length})`;
+}
+
+function removeDraftBookingItem(index){
+  bookingDraftItems.splice(index,1);
+  renderBookingDraftItems();
+}
+
+function nextTimeAfter(time,duration){
+  const next=minutesToTime(timeToMin(time)+Number(duration||30));
+  return times.includes(next)?next:time;
+}
+
+function addDraftBookingItem(){
+  const item=buildBookingFormItem();
+  if(!item)return;
+
+  if(commandItemConflict(dateKey(),item.professionalId,item.time,item.duration)){
+    alert('Essa profissional já possui outro atendimento nesse horário.');
+    return;
+  }
+
+  if(draftItemConflict(item)){
+    alert('Esse horário conflita com outro serviço desta mesma comanda para essa profissional.');
+    return;
+  }
+
+  bookingDraftItems.push(item);
+  renderBookingDraftItems();
+
+  // Facilita lançar vários serviços seguidos para a mesma profissional.
+  const suggestedTime=nextTimeAfter(item.time,item.duration);
+  $('bProfessional').value=item.professionalId;
+  $('bTime').value=suggestedTime;
+
+  const activeServices=services.filter(s=>s.active!==false);
+  if(activeServices.length){
+    $('bService').value=activeServices[0].id;
+    syncService();
+  }
+  updateObservationHint();
+}
+
 function openBooking(profId,time){
   if(!salonSettings.openTime||!salonSettings.closeTime||!Array.isArray(salonSettings.workingDays)||!salonSettings.workingDays.length){
     alert('Configure os dias e horários de funcionamento antes de criar agendamentos.');
@@ -2190,9 +2332,12 @@ function openBooking(profId,time){
   delete $('bPhone').dataset.existingClient;
   if($('clientSuggestions')){$('clientSuggestions').classList.remove('show');$('clientSuggestions').innerHTML='';}
   if($('clientNewHint'))$('clientNewHint').classList.remove('show');
-  $('bProfessional').value=pid;$('bTime').value=time||'08:00';$('bService').value=activeServices[0].id;
+  bookingDraftItems=[];
+  renderBookingDraftItems();
+  $('bProfessional').value=pid;$('bTime').value=time||times[0]||'08:00';$('bService').value=activeServices[0].id;
   $('bObservation').value='';
-  syncService();$('bProfessional').disabled=currentUser.role!=='admin';
+  syncService();
+  $('bProfessional').disabled=false;
   updateObservationHint();
   $('bProfessional').onchange=()=>{updateObservationHint();};
   $('bookingModal').classList.add('show');
@@ -2204,15 +2349,46 @@ function updateObservationHint(){
     ? '<strong style="color:#be123c">Atenção:</strong> como é uma observação da administração para outra profissional, ela aparecerá em vermelho na agenda.'
     : 'A observação ficará visível nos detalhes do agendamento.';
 }
-function closeBooking(){closeClientSuggestions();$('bookingModal').classList.remove('show')}
+function closeBooking(){bookingDraftItems=[];closeClientSuggestions();$('bookingModal').classList.remove('show')}
 async function saveBooking(){
-  const name=$('bName').value.trim();if(!name){alert('Informe o nome da cliente.');return}
-  const profId=$('bProfessional').value,time=$('bTime').value,duration=Number($('bDuration').value),price=Number($('bPrice').value||0),
-  commission=Number($('bCommission').value||0),service=services.find(s=>s.id===$('bService').value);
-  const conflict=commandItemConflict(dateKey(),profId,time,duration);
-  if(conflict){alert('Esse horário já está ocupado para esta profissional.');return}
+  const name=$('bName').value.trim();
+  if(!name){alert('Informe o nome da cliente.');return}
+
+  let items=bookingDraftItems.map(item=>({...item}));
+
+  // Se não usou o botão "Adicionar este serviço", mantém o fluxo simples de um único serviço.
+  if(!items.length){
+    const singleItem=buildBookingFormItem();
+    if(!singleItem)return;
+
+    if(commandItemConflict(dateKey(),singleItem.professionalId,singleItem.time,singleItem.duration)){
+      alert('Essa profissional já possui outro atendimento nesse horário.');
+      return;
+    }
+    items=[singleItem];
+  }
+
+  // Validação final antes de salvar.
+  for(let i=0;i<items.length;i++){
+    const item=items[i];
+    if(commandItemConflict(dateKey(),item.professionalId,item.time,item.duration)){
+      alert(`${item.professionalName} já possui outro atendimento às ${item.time}.`);
+      return;
+    }
+    const a1=timeToMin(item.time),a2=a1+Number(item.duration||30);
+    const internalConflict=items.some((other,j)=>{
+      if(i===j||other.professionalId!==item.professionalId)return false;
+      const b1=timeToMin(other.time),b2=b1+Number(other.duration||30);
+      return a1<b2&&a2>b1;
+    });
+    if(internalConflict){
+      alert(`Existem dois serviços sobrepostos para ${item.professionalName} dentro desta comanda.`);
+      return;
+    }
+  }
+
   const observation=$('bObservation').value.trim();
-  const observationByAdmin=Boolean(observation)&&currentUser.role==='admin'&&profId!==currentUser.id;
+  const observationByAdmin=Boolean(observation)&&currentUser.role==='admin'&&items.some(item=>item.professionalId!==currentUser.id);
   const firstNote=observation?[{
     id:'n'+Date.now(),
     text:observation,
@@ -2221,35 +2397,44 @@ async function saveBooking(){
     authorId:currentUser.id,
     createdAt:new Date().toISOString()
   }]:[];
-  const primaryProfessional=professionals.find(p=>p.id===profId);
-  const initialItem={
-    id:'item_'+Date.now(),
-    professionalId:profId,
-    professionalName:primaryProfessional?.name||'',
-    serviceId:service.id,
-    serviceName:service.name,
-    time,
-    duration,
-    price,
-    scheduledPrice:price,
-    commission,
-    commissionPaid:false,
-    commissionPaymentId:null,
-    createdAt:new Date().toISOString()
-  };
-  bookings.push({
-    id:String(Date.now()),date:dateKey(),clientId:null,client:name,phone:$('bPhone').value.trim(),
-    professionalId:profId,professionalName:primaryProfessional?.name||'',time,
-    serviceId:service.id,serviceName:service.name,duration,price,scheduledPrice:price,commission,status:'agendado',
-    items:[initialItem],
+
+  const primary=items[0];
+  const booking={
+    id:String(Date.now()),
+    date:dateKey(),
+    clientId:null,
+    client:name,
+    phone:$('bPhone').value.trim(),
+    professionalId:primary.professionalId,
+    professionalName:primary.professionalName,
+    time:primary.time,
+    serviceId:primary.serviceId,
+    serviceName:items.length>1?`${items.length} serviços`:primary.serviceName,
+    duration:primary.duration,
+    price:0,
+    scheduledPrice:0,
+    commission:0,
+    status:'agendado',
+    items,
     observation,
     observationByAdmin,
     observationAuthor:observation?currentUser.name:'',
     observations:firstNote,
-    paymentMethod:'',paymentInstallments:1,paymentNote:'',paidAt:null,
-    commissionPaid:false,commissionPaymentId:null
-  });
-  const newBooking=bookings[bookings.length-1];
+    paymentMethod:'',
+    paymentInstallments:1,
+    paymentNote:'',
+    paidAt:null,
+    commissionPaid:false,
+    commissionPaymentId:null,
+    createdAt:new Date().toISOString(),
+    createdBy:currentUser?.name||'',
+    createdById:currentUser?.id||''
+  };
+
+  syncBookingFromItems(booking);
+  bookings.push(booking);
+  const newBooking=booking;
+
   const typedPhone=$('bPhone').value.trim();
   let found=selectedBookingClientId
     ? clients.find(c=>c.id===selectedBookingClientId)
@@ -2263,7 +2448,6 @@ async function saveBooking(){
   let clientChanged=false;
 
   if(!found){
-    // Todos podem cadastrar uma cliente nova.
     found={
       id:'c'+Date.now(),
       name,
@@ -2276,37 +2460,38 @@ async function saveBooking(){
     };
     clients.push(found);
     clientChanged=true;
-  }else{
-    // Cliente existente: colaboradores não alteram cadastro.
-    // Somente a administração pode editar os dados já salvos.
-    if(currentUser?.role==='admin'){
-      if(name&&(found.name||'')!==name){
-        found.name=name;
-        clientChanged=true;
-      }
-      if(typedPhone&&getClientPhone(found)!==typedPhone){
-        found.phone=typedPhone;
-        found.whatsapp=typedPhone;
-        clientChanged=true;
-      }
-      if(clientChanged){
-        found.updatedAt=new Date().toISOString();
-        found.updatedBy=currentUser?.name||'';
-        found.updatedById=currentUser?.id||'';
-      }
+  }else if(currentUser?.role==='admin'){
+    if(name&&(found.name||'')!==name){
+      found.name=name;
+      clientChanged=true;
+    }
+    if(typedPhone&&getClientPhone(found)!==typedPhone){
+      found.phone=typedPhone;
+      found.whatsapp=typedPhone;
+      clientChanged=true;
+    }
+    if(clientChanged){
+      found.updatedAt=new Date().toISOString();
+      found.updatedBy=currentUser?.name||'';
+      found.updatedById=currentUser?.id||'';
     }
   }
+
   newBooking.clientId=found.id;
   newBooking.client=found.name||name;
   newBooking.phone=getClientPhone(found)||typedPhone;
 
-  saveLocal();closeBooking();renderAll();
+  bookingDraftItems=[];
+  closeBooking();
+  renderAll();
+
   try{
     await cloudReplace('agendamentos',newBooking.id,newBooking);
     if(clientChanged)await cloudSet('clientes',found.id,found);
   }catch(err){
-    console.error(err);setSyncStatus('error','Erro ao salvar');
-    alert('O agendamento ficou salvo neste aparelho, mas não foi possível enviar ao Firebase. Confira as regras do Firestore.');
+    console.error(err);
+    setSyncStatus('error','Erro ao salvar');
+    alert('Não foi possível enviar a comanda ao Firebase. Confira sua conexão e as regras do Firestore.');
   }
 }
 
@@ -2337,7 +2522,7 @@ function renderCommandItems(b){
         </div>`).join('')}
     </div>
 
-    ${currentUser?.role==='admin'&&b.status==='agendado'
+    ${b.status==='agendado'
       ? `<button class="command-add-btn" onclick="openCommandItemModal()">＋ Adicionar outro serviço / profissional</button>`
       : ''}
   </div>`;
@@ -2391,10 +2576,6 @@ function openDetails(id){
 
 function openCommandItemModal(){
   const b=bookings.find(x=>x.id===currentBookingId);if(!b)return;
-  if(currentUser?.role!=='admin'){
-    alert('Somente a administração pode adicionar serviços à comanda.');
-    return;
-  }
   if(b.status!=='agendado'){
     alert('Esta comanda já foi encerrada.');
     return;
@@ -2411,11 +2592,31 @@ function openCommandItemModal(){
   $('cmdTime').innerHTML=times.map(t=>`<option value="${t}">${t}</option>`).join('');
   $('cmdService').innerHTML=activeServices.map(s=>`<option value="${s.id}">${safe(s.name)}</option>`).join('');
 
-  const preferred=activeProfessionals.find(p=>p.id!==b.professionalId)||activeProfessionals[0];
+  const preferred=activeProfessionals.find(p=>p.id===currentUser?.id)
+    ||activeProfessionals.find(p=>p.id===b.professionalId)
+    ||activeProfessionals[0];
   $('cmdProfessional').value=preferred.id;
-  $('cmdTime').value=b.time;
+
+  const ownItems=bookingItems(b).filter(item=>item.professionalId===preferred.id);
+  let suggested=b.time;
+  if(ownItems.length){
+    const last=ownItems.slice().sort((a,c)=>(timeToMin(a.time)+Number(a.duration||30))-(timeToMin(c.time)+Number(c.duration||30))).pop();
+    suggested=nextTimeAfter(last.time,last.duration);
+  }
+  $('cmdTime').value=times.includes(suggested)?suggested:(b.time||times[0]);
   $('cmdService').value=activeServices[0].id;
   syncCommandService();
+
+  $('cmdProfessional').onchange=()=>{
+    const pid=$('cmdProfessional').value;
+    const own=bookingItems(b).filter(item=>item.professionalId===pid);
+    let next=b.time||times[0];
+    if(own.length){
+      const last=own.slice().sort((a,c)=>(timeToMin(a.time)+Number(a.duration||30))-(timeToMin(c.time)+Number(c.duration||30))).pop();
+      next=nextTimeAfter(last.time,last.duration);
+    }
+    if(times.includes(next))$('cmdTime').value=next;
+  };
 
   $('commandItemClientInfo').querySelector('strong').textContent=b.client;
   $('commandItemClientInfo').querySelector('span').textContent='Novo serviço dentro da mesma comanda.';
@@ -2438,11 +2639,6 @@ function closeCommandItemModal(){
 
 async function saveCommandItem(){
   const b=bookings.find(x=>x.id===currentBookingId);if(!b)return;
-  if(currentUser?.role!=='admin'){
-    alert('Somente a administração pode adicionar serviços à comanda.');
-    return;
-  }
-
   const professionalId=$('cmdProfessional').value;
   const professional=professionals.find(p=>p.id===professionalId);
   const service=services.find(s=>s.id===$('cmdService').value);
@@ -2455,7 +2651,7 @@ async function saveCommandItem(){
   if(!time){alert('Selecione o horário.');return}
   if(price<0||commission<0||commission>100){alert('Confira valor e comissão.');return}
 
-  if(commandItemConflict(b.date,professionalId,time,duration,b.id)){
+  if(commandItemConflict(b.date,professionalId,time,duration)){
     alert('Essa profissional já possui outro atendimento nesse horário.');
     return;
   }
