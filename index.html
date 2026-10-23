@@ -3282,15 +3282,18 @@ function openDetails(id){
       ${b.paymentNote?`<div class="soft-box" style="margin-top:9px"><div class="list-sub">Observação do pagamento</div><div style="font-size:11px;margin-top:3px">${safe(b.paymentNote)}</div></div>`:''}
     </div>`;
 
+  const editValueButton=`<button class="btn btn-light" onclick="editBookingValue()">✎ Editar valor</button>`;
   const deleteBookingButton=`<button class="btn btn-danger" onclick="deleteCurrentBooking()">🗑 Excluir agendamento</button>`;
 
   $('detailsActions').innerHTML=b.status==='agendado'
     ? `<button class="btn btn-note" onclick="openObservationModal()">＋ Adicionar observação</button>
+       ${editValueButton}
        <button class="btn btn-danger" onclick="cancelCurrent()">Cancelado</button>
        <button class="btn btn-noshow" onclick="markNoShow()">Não compareceu</button>
        <button class="btn btn-pink" onclick="finishCurrent()">Finalizar comanda</button>
        ${deleteBookingButton}`
     : `<button class="btn btn-note" onclick="openObservationModal()">＋ Adicionar observação</button>
+       ${editValueButton}
        <button class="btn btn-light" onclick="closeDetails()">Fechar</button>
        ${deleteBookingButton}`;
 
@@ -3413,6 +3416,21 @@ async function saveCommandItem(){
   }
 }
 
+
+
+function editBookingValue(){
+  const b=bookings.find(x=>x.id===currentBookingId);if(!b)return;
+  const items=bookingItems(b);
+
+  if(items.length===1){
+    openEditItemValue(items[0].id);
+    return;
+  }
+
+  // Em comandas com vários serviços, cada valor é individual.
+  const names=items.map((item,index)=>`${index+1}. ${item.serviceName} — ${item.professionalName} — ${brl(item.price)}`).join('\n');
+  alert(`Esta comanda possui vários serviços.\n\nEdite o valor pelo botão "R$ Editar valor" de cada serviço:\n\n${names}`);
+}
 
 function openEditItemValue(itemId){
   const b=bookings.find(x=>x.id===currentBookingId);if(!b)return;
