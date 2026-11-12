@@ -1167,6 +1167,19 @@ input,select,textarea{
 .edit-command-total{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;padding:10px 11px;border-radius:12px;background:#fff7fa;border:1px solid #f0dce4}
 .edit-command-total span{font-size:9px;color:#7f6670}.edit-command-total strong{font-size:17px}
 
+
+/* Agenda de 15 minutos + até dois clientes no mesmo horário */
+.slot-stack{display:grid;gap:6px;min-width:0}
+.slot-double-alert{background:#fff1e7;border:1px solid #ffd5ab;color:#a75112;
+  padding:7px 10px;border-radius:10px;font-size:10px;font-weight:800}
+.slot-continuation{opacity:.72;min-height:35px;padding:8px 10px;cursor:pointer}
+.slot-continuing{font-size:9px;color:#997b85;padding:0 5px}
+.slot-overlap-add{width:100%;background:#fff8fb;border:1px dashed #ebacc2;
+  color:#c52765;font-weight:800;font-size:10px;border-radius:10px;padding:9px 7px}
+.slot-overlap-add:active{background:#fce8ef}
+.agenda-double-info{padding:9px 10px;border-radius:11px;background:#fff8ed;
+  border:1px solid #ffe0b6;font-size:10px;color:#9b571c;margin-top:6px}
+
 </style>
 
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -1513,7 +1526,7 @@ input,select,textarea{
 <div class="field"><label>Serviço</label><select id="bService"></select></div>
 <div class="field"><label>Valor</label><input id="bPrice" type="number"></div>
 <div class="field"><label>Duração</label><select id="bDuration">
-  <option value="30">30 min</option><option value="60">1 hora</option><option value="90">1h30</option>
+  <option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">1 hora</option><option value="90">1h30</option>
   <option value="120">2 horas</option><option value="150">2h30</option><option value="180">3 horas</option>
   <option value="210">3h30</option><option value="240">4 horas</option>
 </select></div>
@@ -1522,6 +1535,7 @@ input,select,textarea{
   <button type="button" class="command-add-btn" onclick="addDraftBookingItem()">＋ Adicionar este serviço à comanda</button>
   <div class="pin-field-note">Use este botão quando a mesma cliente fizer mais de um serviço, com a mesma profissional ou com outra.</div>
   <div id="bookingDraftList"></div>
+  <div class="agenda-double-info">⚠ Se o mesmo profissional já tiver outra cliente no horário, o app vai pedir confirmação antes de salvar. São permitidos até 2 clientes simultâneos.</div>
 </div>
 <div class="field booking-note-field">
   <label>Observação do agendamento</label>
@@ -1579,7 +1593,7 @@ input,select,textarea{
   <div class="field"><label>VALOR</label><input id="cmdPrice" type="number" min="0" step="0.01"></div>
   <div class="field"><label>DURAÇÃO</label>
     <select id="cmdDuration">
-      <option value="30">30 min</option><option value="60">1 hora</option>
+      <option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">1 hora</option>
       <option value="90">1h30</option><option value="120">2 horas</option>
       <option value="150">2h30</option><option value="180">3 horas</option>
       <option value="210">3h30</option><option value="240">4 horas</option>
@@ -1631,7 +1645,7 @@ input,select,textarea{
   <div class="field"><label>VALOR (R$)</label><input id="servicePriceInput" type="number" min="0" step="0.01" placeholder="0,00"></div>
   <div class="field"><label>DURAÇÃO</label>
     <select id="serviceDurationInput">
-      <option value="30">30 minutos</option><option value="60">1 hora</option>
+      <option value="15">15 minutos</option><option value="30">30 minutos</option><option value="45">45 minutos</option><option value="60">1 hora</option>
       <option value="90">1h30</option><option value="120">2 horas</option>
       <option value="150">2h30</option><option value="180">3 horas</option>
       <option value="210">3h30</option><option value="240">4 horas</option>
@@ -2050,7 +2064,7 @@ function rebuildTimes(){
   const end=timeToMin(salonSettings.closeTime);
   const lunchStart=salonSettings.lunchStart?timeToMin(salonSettings.lunchStart):null;
   const lunchEnd=salonSettings.lunchEnd?timeToMin(salonSettings.lunchEnd):null;
-  for(let m=start;m<end;m+=30){
+  for(let m=start;m<end;m+=15){
     const inLunch=lunchStart!==null&&lunchEnd!==null&&lunchStart<lunchEnd&&m>=lunchStart&&m<lunchEnd;
     if(!inLunch)times.push(minutesToTime(m));
   }
@@ -2201,6 +2215,69 @@ function commandItemConflict(date,professionalId,time,duration){
       return a1<b2&&a2>b1;
     });
   });
+}
+
+function inspectSimultaneousClients(date, proposedItems, ignoreBookingId=null){
+  const issues=[];
+  const clashes=[];
+  const activeBookings=bookings.filter(b=>
+    b.id!==ignoreBookingId && b.date===date && !['cancelado','nao_compareceu'].includes(b.status)
+  );
+
+  for(const item of proposedItems){
+    const start=timeToMin(item.time);
+    const end=start+Number(item.duration||30);
+    const overlaps=activeBookings.map(booking=>{
+      const related=bookingItems(booking).filter(service=>service.professionalId===item.professionalId &&
+        start<timeToMin(service.time)+Number(service.duration||30) &&
+        end>timeToMin(service.time)
+      );
+      return related.length?{booking,related}:null;
+    }).filter(Boolean);
+    if(!overlaps.length)continue;
+
+    // Test the exact points at which existing appointments begin or end.
+    // This avoids missing 15-minute overlaps when two bookings share a time range.
+    const checkpoints=new Set([start]);
+    overlaps.forEach(({related})=>related.forEach(service=>{
+      const s=timeToMin(service.time),e=s+Number(service.duration||30);
+      if(s>start&&s<end)checkpoints.add(s);
+      if(e>start&&e<end)checkpoints.add(e);
+    }));
+
+    let maxConcurrent=0;
+    for(const minute of checkpoints){
+      const active=overlaps.filter(({related})=>related.some(service=>
+        timeToMin(service.time)<=minute && minute<timeToMin(service.time)+Number(service.duration||30)
+      ));
+      maxConcurrent=Math.max(maxConcurrent,active.length);
+    }
+
+    if(maxConcurrent>=2){
+      issues.push({item,overlaps});
+    }else if(maxConcurrent>=1){
+      clashes.push({item,overlaps});
+    }
+  }
+  return {blocked:issues,clashes};
+}
+
+function confirmSimultaneousClients(date, proposedItems, ignoreBookingId=null){
+  const result=inspectSimultaneousClients(date,proposedItems,ignoreBookingId);
+  if(result.blocked.length){
+    const item=result.blocked[0].item;
+    alert(`Já existem dois clientes ocupando parte desse horário para ${item.professionalName}.\n\nO limite é de 2 clientes simultâneos por profissional. Escolha outro horário.`);
+    return false;
+  }
+  if(!result.clashes.length)return true;
+
+  const lines=[];
+  result.clashes.forEach(({item,overlaps})=>overlaps.forEach(({booking,related})=>{
+    const label=`• ${item.professionalName}: ${booking.client} às ${related[0].time} (${related[0].serviceName})`;
+    if(!lines.includes(label))lines.push(label);
+  }));
+  const message=`⚠️ ATENÇÃO: HORÁRIOS SOBREPOSTOS!\n\n${lines.slice(0,6).join('\n')}\n\nVocê está agendando outro cliente no mesmo período.\n\nPossui dois clientes no mesmo horário. Está certo?`;
+  return confirm(message);
 }
 
 function draftItemConflict(candidate,ignoreIndex=-1){
@@ -2736,24 +2813,37 @@ function renderTimeline(profId){
 
   let html='';
   times.forEach(t=>{
-    const b=getBookingForSlot(profId,t);
+    const active=getBookingsForSlot(profId,t);
+    const started=active.filter(b=>b.time===t);
+    const ongoing=active.filter(b=>b.time!==t);
 
-    if(b&&b.time===t){
-      html+=`<div class="slot"><div class="slot-time">${t}</div>
-      <div class="slot-box" onclick="openDetails('${b.id}')"><div class="appt">
-      <div class="appt-main"><div class="appt-name">${safe(b.client)}</div>
-      <div class="appt-meta">${safe(b.serviceName)} • ${b.duration} min ${bookingItems(bookings.find(x=>x.id===b.id)).length>1?'• mesma comanda':''} ${b.status==='finalizado'&&b.paymentMethod?'• '+safe(b.paymentMethod):''}</div></div>
-      <div><div class="price">${brl(b.price)}</div><span class="badge ${b.status}">${statusLabel(b.status)}</span></div>
-      </div>
-      ${renderAgendaNote(b)}
+    if(started.length){
+      const doubleAlert=active.length>=2
+        ? `<div class="slot-double-alert">⚠ 2 clientes no mesmo horário</div>` : '';
+      html+=`<div class="slot"><div class="slot-time">${t}</div><div class="slot-stack">
+        ${doubleAlert}
+        ${started.map(b=>`<div class="slot-box" onclick="openDetails('${b.id}')">
+          <div class="appt">
+            <div class="appt-main"><div class="appt-name">${safe(b.client)}</div>
+              <div class="appt-meta">${safe(b.serviceName)} • ${Number(b.duration||30)} min ${bookingItems(bookings.find(x=>x.id===b.id)).length>1?'• mesma comanda':''} ${b.status==='finalizado'&&b.paymentMethod?'• '+safe(b.paymentMethod):''}</div>
+            </div>
+            <div><div class="price">${brl(b.price)}</div><span class="badge ${b.status}">${statusLabel(b.status)}</span></div>
+          </div>
+          ${renderAgendaNote(b)}
+        </div>`).join('')}
+        ${ongoing.map(b=>`<div class="slot-continuation slot-box" onclick="openDetails('${b.id}')"><div class="appt-meta">Em andamento: ${safe(b.client)} • ${safe(b.serviceName)}</div></div>`).join('')}
+        ${active.length<2?`<button class="slot-overlap-add" onclick="openBooking('${profId}','${t}')">＋ Agendar outro cliente neste horário</button>`:''}
       </div></div>`;
-    }else if(b){
-      html+=`<div class="slot"><div class="slot-time">${t}</div><div class="slot-box" style="opacity:.45"><div class="appt-meta">Continuação de ${safe(b.client)} • ${safe(b.serviceName)}</div></div></div>`;
+    }else if(ongoing.length){
+      html+=`<div class="slot"><div class="slot-time">${t}</div><div class="slot-stack">
+        ${ongoing.length>=2?'<div class="slot-double-alert">⚠ 2 clientes no mesmo horário</div>':''}
+        ${ongoing.map(b=>`<div class="slot-box slot-continuation" onclick="openDetails('${b.id}')"><div class="appt-meta">Continuação: ${safe(b.client)} • ${safe(b.serviceName)}</div></div>`).join('')}
+        ${ongoing.length<2?`<button class="slot-overlap-add" onclick="openBooking('${profId}','${t}')">＋ Agendar outro cliente neste horário</button>`:''}
+      </div></div>`;
     }else{
       html+=`<div class="slot"><div class="slot-time">${t}</div><div class="slot-box free"><span>Horário livre</span><button onclick="event.stopPropagation();openBooking('${profId}','${t}')">+ Agendar</button></div></div>`;
     }
   });
-
   $('timeline').innerHTML=html+renderDayExceptions(profId);
 }
 
@@ -2780,22 +2870,23 @@ function renderDayExceptions(profId){
   </div>`;
 }
 
-function getBookingForSlot(profId,time){
+function getBookingsForSlot(profId,time){
   const target=timeToMin(time);
-
+  const active=[];
   for(const b of bookings){
     if(b.date!==dateKey()||['cancelado','nao_compareceu'].includes(b.status))continue;
-
-    const item=bookingItems(b).find(item=>{
-      if(item.professionalId!==profId)return false;
+    for(const item of bookingItems(b)){
+      if(item.professionalId!==profId)continue;
       const start=timeToMin(item.time);
-      return target>=start&&target<start+Number(item.duration||30);
-    });
-
-    if(item)return commandItemProjection(b,item);
+      if(target>=start&&target<start+Number(item.duration||30)){
+        active.push(commandItemProjection(b,item));
+      }
+    }
   }
-
-  return null;
+  return active.sort((a,b)=>a.time.localeCompare(b.time)||a.client.localeCompare(b.client,'pt-BR'));
+}
+function getBookingForSlot(profId,time){
+  return getBookingsForSlot(profId,time)[0]||null;
 }
 
 function renderCalendar(){
@@ -2946,6 +3037,7 @@ function buildBookingFormItem(){
     alert('Selecione o horário.');
     return null;
   }
+  if(duration<15 || duration%15!==0){alert('Selecione uma duração em intervalos de 15 minutos.');return null;}
   if(!Number.isFinite(price)||price<0){
     alert('Informe um valor válido.');
     return null;
@@ -3027,11 +3119,8 @@ function addDraftBookingItem(){
   const item=buildBookingFormItem();
   if(!item)return;
 
-  if(commandItemConflict(dateKey(),item.professionalId,item.time,item.duration)){
-    alert('Essa profissional já possui outro atendimento nesse horário.');
-    return;
-  }
-
+  // O aviso de horários duplicados é confirmado ao salvar a comanda,
+  // evitando perguntar duas vezes durante o preenchimento de vários itens.
   if(draftItemConflict(item)){
     alert('Esse horário conflita com outro serviço desta mesma comanda para essa profissional.');
     return;
@@ -3098,20 +3187,12 @@ async function saveBooking(){
     const singleItem=buildBookingFormItem();
     if(!singleItem)return;
 
-    if(commandItemConflict(dateKey(),singleItem.professionalId,singleItem.time,singleItem.duration)){
-      alert('Essa profissional já possui outro atendimento nesse horário.');
-      return;
-    }
     items=[singleItem];
   }
 
   // Validação final antes de salvar.
   for(let i=0;i<items.length;i++){
     const item=items[i];
-    if(commandItemConflict(dateKey(),item.professionalId,item.time,item.duration)){
-      alert(`${item.professionalName} já possui outro atendimento às ${item.time}.`);
-      return;
-    }
     const a1=timeToMin(item.time),a2=a1+Number(item.duration||30);
     const internalConflict=items.some((other,j)=>{
       if(i===j||other.professionalId!==item.professionalId)return false;
@@ -3123,6 +3204,8 @@ async function saveBooking(){
       return;
     }
   }
+
+  if(!confirmSimultaneousClients(dateKey(),items))return;
 
   const observation=$('bObservation').value.trim();
   const observationByAdmin=Boolean(observation)&&currentUser.role==='admin'&&items.some(item=>item.professionalId!==currentUser.id);
@@ -3410,12 +3493,20 @@ async function saveCommandItem(){
 
   if(!professional||!service){alert('Selecione profissional e serviço.');return}
   if(!time){alert('Selecione o horário.');return}
+  if(duration<15||duration%15!==0){alert('A duração deve ser de pelo menos 15 minutos.');return}
   if(price<0||commission<0||commission>100){alert('Confira valor e comissão.');return}
 
-  if(commandItemConflict(b.date,professionalId,time,duration)){
-    alert('Essa profissional já possui outro atendimento nesse horário.');
+  const a1=timeToMin(time),a2=a1+duration;
+  const overlapsOwn=bookingItems(b).some(other=>{
+    if(other.professionalId!==professionalId)return false;
+    const b1=timeToMin(other.time),b2=b1+Number(other.duration||30);
+    return a1<b2&&a2>b1;
+  });
+  if(overlapsOwn){
+    alert('Esta profissional já possui um serviço da mesma comanda nesse horário. Escolha um horário diferente para esse segundo serviço.');
     return;
   }
+  if(!confirmSimultaneousClients(b.date,[{professionalId,professionalName:professional.name,time,duration}],b.id))return;
 
   b.items=bookingItems(b);
   b.items.push({
@@ -3463,7 +3554,7 @@ function editCommandServiceOptions(selectedId=''){
     .map(s=>`<option value="${s.id}" ${s.id===selectedId?'selected':''}>${safe(s.name)}</option>`).join('');
 }
 function editCommandDurationOptions(selected){
-  return [30,60,90,120,150,180,210,240].map(d=>`<option value="${d}" ${Number(selected||30)===d?'selected':''}>${d===30?'30 min':d===60?'1 hora':d===90?'1h30':d===120?'2 horas':d===150?'2h30':d===180?'3 horas':d===210?'3h30':'4 horas'}</option>`).join('');
+  return [15,30,45,60,90,120,150,180,210,240].map(d=>`<option value="${d}" ${Number(selected||30)===d?'selected':''}>${d===15?'15 min':d===30?'30 min':d===45?'45 min':d===60?'1 hora':d===90?'1h30':d===120?'2 horas':d===150?'2h30':d===180?'3 horas':d===210?'3h30':'4 horas'}</option>`).join('');
 }
 function updateEditCommandTotal(){
   const total=editCommandDraftItems.reduce((s,item)=>s+Number(item.price||0),0);
@@ -3552,9 +3643,8 @@ async function saveEditCommand(){
       const b1=timeToMin(c.time), b2=b1+Number(c.duration||30);
       if(a1<b2&&a2>b1){alert(`${a.professionalName} possui dois serviços sobrepostos nesta comanda.`);return}
     }
-    const conflict=bookings.some(other=>{if(other.id===b.id||other.date!==date||['cancelado','nao_compareceu'].includes(other.status))return false;return bookingItems(other).some(oi=>{if(oi.professionalId!==a.professionalId)return false;const b1=timeToMin(oi.time),b2=b1+Number(oi.duration||30);return a1<b2&&a2>b1})});
-    if(conflict){alert(`${a.professionalName} já possui outro atendimento às ${a.time}.`);return}
   }
+  if(!['cancelado','nao_compareceu'].includes(b.status) && !confirmSimultaneousClients(date,editCommandDraftItems,b.id))return;
   const oldTotal=Number(b.price||0), oldItems=bookingItems(b).map(i=>({service:i.serviceName,professional:i.professionalName,time:i.time,price:Number(i.price||0)}));
   if(currentUser?.role==='admin'){b.client=$('editCommandClient').value.trim()||b.client; b.phone=$('editCommandPhone').value.trim(); if(b.clientId){const c=clients.find(x=>x.id===b.clientId); if(c){c.name=b.client;c.phone=b.phone;c.whatsapp=b.phone;c.updatedAt=new Date().toISOString();c.updatedBy=currentUser?.name||'';c.updatedById=currentUser?.id||'';try{await cloudReplace('clientes',c.id,c)}catch(e){console.warn(e)}}}}
   b.date=date; b.items=editCommandDraftItems.map(i=>({...i,price:Number(i.price||0),duration:Number(i.duration||30),commission:Number(i.commission||0),updatedAt:new Date().toISOString(),updatedBy:currentUser?.name||'',updatedById:currentUser?.id||''}));
@@ -4369,7 +4459,7 @@ async function saveService(){
 
   if(!name){alert('Informe o nome do serviço.');return}
   if(Number.isNaN(price)||price<0){alert('Informe um valor válido.');return}
-  if(!duration||duration<30){alert('Informe uma duração válida.');return}
+  if(!duration||duration<15||duration%15!==0){alert('Informe uma duração válida de pelo menos 15 minutos.');return}
   if(Number.isNaN(commission)||commission<0||commission>100){alert('A comissão deve ficar entre 0% e 100%.');return}
 
   const id=currentEditingServiceId||('serv_'+Date.now());
