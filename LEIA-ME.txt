@@ -1,0 +1,15 @@
+ETAPA 1 - Cadastro de dispositivos push no Firebase
+
+1. Faça upload dos arquivos na raiz do seu repositório GitHub Pages, substituindo index.html.
+2. Cada funcionário abre o aplicativo no próprio celular (no iPhone: via ícone da Tela de Início).
+3. No Início, toca em "Ativar notificações" e permite os avisos.
+4. Um documento aparece na coleção Firestore dispositivosNotificacoes, com professionalId e token.
+
+ATENÇÃO: Esta etapa registra os aparelhos, mas NÃO dispara lembretes automaticamente.
+Para isso é necessário implantar uma função agendada no Firebase (Cloud Functions/Cloud Scheduler),
+que consulte os agendamentos e envie FCM apenas para a profissional envolvida.
+Nunca inclua credenciais de conta de serviço ou chaves privadas no GitHub.
+A chave VAPID gerada no console é pública.
+
+SEGURANÇA: como a equipe compartilha uma única conta Firebase Auth, o UID é o mesmo para todos;
+o PIN do app é separação de interface e não autorização robusta no Firestore.
